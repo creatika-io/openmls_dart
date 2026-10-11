@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:code_assets/code_assets.dart';
+import 'package:hooks/hooks.dart';
 import 'package:test/test.dart';
 
 import '../../hook/build.dart' as build_hook;
@@ -162,9 +163,18 @@ void main() {
     Uri sharedOutputUnder(Directory root) =>
         Directory('${root.path}/.dart_tool/hooks_runner/shared/openmls').uri;
 
-    test('uses the user-define over the parent-directory search', () {
-      final appRoot = Directory('${workspace.path}/apps/alan')
-        ..createSync(recursive: true);
+    void makeDiscoverableApp(Directory root) {
+      File(
+        '${root.path}/pubspec.yaml',
+      ).writeAsStringSync('dependencies:\n  openmls: any\n');
+      Directory('${root.path}/web').createSync();
+    }
+
+    Directory createAppUnder(Directory root) =>
+        Directory('${root.path}/apps/alan')..createSync(recursive: true);
+
+    test('uses the user-define', () {
+      final appRoot = createAppUnder(workspace);
 
       expect(
         build_hook.resolveWebAppRoot(
@@ -175,6 +185,62 @@ void main() {
         reason:
             'The app root is resolved against `web/pkg/`, so it must keep '
             'its trailing slash or the module lands beside the app.',
+      );
+    });
+
+    test('prefers the user-define over an app the search would find', () {
+      makeDiscoverableApp(workspace);
+      final appRoot = createAppUnder(workspace);
+
+      expect(
+        build_hook.resolveWebAppRoot(
+          definedAppRoot: Uri.file(appRoot.path),
+          outputDirectoryShared: sharedOutputUnder(workspace),
+        ),
+        appRoot.uri,
+      );
+    });
+
+    test('falls back to the parent-directory search without a define', () {
+      makeDiscoverableApp(workspace);
+
+      expect(
+        build_hook.resolveWebAppRoot(
+          definedAppRoot: null,
+          outputDirectoryShared: sharedOutputUnder(workspace),
+        ),
+        workspace.uri,
+      );
+    });
+
+    test('resolves a relative define against the declaring pubspec', () {
+      final appRoot = createAppUnder(workspace);
+      final input =
+          (BuildInputBuilder()
+                ..setupShared(
+                  packageRoot: Directory.current.uri,
+                  packageName: 'openmls',
+                  outputDirectoryShared: sharedOutputUnder(workspace),
+                  outputFile: workspace.uri.resolve('output.json'),
+                  userDefines: PackageUserDefines(
+                    workspacePubspec: PackageUserDefinesSource(
+                      defines: {build_hook.webAppRootUserDefine: 'apps/alan'},
+                      basePath: workspace.uri.resolve('pubspec.yaml'),
+                    ),
+                  ),
+                )
+                ..setupBuildInput()
+                ..config.setupBuild(linkingEnabled: false))
+              .build();
+
+      expect(
+        build_hook.resolveWebAppRoot(
+          definedAppRoot: input.userDefines.path(
+            build_hook.webAppRootUserDefine,
+          ),
+          outputDirectoryShared: input.outputDirectoryShared,
+        ),
+        appRoot.uri,
       );
     });
 

@@ -31,6 +31,10 @@
   `web_app_root` user-define names the app; when neither it nor the search
   finds one, the build fails naming the define.
 
+  ⚠ An app that depends on `openmls` only transitively and filled `web/pkg/`
+  by hand now fails its web build too; set `web_app_root` to the app's path
+  relative to the pubspec that declares `hooks.user_defines`.
+
 ### For Contributors
 
 #### Added
