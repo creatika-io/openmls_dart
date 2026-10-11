@@ -150,4 +150,64 @@ void main() {
       expect(build_hook.readLocalWasmStamp(dir), equals('1.5.0'));
     });
   });
+
+  group('resolveWebAppRoot', () {
+    late Directory workspace;
+
+    setUp(() {
+      workspace = Directory.systemTemp.createTempSync('web_app_root_test');
+      addTearDown(() => workspace.deleteSync(recursive: true));
+    });
+
+    Uri sharedOutputUnder(Directory root) =>
+        Directory('${root.path}/.dart_tool/hooks_runner/shared/openmls').uri;
+
+    test('uses the user-define over the parent-directory search', () {
+      final appRoot = Directory('${workspace.path}/apps/alan')
+        ..createSync(recursive: true);
+
+      expect(
+        build_hook.resolveWebAppRoot(
+          definedAppRoot: Uri.file(appRoot.path),
+          outputDirectoryShared: sharedOutputUnder(workspace),
+        ),
+        appRoot.uri,
+        reason:
+            'The app root is resolved against `web/pkg/`, so it must keep '
+            'its trailing slash or the module lands beside the app.',
+      );
+    });
+
+    test('rejects a user-define that points at no directory', () {
+      expect(
+        () => build_hook.resolveWebAppRoot(
+          definedAppRoot: Uri.file('${workspace.path}/apps/missing'),
+          outputDirectoryShared: sharedOutputUnder(workspace),
+        ),
+        throwsA(
+          isA<build_hook.HookException>().having(
+            (exception) => exception.message,
+            'message',
+            contains(build_hook.webAppRootUserDefine),
+          ),
+        ),
+      );
+    });
+
+    test('fails naming the user-define when the search finds no app', () {
+      expect(
+        () => build_hook.resolveWebAppRoot(
+          definedAppRoot: null,
+          outputDirectoryShared: sharedOutputUnder(workspace),
+        ),
+        throwsA(
+          isA<build_hook.HookException>().having(
+            (exception) => exception.message,
+            'message',
+            contains(build_hook.webAppRootUserDefine),
+          ),
+        ),
+      );
+    });
+  });
 }
