@@ -352,13 +352,10 @@ Future<void> _handleWebBuild(
     packageRoot.resolve('rust/target/wasm32/$localWasmStampName'),
   );
 
-  // Find the Flutter app root first
-  final appRoot = _findAppRoot(input.outputDirectoryShared);
-  if (appRoot == null) {
-    // ignore: avoid_print
-    print('Warning: Could not find Flutter app root for web build');
-    return;
-  }
+  final appRoot = resolveWebAppRoot(
+    definedAppRoot: input.userDefines.path(webAppRootUserDefine),
+    outputDirectoryShared: input.outputDirectoryShared,
+  );
 
   final webPkgDir = Directory.fromUri(appRoot.resolve('web/pkg/'));
   output.dependencies.add(webPkgDir.uri.resolve('$_wasmVersionMarkerName'));
@@ -460,6 +457,39 @@ Future<void> _handleWebBuild(
   // detect an upgrade and refresh instead of serving stale binaries.
   await _copyWasmFilesToAppRoot(cacheDir, webPkgDir);
   _writeWasmVersionMarker(webPkgDir, version);
+}
+
+/// User-define naming the Flutter app root that receives `web/pkg/`, for
+/// layouts the parent-directory search cannot see, such as a pub workspace.
+const webAppRootUserDefine = 'web_app_root';
+
+/// The app root from [webAppRootUserDefine], else the parent-directory search.
+Uri resolveWebAppRoot({
+  required Uri? definedAppRoot,
+  required Uri outputDirectoryShared,
+}) {
+  if (definedAppRoot != null) {
+    final definedAppRootDirectory = Directory.fromUri(definedAppRoot);
+    if (!definedAppRootDirectory.existsSync()) {
+      throw HookException(
+        'The `$webAppRootUserDefine` user-define points at '
+        '${definedAppRootDirectory.path}, which does not exist.',
+      );
+    }
+    return definedAppRootDirectory.uri;
+  }
+  final discoveredAppRoot = _findAppRoot(outputDirectoryShared);
+  if (discoveredAppRoot == null) {
+    throw HookException(
+      'Could not find the Flutter app root to place the WASM module in its '
+      'web/pkg/. Set it in the root pubspec.yaml:\n'
+      '  hooks:\n'
+      '    user_defines:\n'
+      '      $_packageName:\n'
+      '        $webAppRootUserDefine: path/to/your/app',
+    );
+  }
+  return discoveredAppRoot;
 }
 
 /// Finds the Flutter application root by searching parent directories from shared output.

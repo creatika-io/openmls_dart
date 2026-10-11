@@ -23,6 +23,18 @@
   `creatika-io/openmls_dart` releases, and a package that depends on a
   prerelease cannot be published to pub.dev.
 
+- **A web build in a pub workspace now places the WASM module, or fails
+  saying how** (`hook/build.dart`, `README.md`) — the hook found the app by
+  walking up to a `pubspec.yaml` with a `web/` directory that depends on
+  `openmls` directly, which an app in a workspace does not. It warned, skipped
+  `web/pkg/`, and the build succeeded into a 404 at runtime. The new
+  `web_app_root` user-define names the app; when neither it nor the search
+  finds one, the build fails naming the define.
+
+  ⚠ An app that depends on `openmls` only transitively and filled `web/pkg/`
+  by hand now fails its web build too; set `web_app_root` to the app's path
+  relative to the pubspec that declares `hooks.user_defines`.
+
 ### For Contributors
 
 #### Added

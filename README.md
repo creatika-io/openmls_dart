@@ -256,6 +256,24 @@ Under dart2wasm, `flutter_rust_bridge` 2.13's decoder fails every call into Rust
 
 The Rust core of openmls ships as a `.wasm` module in both modes — `--wasm` only changes what the *Dart* code compiles to. Crypto performance and functionality are equivalent.
 
+### Web: in a pub workspace, name the app that receives `web/pkg/`
+
+The build hook finds your app by walking up from the build output for a `pubspec.yaml`
+that has a `web/` directory and depends on `openmls` directly. In a pub workspace, where
+the app reaches `openmls` through another workspace package, nothing matches, and the web
+build fails asking for the `web_app_root` user-define. The same goes for an app outside a
+workspace that depends on `openmls` only transitively; such an app used to get a warning
+and had to fill `web/pkg/` by hand, and now sets `web_app_root` instead. Set it in the
+`pubspec.yaml` that declares `hooks.user_defines` (the workspace root in a workspace) as
+a path relative to that file:
+
+```yaml
+hooks:
+  user_defines:
+    openmls:
+      web_app_root: apps/my_app
+```
+
 ### Web: `flutter run -d chrome` can skip the build hook and leave `web/pkg/` empty
 
 The build hook provisions the WASM module into your app's `web/pkg/` directory.
