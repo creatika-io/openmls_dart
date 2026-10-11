@@ -8,7 +8,7 @@
 # On Windows CI (Git Bash), use cmd to run fvm.bat from PATH:
 # Example: make build ARGS="--target x86_64-pc-windows-msvc" FVM="cmd //c fvm"
 
-.PHONY: help setup setup-fvm setup-rust-tools setup-frb-codegen setup-android setup-web setup-fuzz codegen regen build build-android build-web run-example-web test-web test coverage analyze format format-check get clean version get-version check-new-openmls-version check-exists-openmls-frb-release check-template-updates update-template check-targets third-party-notices verify-third-party-notices verify-frb-pins verify-feature-graph verify-android-alignment verify-release-artifacts verify-library-loads actionlint rust-audit rust-deny rust-check rust-test rust-clippy rust-clippy-web rust-doc rust-geiger fuzz fuzz-list fuzz-seed doc publish publish-dry-run rust-update update-changelog release-frb release setup-repo-protections
+.PHONY: help setup setup-fvm setup-rust-tools setup-frb-codegen setup-android setup-web setup-fuzz codegen regen build build-android build-web run-example-web test-example-wasm test-web test coverage analyze format format-check get clean version get-version check-new-openmls-version check-exists-openmls-frb-release check-template-updates update-template check-targets third-party-notices verify-third-party-notices verify-frb-pins verify-feature-graph verify-android-alignment verify-release-artifacts verify-library-loads actionlint rust-audit rust-deny rust-check rust-test rust-clippy rust-clippy-web rust-doc rust-geiger fuzz fuzz-list fuzz-seed doc publish publish-dry-run rust-update update-changelog release-frb release setup-repo-protections
 
 # FVM command - can be overridden to provide full path on Windows CI
 FVM ?= fvm
@@ -17,7 +17,7 @@ FVM ?= fvm
 # Must match the flutter_rust_bridge dependency in pubspec.yaml — a codegen
 # binary of a different version produces different bindings, which makes CI
 # and local codegen runs disagree.
-FRB_CODEGEN_VERSION ?= 2.13.0
+FRB_CODEGEN_VERSION ?= 2.14.0-beta.2
 
 # Arguments are passed via ARGS variable
 ARGS ?=
@@ -53,6 +53,8 @@ help:
 	@echo "    make build-web                    - Build WASM for web platform"
 	@echo "    make run-example-web              - Build WASM and run example/ in Chrome"
 	@echo "                                        Example: make run-example-web ARGS=\"--web-port=5599\""
+	@echo "    make test-example-wasm            - Build WASM and drive example/ compiled by dart2wasm"
+	@echo "                                        Example: make test-example-wasm CHROMEDRIVER=/path/to/chromedriver"
 	@echo ""
 	@echo "  CI / VERSION CHECKS"
 	@echo "    make check-new-openmls-version  - Check for new upstream openmls version"
@@ -314,15 +316,30 @@ build-web:
 #      `RustLib.init()` then fails on a 404 for `pkg/openmls_frb.js`. A
 #      stamp that does not exist cannot be stale, and an unmatched glob is
 #      a no-op under `rm -f`.
-#   4. `flutter run -d chrome` last, and NOT `--wasm`: that flag compiles the
-#      Dart half with dart2wasm, which flutter_rust_bridge's generated decoders
-#      do not support. The Rust side is a wasm module either way.
+#   4. `flutter run -d chrome` last. ARGS="--wasm" compiles the Dart half with
+#      dart2wasm instead; the Rust side is a wasm module either way.
 #
 # Pass flutter arguments through ARGS, e.g. ARGS="--web-port=5599".
 run-example-web: build-web
 	@rm -rf example/web/pkg
 	@rm -f example/build/*/dart_build.stamp
 	cd example && $(FVM) flutter run -d chrome $(ARGS)
+
+# Drive example/integration_test/dart2wasm_test.dart in headless Chrome, with
+# the Dart half compiled by dart2wasm. Flutter falls back to dart2js when Chrome
+# has no WebGL, so SwiftShader is forced and the test asserts kIsWasm.
+#   make test-example-wasm CHROMEDRIVER=/path/to/chromedriver
+test-example-wasm: build-web
+	@rm -rf example/web/pkg
+	@rm -f example/build/*/dart_build.stamp
+	@command -v "$(or $(CHROMEDRIVER),chromedriver)" >/dev/null || { echo "chromedriver not found; pass CHROMEDRIVER=/path"; exit 1; }
+	@"$(or $(CHROMEDRIVER),chromedriver)" --port=4444 & driver=$$!; \
+	cd example && $(FVM) flutter drive -d web-server --wasm \
+		--driver=test_driver/integration_test.dart \
+		--target=integration_test/dart2wasm_test.dart \
+		--web-browser-flag=--use-angle=swiftshader \
+		--web-browser-flag=--enable-unsafe-swiftshader $(ARGS); \
+	ret=$$?; kill $$driver; exit $$ret
 
 # The wasm32 test runner's own timeout defaults to 20 s, and it is raised here
 # rather than when it first bites. The browser runs every test on ONE JS

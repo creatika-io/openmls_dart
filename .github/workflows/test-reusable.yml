@@ -263,6 +263,43 @@ jobs:
       - name: Verify 16 KB alignment
         run: make verify-android-alignment
 
+  # ============================================
+  # Web host app compiled by dart2wasm
+  # ============================================
+  # Drives example/integration_test/dart2wasm_test.dart in headless Chrome, so
+  # a binding that only works under dart2js (FRB's `as List` decode casts)
+  # fails here. The test asserts kIsWasm because Flutter silently falls back to
+  # dart2js when Chrome cannot run the wasm renderer.
+  dart2wasm:
+    name: Web (dart2wasm)
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Setup Rust
+        uses: ./.github/actions/setup-rust
+
+      - name: Setup FVM and Flutter
+        uses: ./.github/actions/setup-fvm
+
+      - name: Setup web build tools
+        run: make setup-web
+
+      - name: Drive the example compiled by dart2wasm
+        run: |
+          set -euo pipefail
+          if [ -n "${CHROMEWEBDRIVER:-}" ] && [ -x "${CHROMEWEBDRIVER}/chromedriver" ]; then
+            driver="${CHROMEWEBDRIVER}/chromedriver"
+          elif command -v chromedriver >/dev/null 2>&1; then
+            driver="$(command -v chromedriver)"
+          else
+            echo "::error::no preinstalled chromedriver on this runner"
+            exit 1
+          fi
+          echo "using $driver ($("$driver" --version))"
+          make test-example-wasm CHROMEDRIVER="$driver"
+
   test:
     strategy:
       fail-fast: false

@@ -66,6 +66,9 @@ class FrbPin {
 /// assert rejects. So the form is checked, not only the number.
 final _exactRange = RegExp(r'^>=(\d+\.\d+\.\d+)\s+<(\d+)\.(\d+)\.(\d+)$');
 
+/// A pre-release pinned exactly; such a package cannot be published anyway.
+final _exactPrerelease = RegExp(r'^\d+\.\d+\.\d+-[0-9A-Za-z.-]+$');
+
 /// Strips a trailing `# comment` and any surrounding quotes from a scalar.
 ///
 /// Both are things a person writes and neither changes the constraint, so
@@ -109,6 +112,7 @@ String frbVersionFromPubspec(String content) {
   }
 
   final raw = _scalar(lines.single.group(1)!);
+  if (_exactPrerelease.hasMatch(raw)) return raw;
   final match = _exactRange.firstMatch(raw);
   if (match == null) {
     throw FrbPinFormatException(
@@ -117,8 +121,8 @@ String frbVersionFromPubspec(String content) {
       '`">=2.12.0 <2.12.1"`: a caret admits versions the runtime assert in '
       '`frb_generated.dart` rejects at init, and a bare `2.12.0` makes the '
       'package unpublishable (pub warns "should allow more than one version" '
-      'and `dart pub publish` exits 65 on any warning). Only `X.Y.Z` versions '
-      'are supported — a pre-release has no well-defined next patch.',
+      'and `dart pub publish` exits 65 on any warning). A pre-release has no '
+      'well-defined next patch, so pin it exactly instead: `2.14.0-beta.2`.',
     );
   }
 

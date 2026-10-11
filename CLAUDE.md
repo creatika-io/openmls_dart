@@ -122,7 +122,13 @@ reads as a hang somewhere unrelated.
 ```bash
 make run-example-web              # build-web, then run example/ in Chrome
 make run-example-web ARGS="--web-port=5599"        # flags reach flutter run
+make test-example-wasm CHROMEDRIVER=/path/to/chromedriver   # drive example/ compiled by dart2wasm
 ```
+
+`make test-example-wasm` asserts `kIsWasm`: Chrome without WebGL makes Flutter
+fall back to dart2js silently, which would hide the dart2wasm decode failures.
+Its tests use `testWidgets`, because `integration_test` does not report a
+failing plain `test()`.
 
 ⚠ **`make run-example-web` deletes `example/build/*/dart_build.stamp`, and that
 step is load-bearing.** `flutter run` keys its build directory on the engine

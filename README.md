@@ -243,26 +243,16 @@ On WASM, the encryption key is imported as a **non-extractable `CryptoKey`** via
 
 ## Known Limitations
 
-### Web: `flutter build web --wasm` (dart2wasm) is not supported
+### Web: dart2wasm relies on a prerelease `flutter_rust_bridge`
 
-This package works with the standard `flutter build web` (dart2js) target. It does **not** currently work when the host app is compiled with `flutter build web --wasm` / `flutter run -d chrome --wasm` (dart2wasm). Calls to the Rust side fail with:
-
-```
-type 'JSValue' is not a subtype of type 'List<dynamic>' of 'raw'
-```
-
-This is an upstream limitation in [`flutter_rust_bridge`](https://github.com/fzyzcjy/flutter_rust_bridge). Its DCO decoder unwraps every value coming back from Rust with `raw as List<dynamic>` — free under dart2js, where a JS array *is* a Dart `List`, and a failing cast under dart2wasm, where the same value arrives as an opaque `JSAny`. The cast is emitted by FRB's codegen templates as well as its runtime codec, so it affects every FRB-based Dart package, not just this one.
-
-**Fixed upstream, but not yet in a stable release.** [flutter_rust_bridge#3182](https://github.com/fzyzcjy/flutter_rust_bridge/pull/3182) replaces that cast with a `dcoDecodeList` helper on both sides and was merged on 2026-09-05, superseding [#3125](https://github.com/fzyzcjy/flutter_rust_bridge/pull/3125). The first release carrying it is `flutter_rust_bridge` 2.14.0-beta.2 — a prerelease. This package pins the latest stable, 2.13.0, which predates the fix, so `--wasm` stays unsupported here until the fix reaches a stable release and this package's pin moves onto it.
-
-A `dependency_override` in the host app does not work around it. This package's *own* generated bindings emit the same cast, so the fix has to ship from here as a regenerated release — and a stable release of this package cannot depend on a prerelease of `flutter_rust_bridge`, because pub warns against exactly that and this package's release gate treats any warning as an error.
+Under dart2wasm, `flutter_rust_bridge` 2.13's decoder fails every call into Rust with `Type 'JSValue' is not a subtype of type 'List<dynamic>'`. The fix ([flutter_rust_bridge#3182](https://github.com/fzyzcjy/flutter_rust_bridge/pull/3182)) first shipped in the prerelease 2.14.0-beta.2, which this package pins with regenerated bindings. `make test-example-wasm` drives the example app compiled by dart2wasm in headless Chrome. A stable release cannot depend on a prerelease, because pub warns against it and the release gate treats any warning as an error.
 
 | Command | Status |
 |---------|--------|
 | `flutter run -d chrome` | Works (dart2js) |
 | `flutter build web` | Works (dart2js) |
-| `flutter run -d chrome --wasm` | Not supported (dart2wasm) |
-| `flutter build web --wasm` | Not supported (dart2wasm) |
+| `flutter run -d chrome --wasm` | Works (dart2wasm) |
+| `flutter build web --wasm` | Works (dart2wasm) |
 
 The Rust core of openmls ships as a `.wasm` module in both modes — `--wasm` only changes what the *Dart* code compiles to. Crypto performance and functionality are equivalent.
 
