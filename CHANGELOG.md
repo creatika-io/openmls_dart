@@ -1,8 +1,42 @@
 ## [Unreleased]
 
+### For Users
+
+#### ✨ Highlights
+
+- **Web apps built with `--wasm` (dart2wasm) now work** — the bindings are
+  regenerated with `flutter_rust_bridge` 2.14.0-beta.2, a prerelease.
+- **openmls v0.9.0** — unchanged this release
+- **openmls_frb v2.4.0** — Rust FFI bindings
+
+#### Fixed
+
+- **Calls into Rust no longer fail under dart2wasm** (`lib/src/rust/`,
+  `pubspec.yaml`, `rust/Cargo.toml`) — `flutter_rust_bridge` 2.13's decoder
+  cast every value from Rust with `as List<dynamic>`, which throws
+  `Type 'JSValue' is not a subtype of type 'List<dynamic>'` under dart2wasm.
+  2.14.0-beta.2 replaces the cast with `dcoDecodeList`
+  ([flutter_rust_bridge#3182][frb3182]). The crate moves to 2.4.0 so its
+  binaries never share a release or a download cache with the 2.13 builds.
+
+  ⚠ Native binaries and the WASM module are downloaded from
+  `creatika-io/openmls_dart` releases, and a package that depends on a
+  prerelease cannot be published to pub.dev.
+
 ### For Contributors
 
+#### Added
+
+- **The example app is driven under dart2wasm in CI** (`make
+  test-example-wasm`, `example/integration_test/dart2wasm_test.dart`,
+  `.github/workflows/test-reusable.yml`) — the test asserts `kIsWasm`, because
+  Flutter silently falls back to dart2js when Chrome cannot run the wasm
+  renderer.
+
 #### Changed
+
+- **The FRB pin gate accepts an exact prerelease pin**
+  (`scripts/src/frb_pins.dart`) — `pubspec.yaml` pins `2.14.0-beta.2` exactly.
 
 - **copier template adopted: v4.15.1 -> v4.15.2** — workflow fixes.
 

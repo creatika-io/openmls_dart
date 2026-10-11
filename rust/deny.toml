@@ -44,6 +44,12 @@ ignore = [
     # blanket policy) so any newly-appearing unmaintained crate still surfaces
     # for review.
     "RUSTSEC-2026-0173", # proc-macro-error2 — via hax-lib-macros (libcrux/X-Wing build-time proc-macro)
+    # --- libcrux X-Wing path, availability-only, pinned by openmls-v0.9.0 ---
+    # Same three entries and reasoning as `.cargo/audit.toml`; clears on the
+    # next upstream OpenMLS bump.
+    "RUSTSEC-2026-0329", # libcrux-hmac-drbg 0.0.1 — fixed in 0.0.2
+    "RUSTSEC-2026-0330", # libcrux-kem 0.0.9 — fixed in 0.0.10
+    "RUSTSEC-2026-0331", # libcrux-kem 0.0.9 — fixed in 0.0.10
 ]
 
 [licenses]

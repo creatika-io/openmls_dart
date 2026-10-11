@@ -71,6 +71,13 @@ void main() {
       );
     });
 
+    test('accepts an exact pre-release pin', () {
+      expect(
+        frbVersionFromPubspec('  flutter_rust_bridge: 2.14.0-beta.2\n'),
+        '2.14.0-beta.2',
+      );
+    });
+
     // A person writes a comment beside a pin; it is not part of the version,
     // and reading it as part turned a correctly-pinned file into a failure
     // telling the reader to write what they had already written.

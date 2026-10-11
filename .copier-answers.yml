@@ -18,8 +18,8 @@ enable_web: true
 flutter_sdk_version: '>=3.38.0'
 flutter_version: 3.38.4
 forbidden_features: openmls=test-utils,backtrace
-frb_version: 2.13.0
-github_repo: djx-y-z/openmls_dart
+frb_version: 2.14.0-beta.2
+github_repo: creatika-io/openmls_dart
 ios_min_version: '13.0'
 license: MIT
 macos_min_version: '10.15'

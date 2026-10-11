@@ -1,6 +1,6 @@
 [package]
 name = "openmls_frb"
-version = "2.3.1"
+version = "2.4.0"
 edition = "2024"
 # 1.91 is openmls 0.9.0's floor (its workspace declares it), and that is what
 # sets this now. The previous 1.89 was ours: `std::fs::File::try_lock`, the
@@ -19,7 +19,7 @@ name = "openmls_frb"
 crate-type = ["cdylib", "staticlib", "rlib"]
 
 [dependencies]
-flutter_rust_bridge = "=2.13.0"
+flutter_rust_bridge = "=2.14.0-beta.2"
 thiserror = "2.0"
 log = "0.4"
 zeroize = { version = "1.8", features = ["derive"] }
