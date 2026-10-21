@@ -68,10 +68,10 @@ substitution. The local build still takes priority over the released module; it
 just has to prove which crate produced it.
 
 The stamp exists because nothing else can answer that question. `rustContentHash`
-cannot: it compares the FFI *surface*, and a patch release is precisely the case
-where the surface is byte-identical while the native code behind it moves.
-Timestamps cannot either — a checkout or a stash moves them in both directions
-with the content unchanged.
+cannot: it hashes only the names of the bridged functions, and a patch release
+is precisely the case where those names stay the same while the native code
+behind them moves. Timestamps cannot either — a checkout or a stash moves them
+in both directions with the content unchanged.
 
 ⚠ **A `rust/target/wasm32/` built before this stamp existed carries none and is
 rejected.** That is the intended answer rather than a regression, and it is what
@@ -137,7 +137,10 @@ platform is **not** in that key — so a debug run for macOS and a debug run for
 Chrome share one `dart_build` stamp. Whichever ran first makes the other skip
 the build hook outright (`Skipping target: dart_build`, visible under
 `--verbose`), and `example/web/pkg/` is then never provisioned:
-`RustLib.init()` fails on a 404 for `pkg/openmls_frb.js`. The hook cannot
+`RustLib.init()` never completes: flutter_rust_bridge waits for the `load`
+event of `pkg/openmls_frb.js` with no error path or timeout, so a missing
+module (a 404, or the app's HTML page the dev server serves in its place
+with a 200) leaves the call pending. The hook cannot
 declare its way out of it — the skip happens above `hooks_runner`, where
 nothing it declares is read. Consumers of the published package hit the same
 thing; the README's *Known Limitations* names the escapes.
@@ -215,6 +218,8 @@ make rust-update                  # Update Cargo.lock + regenerate notices
 make third-party-notices          # Regenerate THIRD_PARTY_NOTICES.txt
 make verify-third-party-notices   # Check it matches the dependency graph
 make verify-frb-pins              # Check every file names the same FRB version
+make verify-pub-limits            # Check no file is over what pub.dev accepts at upload
+make verify-feature-graph         # Check no forbidden cargo feature is enabled (GATE)
 make verify-android-alignment     # Check built Android libraries are 16 KB-aligned
 make verify-release-artifacts ARGS=<dir>  # Check release archives hold what their names say
 make actionlint                   # Lint the GitHub Actions workflows
@@ -224,7 +229,7 @@ make check-template-updates       # Check for copier template updates
 make update-template ARGS="--version vX.Y.Z"  # Apply a template update (runs copier)
 make check-targets                # Check deployment targets (iOS/macOS/Android)
 make check-targets ARGS="--ios --set 14.0"  # Set iOS target everywhere
-make update-changelog ARGS="--version vX.Y.Z"  # Update CHANGELOG with AI
+make update-changelog ARGS="--version X.Y.Z"  # Update CHANGELOG with AI
 make help                         # Show all available commands
 ```
 
@@ -346,8 +351,10 @@ make release ARGS="--version X.Y.Z"   # verify frb binary + bump + finalize
 Verifies the stage-1 `openmls_frb-<crate>` release exists, runs
 `make publish-dry-run` (on the clean, pre-bump tree), bumps `pubspec.yaml`,
 finalizes the CHANGELOG (`[Unreleased]` → `[X.Y.Z]` + compare links; no empty
-`[Unreleased]` is left behind), then signs a commit + tag `vX.Y.Z` and pushes —
-`publish.yml` publishes to pub.dev.
+`[Unreleased]` is left behind), measures the result against pub.dev's upload
+limits (`make verify-pub-limits` — the dry-run does not check them, and pub.dev
+refuses the upload only after the tag), then signs a commit + tag `vX.Y.Z` and
+pushes — `publish.yml` publishes to pub.dev.
 
 Repository rulesets restrict who can create the `openmls_frb-*` / `v*` release
 tags, and a required-reviewer `native-build` environment gates the native publish.
@@ -357,10 +364,14 @@ See `.github/rulesets/README.md`.
 
 Two different versions live here and neither is in `pubspec.yaml`:
 
-- **The upstream openmls version** is the git tag in `rust/Cargo.toml`
-  (`tag = "openmls-v0.9.0"` on each of the six openmls dependency lines — five
-  crates, with `openmls` declared a second time for `wasm32`). This
-  is what `make check-new-openmls-version` reads and updates.
+- **The upstream openmls version** is the crates.io version
+  `rust/Cargo.toml` pins `openmls` to — exactly, `"=0.9.1"`, on both
+  declarations of it (the second is the `wasm32` target table). The other four
+  openmls crates are at the requirement that release itself declares,
+  recorded in `upstream_crate_versions` in `.copier-answers.yml`. That is what
+  `make check-new-openmls-version` reads and updates, and it finds
+  new releases on crates.io — not through GitHub Releases or tags, which an
+  upstream may name or publish however it likes.
 - **The native crate version** is `[package] version` in `rust/Cargo.toml`.
   `hook/build.dart` parses it (`_readVersion`) and downloads
   `openmls_frb-<version>` from GitHub Releases, so the archive's copy of
@@ -372,7 +383,7 @@ To check/update the version:
 make check-new-openmls-version              # Check for updates
 make check-new-openmls-version ARGS="--update"  # Apply update
 make rust-update                    # Update Cargo.lock after version bump
-make update-changelog ARGS="--version v1.0.0"  # Generate AI changelog entry
+make update-changelog ARGS="--version 1.0.0"  # Generate AI changelog entry
 ```
 
 ### AI-Powered Changelog
@@ -390,11 +401,11 @@ instead of going quiet.
 
 ```bash
 AI_MODELS=anthropic/claude-opus-5 ANTHROPIC_API_KEY=xxx \
-  make update-changelog ARGS="--version v1.0.0"
+  make update-changelog ARGS="--version 1.0.0"
 
 # Pick a different model, or a different order, without touching the code
 AI_MODELS=google/gemini-3.5-flash-lite ANTHROPIC_API_KEY=… GEMINI_API_KEY=… \
-  make update-changelog ARGS="--version v1.0.0"
+  make update-changelog ARGS="--version 1.0.0"
 ```
 
 | Variable | Purpose |
@@ -476,6 +487,12 @@ described as our features.
   checksum where CI downloads them (`cargo-ndk`, `actionlint`). Neither pin is
   moved by Dependabot — it does not read `cargo install` or `curl` lines — so
   both move by hand
+- Runner images are named by version too: every Ubuntu job runs on
+  `ubuntu-26.04` (`ubuntu-26.04-arm` for arm64), never on `ubuntu-latest`,
+  which GitHub moves to a new image without a commit. The next image is a
+  change of its own, to every label at once, and the Linux release build is
+  the one to measure first: its image sets the oldest glibc a consumer needs
+  (`build-openmls.yml`)
 
 ### Code Review Checklist
 1. No hardcoded keys or secrets
@@ -535,8 +552,11 @@ Schema version tracked in `LATEST_SCHEMA_VERSION` constant (`encrypted_db.rs`). 
 
 ## Feature Graph Gate
 
-> Project-specific. `make verify-feature-graph` and the files under it are not
-> part of the copier template — this section is why they exist here.
+> The mechanism comes from the copier template: `make verify-feature-graph`,
+> its scripts and CI step, with the rules rendered from this project's
+> `forbidden_features` answer. The policy is this project's — this section says
+> why those rules, and `test/scripts/feature_graph_policy_test.dart`, which the
+> template never renders, holds the evidence for them.
 
 `rust/Cargo.toml` states which features this crate *asks* for. It cannot state
 which features `openmls` is ultimately **built** with, because cargo unifies
@@ -676,8 +696,10 @@ Rules:
 Releasing itself is **"Release Flow (two stages)"** above — `make release-frb`,
 then `make release`. Do not bump versions, tag or push by hand: each script
 requires a clean tree, bumps the right file, finalizes the CHANGELOG, and
-creates a **signed** tag (`git tag -s`), which the `Protect release tags`
-ruleset requires. An unsigned `git tag -a` is rejected.
+creates a **signed** tag (`git tag -s`). Do not count on the
+`Protect release tags` ruleset to refuse an unsigned one: only Admin may create
+a tag at all, and Admin bypasses it (`always`), its `required_signatures` rule
+included.
 
 What to have green before starting stage 1:
 
@@ -696,7 +718,7 @@ make rust-deny
 make verify-frb-pins
 make verify-third-party-notices
 make actionlint                 # workflows: static + shellcheck (CI runs it too)
-make publish-dry-run            # exits 65 on ANY warning, a dirty tree included
+make publish-dry-run            # size limits first; then exits 65 on ANY warning, a dirty tree included
 ```
 
 Push first and let CI go green. `make release-frb` only *warns* when local main

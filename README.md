@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Dart](https://img.shields.io/badge/dart-%3E%3D3.10.0-brightgreen.svg)](https://dart.dev)
 [![Flutter](https://img.shields.io/badge/flutter-%3E%3D3.38.0-blue.svg)](https://flutter.dev)
-[![openmls](https://img.shields.io/badge/openmls-v0.9.0-orange.svg)](https://github.com/openmls/openmls)
+[![openmls](https://img.shields.io/badge/openmls-v0.9.1-orange.svg)](https://github.com/openmls/openmls)
 
 Dart bindings for [OpenMLS](https://github.com/openmls/openmls), providing a Rust implementation of the Messaging Layer Security (MLS) protocol ([RFC 9420](https://www.rfc-editor.org/rfc/rfc9420.html)) for secure group messaging.
 
@@ -284,8 +284,11 @@ directory on the engine revision, the entrypoint, the build mode and the output 
 alone, so a debug run for *another* platform (`flutter run -d macos`, say) leaves behind a
 `dart_build` stamp naming its own dependencies; the next `flutter run -d chrome` finds
 every one of them unchanged, logs `Skipping target: dart_build`, and never invokes the
-hook. With `web/pkg/` not already provisioned, `RustLib.init()` then fails on a 404 for
-`pkg/openmls_frb.js`.
+hook. With `web/pkg/` not already provisioned, `RustLib.init()` then never completes:
+flutter_rust_bridge loads `pkg/openmls_frb.js` through a `<script>` tag and waits for its
+`load` event with no error path or timeout, so a missing module — a 404, or, under
+`flutter run`, the app's own HTML page served in its place with a 200 — leaves the call
+pending with nothing reported to Dart.
 
 The hook cannot defend against this — the skip happens above `hooks_runner`, so nothing
 the hook declares as a dependency is ever read. Any one of these unblocks it, and
@@ -413,7 +416,7 @@ make check-targets
 make rust-update
 
 # Generate AI-powered changelog entry (needs AI_MODELS + a provider key)
-make update-changelog ARGS="--version v1.0.0"
+make update-changelog ARGS="--version 1.0.0"
 ```
 
 The CI automatically checks for new openmls releases daily and creates PRs with:
