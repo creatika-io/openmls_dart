@@ -7,7 +7,7 @@ use openmls::prelude::*;
 use openmls_basic_credential::SignatureKeyPair;
 use zeroize::Zeroize;
 
-use super::types::{ciphersuite_to_native, MlsCiphersuite};
+use super::types::{ciphersuite_to_native, require_executed_signature_scheme, MlsCiphersuite};
 
 /// An opaque wrapper around an OpenMLS SignatureKeyPair.
 pub struct MlsSignatureKeyPair {
@@ -156,6 +156,7 @@ pub(crate) fn signer_from_bytes(mut signer_bytes: Vec<u8>) -> Result<SignatureKe
     let mut skp = result?;
     let scheme = SignatureScheme::try_from(skp.scheme)
         .map_err(|_| format!("Invalid signature scheme: {}", skp.scheme))?;
+    require_executed_signature_scheme(scheme)?;
     Ok(SignatureKeyPair::from_raw(
         scheme,
         std::mem::take(&mut skp.private),

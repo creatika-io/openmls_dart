@@ -38,8 +38,13 @@
   openmls's `draft-ietf-mls-pq-ciphersuites` feature are compiled only with
   `all-ciphersuites`, which builds what earlier releases built: thirteen
   suites, X-Wing on libcrux. `supportedCiphersuites()` says which build is
-  loaded; on the default one, a group, key package or signature key on any
-  other suite fails with an error rather than reaching openmls.
+  loaded. On the default one, a group, key package or signature key on any
+  other suite fails with an error rather than reaching openmls, and so do a
+  stored signer whose signature scheme no executed suite uses and any call on
+  a stored group of such a suite (`deleteGroup` still removes it). Leaf nodes
+  built without an explicit ciphersuite list — groups, key packages, external
+  joins — advertise the suites the build executes instead of OpenMLS's fixed
+  0x0001–0x0003, and an explicit list naming any other suite is refused.
   **Action required:** an app that uses a suite other than 0x0001 builds the
   native library itself with `--features all-ciphersuites`; the released
   binaries are the default build.
@@ -66,9 +71,12 @@
   the system's CommonCrypto, so OpenSSL is no longer compiled into them;
   Android, Linux and Windows keep `bundled-sqlcipher-vendored-openssl`.
   `PRAGMA cipher_provider` answers `commoncrypto` there and `openssl`
-  elsewhere, which a test asserts. The database format does not depend on
-  the provider: a macOS database written by a 2.4 build, on OpenSSL, opens
-  and takes a commit in this one, and the other way round.
+  elsewhere, which a test asserts. An Apple build fails when `OPENSSL_DIR`,
+  `OPENSSL_LIB_DIR` or `OPENSSL_INCLUDE_DIR` (plain or target-prefixed) is
+  set (`rust/build.rs`), because libsqlite3-sys would then link that
+  OpenSSL's `libcrypto` instead. The database format does not depend on the
+  provider: `test/security/sqlcipher_compat_test.dart` opens and writes a
+  fixture database from each.
 
 - **The build hook uses a local host build only when `make build` stamped it
   with the current crate version** (`hook/build.dart`, `Makefile`) — a
@@ -219,13 +227,19 @@
   whole API move from `test/` to `test_full_api/`, which `make analyze`
   excludes because it compiles only against full-API bindings. CI's Linux
   x86_64 leg regenerates the bindings with `full-api`, builds with
-  `full-api,all-ciphersuites` and runs `make test ARGS="test test_full_api"`;
-  `test/group_flow_test.dart` covers the default surface end to end.
-- **The `all-ciphersuites` backend is unit-tested in CI** (`make rust-test
-  ARGS="--features all-ciphersuites"`) — the libcrux routing tests that
-  `.cargo/audit.toml` cites live in `rust/src/hybrid_crypto.rs`, which the
-  default build no longer compiles. Both backends run the same group
-  lifecycle from `rust/src/test_support.rs`.
+  `full-api,all-ciphersuites` and runs `make test ARGS="test test_full_api"`,
+  then runs `test_full_api` again on a `full-api` build, where suites are
+  refused; `test/group_flow_test.dart` covers the default surface end to end.
+- **The other feature sets are tested in CI** — `make rust-test` runs with
+  `all-ciphersuites` (the libcrux routing tests that `.cargo/audit.toml` cites
+  live in `rust/src/hybrid_crypto.rs`, which the default build no longer
+  compiles) and with `full-api`; the browser tests run with `full-api` too,
+  for the IndexedDB keep-all regression; and the macOS leg runs
+  `sqlcipher_crypto_provider_matches_the_platform`. Both backends run the
+  same group lifecycle from `rust/src/test_support.rs`.
+- **SQLCipher fixture databases** (`test/fixtures/`) — one per crypto
+  provider, written with a fixed test key by
+  `test/fixtures/write_sqlcipher_fixture.dart`; regenerate one only on purpose.
 
 #### Changed
 

@@ -8,7 +8,7 @@ import 'config.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'types.dart';
 
-// These functions are ignored because they are not marked as `pub`: `acquire_locks`, `apply_past_epoch_deletion`, `apply_past_epoch_policy`, `build_credential_with_key`, `commit`, `db`, `load_for_group`, `load_global`, `load_group`, `max_epochs_to_native`, `native_to_past_epoch_policy`, `unix_seconds_to_system_time`, `with_cap`
+// These functions are ignored because they are not marked as `pub`: `acquire_locks`, `apply_past_epoch_deletion`, `apply_past_epoch_policy`, `build_credential_with_key`, `commit`, `db`, `load_for_group`, `load_global`, `load_group`, `load_stored_group`, `max_epochs_to_native`, `native_to_past_epoch_policy`, `unix_seconds_to_system_time`, `with_cap`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `AddMembersResult`, `CreateMessageResult`, `GroupConfigurationResult`, `JoinGroupResult`, `KeyPackageLifetime`, `KeyPackageResult`, `LeaveGroupResult`, `LifetimeVerdict`, `OpLocks`, `OpSession`, `PastEpochDeletionPolicyResult`, `ProcessedMessageInspectResult`, `ProposalResult`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `crypto`, `rand`, `storage`
 

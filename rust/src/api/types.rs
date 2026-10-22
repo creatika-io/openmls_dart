@@ -181,11 +181,13 @@ pub struct MlsCapabilities {
     pub versions: Vec<u16>,
     /// Supported ciphersuites, as raw MLS code points.
     ///
-    /// An **empty** list is not "advertise nothing" — it means "use OpenMLS's
-    /// defaults": the RFC 9420 suites 0x0001–0x0003, plus ten experimental
-    /// post-quantum suites in a build with them. To advertise a
-    /// narrower set, list the code points explicitly (e.g. `[0x0001, 0x0002,
-    /// 0x0003]` for the IANA-registered MLS 1.0 suites only).
+    /// An **empty** list is not "advertise nothing" — it means every suite
+    /// `supportedCiphersuites()` returns: 0x0001 alone, or the RFC 9420 suites
+    /// 0x0001–0x0003 plus ten experimental post-quantum suites in a build with
+    /// them. To advertise a narrower set, list the code points explicitly
+    /// (e.g. `[0x0001]`, or `[0x0001, 0x0002, 0x0003]` for the IANA-registered
+    /// MLS 1.0 suites in an `all-ciphersuites` build). A suite the build does
+    /// not execute is refused.
     pub ciphersuites: Vec<u16>,
     /// Supported extension types.
     pub extensions: Vec<u16>,
@@ -320,8 +322,42 @@ fn ciphersuite_from_code_point(code_point: u16) -> Option<MlsCiphersuite> {
 
 pub(crate) fn ciphersuite_to_native(cs: &MlsCiphersuite) -> Result<Ciphersuite, String> {
     let code_point = ciphersuite_code_point(cs);
-    Ciphersuite::try_from(code_point)
-        .map_err(|_| format!("Ciphersuite {code_point:#06x} is not compiled into this build"))
+    let native =
+        Ciphersuite::try_from(code_point).map_err(|_| unsupported_ciphersuite(code_point))?;
+    require_executed_ciphersuite(native)?;
+    Ok(native)
+}
+
+pub(crate) fn require_executed_ciphersuite(cs: Ciphersuite) -> Result<(), String> {
+    if executed_ciphersuites().contains(&cs) {
+        Ok(())
+    } else {
+        Err(unsupported_ciphersuite(u16::from(cs)))
+    }
+}
+
+/// Refuses a signer whose scheme no ciphersuite of this build signs with.
+pub(crate) fn require_executed_signature_scheme(scheme: SignatureScheme) -> Result<(), String> {
+    if executed_ciphersuites()
+        .iter()
+        .any(|cs| cs.signature_algorithm() == scheme)
+    {
+        Ok(())
+    } else {
+        Err(format!(
+            "Signature scheme {:#06x} is not supported by this build",
+            scheme as u16
+        ))
+    }
+}
+
+fn unsupported_ciphersuite(code_point: u16) -> String {
+    format!("Ciphersuite {code_point:#06x} is not supported by this build")
+}
+
+fn executed_ciphersuites() -> Vec<Ciphersuite> {
+    use openmls_traits::crypto::OpenMlsCrypto;
+    crate::CryptoBackend::new().supported_ciphersuites()
 }
 
 pub(crate) fn native_to_ciphersuite(cs: Ciphersuite) -> Result<MlsCiphersuite, String> {
@@ -336,20 +372,33 @@ pub(crate) fn wire_format_to_native(wf: &MlsWireFormatPolicy) -> WireFormatPolic
     }
 }
 
-pub(crate) fn capabilities_to_native(caps: &MlsCapabilities) -> Result<Capabilities, String> {
+/// The capabilities a new leaf node advertises. No `caps`, or an empty field,
+/// takes OpenMLS's default — except the ciphersuites, which default to the
+/// ones this build executes rather than OpenMLS's fixed 0x0001–0x0003 list.
+pub(crate) fn capabilities_to_native(
+    caps: Option<&MlsCapabilities>,
+) -> Result<Capabilities, String> {
+    let Some(caps) = caps else {
+        let ciphersuites = executed_ciphersuites();
+        return Ok(Capabilities::new(None, Some(&ciphersuites), None, None, None));
+    };
     let versions: Option<Vec<ProtocolVersion>> = if caps.versions.is_empty() {
         None
     } else {
         Some(caps.versions.iter().map(|&v| ProtocolVersion::from(v)).collect())
     };
-    let ciphersuites: Option<Vec<Ciphersuite>> = if caps.ciphersuites.is_empty() {
-        None
+    let ciphersuites: Vec<Ciphersuite> = if caps.ciphersuites.is_empty() {
+        executed_ciphersuites()
     } else {
-        let cs: Result<Vec<_>, _> = caps.ciphersuites
+        caps.ciphersuites
             .iter()
-            .map(|&c| Ciphersuite::try_from(c).map_err(|e| format!("Invalid ciphersuite {}: {}", c, e)))
-            .collect();
-        Some(cs?)
+            .map(|&c| {
+                let native = Ciphersuite::try_from(c)
+                    .map_err(|e| format!("Invalid ciphersuite {}: {}", c, e))?;
+                require_executed_ciphersuite(native)?;
+                Ok(native)
+            })
+            .collect::<Result<_, String>>()?
     };
     let extensions: Option<Vec<ExtensionType>> = if caps.extensions.is_empty() {
         None
@@ -369,7 +418,7 @@ pub(crate) fn capabilities_to_native(caps: &MlsCapabilities) -> Result<Capabilit
 
     Ok(Capabilities::new(
         versions.as_deref(),
-        ciphersuites.as_deref(),
+        Some(&ciphersuites),
         extensions.as_deref(),
         proposals.as_deref(),
         credentials.as_deref(),
@@ -396,9 +445,7 @@ pub(crate) fn extensions_from_mls(exts: &[MlsExtension]) -> Vec<Extension> {
 // noise for consumers.
 #[flutter_rust_bridge::frb(sync)]
 pub fn supported_ciphersuites() -> Vec<MlsCiphersuite> {
-    use openmls_traits::crypto::OpenMlsCrypto;
-    crate::CryptoBackend::new()
-        .supported_ciphersuites()
+    executed_ciphersuites()
         .into_iter()
         .filter_map(|native| native_to_ciphersuite(native).ok())
         .collect()

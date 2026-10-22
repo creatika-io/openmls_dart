@@ -69,8 +69,10 @@ full-api = []
 rusqlite = { version = "0.37", features = ["bundled-sqlcipher-vendored-openssl"] }
 
 # SQLCipher on Apple's CommonCrypto instead of a bundled OpenSSL. libsqlite3-sys
-# picks CommonCrypto only while OPENSSL_DIR and OPENSSL_LIB_DIR are unset, which
-# `sqlcipher_crypto_provider_matches_the_platform` in encrypted_db.rs checks.
+# links a system libcrypto instead when OPENSSL_DIR, or OPENSSL_LIB_DIR with
+# OPENSSL_INCLUDE_DIR, is set (each also `<TARGET>_`-prefixed), so build.rs
+# refuses those on Apple targets; `sqlcipher_crypto_provider_matches_the_platform`
+# in encrypted_db.rs checks the result.
 [target.'cfg(target_vendor = "apple")'.dependencies]
 rusqlite = { version = "0.37", features = ["bundled-sqlcipher"] }
 

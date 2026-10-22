@@ -6,7 +6,7 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `capabilities_to_native`, `ciphersuite_code_point`, `ciphersuite_from_code_point`, `ciphersuite_to_native`, `extensions_from_mls`, `native_to_ciphersuite`, `wire_format_to_native`
+// These functions are ignored because they are not marked as `pub`: `capabilities_to_native`, `ciphersuite_code_point`, `ciphersuite_from_code_point`, `ciphersuite_to_native`, `executed_ciphersuites`, `extensions_from_mls`, `native_to_ciphersuite`, `require_executed_ciphersuite`, `require_executed_signature_scheme`, `unsupported_ciphersuite`, `wire_format_to_native`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `KeyPackageOptions`, `MlsGroupContextInfo`, `MlsLeafNodeInfo`, `MlsPendingProposalInfo`, `StagedCommitInfo`, `WelcomeInspectResult`
 
 /// Returns every ciphersuite this build can execute.
@@ -92,11 +92,13 @@ class MlsCapabilities {
 
   /// Supported ciphersuites, as raw MLS code points.
   ///
-  /// An **empty** list is not "advertise nothing" — it means "use OpenMLS's
-  /// defaults": the RFC 9420 suites 0x0001–0x0003, plus ten experimental
-  /// post-quantum suites in a build with them. To advertise a
-  /// narrower set, list the code points explicitly (e.g. `[0x0001, 0x0002,
-  /// 0x0003]` for the IANA-registered MLS 1.0 suites only).
+  /// An **empty** list is not "advertise nothing" — it means every suite
+  /// `supportedCiphersuites()` returns: 0x0001 alone, or the RFC 9420 suites
+  /// 0x0001–0x0003 plus ten experimental post-quantum suites in a build with
+  /// them. To advertise a narrower set, list the code points explicitly
+  /// (e.g. `[0x0001]`, or `[0x0001, 0x0002, 0x0003]` for the IANA-registered
+  /// MLS 1.0 suites in an `all-ciphersuites` build). A suite the build does
+  /// not execute is refused.
   final Uint16List ciphersuites;
 
   /// Supported extension types.

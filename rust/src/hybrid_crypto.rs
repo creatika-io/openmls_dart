@@ -546,10 +546,10 @@ mod tests {
     /// Every ciphersuite OpenMLS advertises **by default** must be one this
     /// provider can actually execute, and one the public API can name.
     ///
-    /// `capabilities_to_native` (api/types.rs) passes `None` for an empty
-    /// ciphersuite list, and `Capabilities::new(None, ..)` fills that with
-    /// `default_ciphersuites()` — so this list is what goes out in a leaf node
-    /// whenever the caller does not pin capabilities. Advertising a suite the
+    /// `capabilities_to_native` (api/types.rs) fills an absent or empty
+    /// ciphersuite list from the provider, but a leaf node OpenMLS builds
+    /// without capabilities from this crate gets `default_ciphersuites()`, so
+    /// the two lists must agree. Advertising a suite the
     /// provider cannot run makes peers pick it and fail; advertising one the
     /// enum cannot name makes `inspect_welcome` reject the group before the
     /// application can decide whether to join.

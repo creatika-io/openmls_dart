@@ -2,7 +2,10 @@
 
 use openmls::prelude::*;
 
-use super::types::{ciphersuite_to_native, wire_format_to_native, MlsCiphersuite, MlsWireFormatPolicy};
+use super::types::{
+    capabilities_to_native, ciphersuite_to_native, wire_format_to_native, MlsCiphersuite,
+    MlsWireFormatPolicy,
+};
 
 /// Group configuration parameters.
 ///
@@ -51,6 +54,7 @@ impl MlsGroupConfig {
         let wf = wire_format_to_native(&self.wire_format_policy);
         Ok(MlsGroupCreateConfig::builder()
             .ciphersuite(cs)
+            .capabilities(capabilities_to_native(None)?)
             .wire_format_policy(wf)
             .use_ratchet_tree_extension(self.use_ratchet_tree_extension)
             .max_past_epochs(self.max_past_epochs as usize)

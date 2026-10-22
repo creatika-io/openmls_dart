@@ -207,7 +207,7 @@ void main() async {
 
   // Create a group
   final config = MlsGroupConfig.defaultConfig(ciphersuite: ciphersuite);
-  final group = await engine.createGroup(
+  final group = await engine.createGroupWithBuilder(
     config: config,
     signerBytes: signerBytes,
     credentialIdentity: utf8.encode('alice'),
@@ -241,8 +241,8 @@ final engine = await MlsEngine.create(
 );
 
 // All operations go through the engine
-final group = await engine.createGroup(...);
-await engine.addMembers(...);
+final group = await engine.createGroupWithBuilder(...);
+await engine.flexibleCommit(...);
 
 // Close the engine to release the DB connection and encryption key resources.
 // After close, all operations fail with "MlsEngine is closed".

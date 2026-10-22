@@ -30,7 +30,8 @@ use openmls_traits::storage::StorageProvider;
 use super::config::MlsGroupConfig;
 use super::keys::signer_from_bytes;
 use super::types::{
-    ciphersuite_to_native, capabilities_to_native, extensions_from_mls, FlexibleCommitOptions,
+    ciphersuite_to_native, capabilities_to_native, extensions_from_mls,
+    require_executed_ciphersuite, FlexibleCommitOptions,
     MlsCapabilities, MlsCiphersuite, MlsExtension, MlsMemberInfo, MlsProposalType,
     MlsWireFormatPolicy, ProcessedMessageType, StagedCommitInfo,
 };
@@ -63,8 +64,18 @@ fn build_credential_with_key(
     })
 }
 
-/// Load an MlsGroup from the provider's storage.
+/// Load an MlsGroup whose ciphersuite this build executes.
 fn load_group<P: OpenMlsProvider>(group_id: &[u8], provider: &P) -> Result<MlsGroup, String> {
+    let group = load_stored_group(group_id, provider)?;
+    require_executed_ciphersuite(group.ciphersuite())?;
+    Ok(group)
+}
+
+/// Load an MlsGroup whatever its ciphersuite, for deleting it.
+fn load_stored_group<P: OpenMlsProvider>(
+    group_id: &[u8],
+    provider: &P,
+) -> Result<MlsGroup, String> {
     let gid = GroupId::from_slice(group_id);
     MlsGroup::load(provider.storage(), &gid)
         .map_err(|e| format!("Failed to load group: {}", e))?
@@ -439,9 +450,10 @@ impl MlsEngine {
     /// ciphersuite and the credential.
     ///
     /// Those defaults include the advertised capabilities, and the ciphersuite
-    /// list inside them is every suite `supportedCiphersuites` returns — ten of
-    /// them experimental post-quantum suites on provisional code points. A peer
-    /// reading this key package may therefore pick one of those for a group.
+    /// list inside them is every suite `supportedCiphersuites` returns — in a
+    /// build with them, ten experimental post-quantum suites on provisional
+    /// code points. A peer reading this key package may pick one of those for a
+    /// group.
     ///
     /// To advertise a narrower set, or to change the lifetime, mark the package
     /// last-resort, or attach extensions, use `createKeyPackageWithOptions`
@@ -465,6 +477,7 @@ impl MlsEngine {
         let provider = self.load_global().await?;
 
         let key_package_bundle = KeyPackage::builder()
+            .leaf_node_capabilities(capabilities_to_native(None)?)
             .build(cs, &provider, &signer, credential_with_key)
             .map_err(|e| format!("Failed to create key package: {}", e))?;
 
@@ -505,16 +518,14 @@ impl MlsEngine {
         )?;
 
         let provider = self.load_global().await?;
-        let mut builder = KeyPackage::builder();
+        let mut builder = KeyPackage::builder()
+            .leaf_node_capabilities(capabilities_to_native(options.capabilities.as_ref())?);
 
         if let Some(lifetime_secs) = options.lifetime_seconds {
             builder = builder.key_package_lifetime(Lifetime::new(lifetime_secs));
         }
         if options.last_resort {
             builder = builder.mark_as_last_resort();
-        }
-        if let Some(ref caps) = options.capabilities {
-            builder = builder.leaf_node_capabilities(capabilities_to_native(caps)?);
         }
         if let Some(ref leaf_exts) = options.leaf_node_extensions {
             let extensions = Extensions::from_vec(extensions_from_mls(leaf_exts))
@@ -646,11 +657,9 @@ impl MlsEngine {
                 .with_leaf_node_extensions(extensions)
                 .map_err(|e| format!("Failed to set leaf node extensions: {}", e))?;
         }
-        if let Some(ref caps) = capabilities {
-            builder = builder.with_capabilities(capabilities_to_native(caps)?);
-        }
 
         let mls_group = builder
+            .with_capabilities(capabilities_to_native(capabilities.as_ref())?)
             .build(&provider, &signer, credential_with_key)
             .map_err(|e| format!("Failed to create group: {}", e))?;
 
@@ -880,7 +889,8 @@ impl MlsEngine {
             .transpose()?;
 
         let (mls_group, commit_out, group_info_opt) = MlsGroup::join_by_external_commit(
-            &provider, &signer, ratchet_tree, verifiable_group_info, &join_config, None, None, &[], credential_with_key,
+            &provider, &signer, ratchet_tree, verifiable_group_info, &join_config,
+            Some(capabilities_to_native(None)?), None, &[], credential_with_key,
         )
         .map_err(|e| format!("Failed to join group via external commit: {}", e))?;
 
@@ -950,6 +960,11 @@ impl MlsEngine {
             .build_group(&provider, verifiable_group_info, credential_with_key)
             .map_err(|e| format!("Failed to build external commit group: {}", e))?;
         let commit_builder = commit_builder
+            .leaf_node_parameters(
+                LeafNodeParameters::builder()
+                    .with_capabilities(capabilities_to_native(None)?)
+                    .build(),
+            )
             .load_psks(provider.storage())
             .map_err(|e| format!("Failed to load PSKs: {}", e))?;
         let commit_builder = commit_builder
@@ -1595,7 +1610,7 @@ impl MlsEngine {
 
         let mut ln_builder = LeafNodeParameters::builder();
         if let Some(ref caps) = leaf_node_capabilities {
-            ln_builder = ln_builder.with_capabilities(capabilities_to_native(caps)?);
+            ln_builder = ln_builder.with_capabilities(capabilities_to_native(Some(caps))?);
         }
         if let Some(ref exts) = leaf_node_extensions {
             let extensions = Extensions::from_vec(extensions_from_mls(exts))
@@ -1671,7 +1686,7 @@ impl MlsEngine {
 
         let mut ln_builder = LeafNodeParameters::builder();
         if let Some(ref caps) = leaf_node_capabilities {
-            ln_builder = ln_builder.with_capabilities(capabilities_to_native(caps)?);
+            ln_builder = ln_builder.with_capabilities(capabilities_to_native(Some(caps))?);
         }
         if let Some(ref exts) = leaf_node_extensions {
             let extensions = Extensions::from_vec(extensions_from_mls(exts))
@@ -2178,7 +2193,7 @@ impl MlsEngine {
         group_id_bytes: Vec<u8>,
     ) -> Result<(), String> {
         let session = self.load_for_group(&group_id_bytes).await?;
-        let mut group = load_group(&group_id_bytes, &session)?;
+        let mut group = load_stored_group(&group_id_bytes, &session)?;
         group.delete(session.storage()).map_err(|e| format!("Failed to delete group: {}", e))?;
 
         // One transaction for the final state and the purge of whatever rows
@@ -2856,5 +2871,277 @@ mod past_epoch_web_tests {
             after.keep_all,
             "keep-all must survive the Web storage round trip"
         );
+    }
+}
+
+/// A build advertises and operates only the ciphersuites its crypto backend
+/// executes, through every entry point that writes or loads a leaf node.
+#[cfg(all(test, not(target_arch = "wasm32")))]
+mod executed_ciphersuite_tests {
+    use super::*;
+    use crate::api::keys::{serialize_signer, MlsSignatureKeyPair};
+    use futures::executor::block_on;
+    use openmls_traits::crypto::OpenMlsCrypto;
+
+    const SUITE: MlsCiphersuite = MlsCiphersuite::Mls128DhkemX25519Aes128gcmSha256Ed25519;
+
+    struct Member {
+        engine: MlsEngine,
+        signer: Vec<u8>,
+        public_key: Vec<u8>,
+    }
+
+    impl Member {
+        fn new() -> Self {
+            let engine = block_on(MlsEngine::create(":memory:".to_string(), vec![7; 32]))
+                .expect("engine opens");
+            let keys = MlsSignatureKeyPair::generate(SUITE).expect("signature key pair");
+            let signer =
+                serialize_signer(SUITE, keys.private_key(), keys.public_key()).expect("signer");
+            Self { engine, signer, public_key: keys.public_key() }
+        }
+
+        fn create_group(&self, capabilities: Option<MlsCapabilities>) -> Vec<u8> {
+            block_on(self.engine.create_group_with_builder(
+                MlsGroupConfig::default_config(SUITE),
+                self.signer.clone(),
+                b"member".to_vec(),
+                self.public_key.clone(),
+                None,
+                None,
+                None,
+                None,
+                capabilities,
+                None,
+            ))
+            .expect("group is created")
+            .group_id
+        }
+
+        fn advertised_ciphersuites(&self, group_id: &[u8]) -> Vec<u16> {
+            let session = block_on(self.engine.load_for_group(group_id)).expect("session");
+            let group = load_group(group_id, &session).expect("group loads");
+            serialized_ciphersuites(group.own_leaf_node().expect("own leaf").capabilities())
+        }
+    }
+
+    fn serialized_ciphersuites(capabilities: &Capabilities) -> Vec<u16> {
+        let bytes = capabilities
+            .tls_serialize_detached()
+            .expect("capabilities serialize");
+        let decoded =
+            Capabilities::tls_deserialize_exact_bytes(&bytes).expect("capabilities deserialize");
+        let mut code_points: Vec<u16> =
+            decoded.ciphersuites().iter().map(|cs| cs.value()).collect();
+        code_points.sort_unstable();
+        code_points
+    }
+
+    fn executed_ciphersuites() -> Vec<u16> {
+        let mut code_points: Vec<u16> = crate::CryptoBackend::new()
+            .supported_ciphersuites()
+            .into_iter()
+            .map(u16::from)
+            .collect();
+        code_points.sort_unstable();
+        code_points
+    }
+
+    fn capabilities_without_ciphersuites() -> MlsCapabilities {
+        MlsCapabilities {
+            versions: vec![],
+            ciphersuites: vec![],
+            extensions: vec![],
+            proposals: vec![],
+            credentials: vec![],
+        }
+    }
+
+    #[test]
+    fn a_created_group_advertises_only_executed_ciphersuites() {
+        let alice = Member::new();
+        for capabilities in [None, Some(capabilities_without_ciphersuites())] {
+            let group_id = alice.create_group(capabilities);
+            assert_eq!(
+                alice.advertised_ciphersuites(&group_id),
+                executed_ciphersuites()
+            );
+        }
+    }
+
+    #[test]
+    fn a_self_update_keeps_advertising_only_executed_ciphersuites() {
+        let alice = Member::new();
+        let group_id = alice.create_group(None);
+        block_on(alice.engine.flexible_commit(
+            group_id.clone(),
+            alice.signer.clone(),
+            FlexibleCommitOptions {
+                add_key_packages: vec![],
+                remove_indices: vec![],
+                force_self_update: true,
+                consume_pending_proposals: false,
+                group_context_extensions: None,
+                aad: None,
+                create_group_info: false,
+                use_ratchet_tree_extension: true,
+            },
+        ))
+        .expect("self update");
+        assert_eq!(
+            alice.advertised_ciphersuites(&group_id),
+            executed_ciphersuites()
+        );
+    }
+
+    #[test]
+    fn an_external_joiner_advertises_only_executed_ciphersuites() {
+        let alice = Member::new();
+        let bob = Member::new();
+        let group_id = alice.create_group(None);
+        let group_info = block_on(
+            alice
+                .engine
+                .export_group_info(group_id, alice.signer.clone()),
+        )
+        .expect("group info");
+        let joined = block_on(bob.engine.join_group_external_commit_v2(
+            MlsGroupConfig::default_config(SUITE),
+            group_info,
+            None,
+            bob.signer.clone(),
+            b"bob".to_vec(),
+            bob.public_key.clone(),
+            None,
+            false,
+            None,
+        ))
+        .expect("bob joins");
+        assert_eq!(
+            bob.advertised_ciphersuites(&joined.group_id),
+            executed_ciphersuites()
+        );
+    }
+
+    #[cfg(feature = "full-api")]
+    #[test]
+    fn a_key_package_advertises_only_executed_ciphersuites() {
+        let bob = Member::new();
+        let with_options = |capabilities| {
+            block_on(bob.engine.create_key_package_with_options(
+                SUITE,
+                bob.signer.clone(),
+                b"bob".to_vec(),
+                bob.public_key.clone(),
+                KeyPackageOptions {
+                    lifetime_seconds: None,
+                    last_resort: false,
+                    capabilities,
+                    leaf_node_extensions: None,
+                    key_package_extensions: None,
+                },
+                None,
+            ))
+        };
+        let key_packages = [
+            block_on(bob.engine.create_key_package(
+                SUITE,
+                bob.signer.clone(),
+                b"bob".to_vec(),
+                bob.public_key.clone(),
+                None,
+            )),
+            with_options(None),
+            with_options(Some(capabilities_without_ciphersuites())),
+        ];
+        for key_package in key_packages {
+            let bytes = key_package.expect("key package").key_package_bytes;
+            let validated = KeyPackageIn::tls_deserialize_exact_bytes(&bytes)
+                .expect("key package deserializes")
+                .validate(&crate::CryptoBackend::new(), ProtocolVersion::Mls10)
+                .expect("key package validates");
+            assert_eq!(
+                serialized_ciphersuites(validated.leaf_node().capabilities()),
+                executed_ciphersuites()
+            );
+        }
+    }
+
+    /// A provider that executes every classical suite, standing in for an
+    /// earlier build that stored a group this one does not execute.
+    struct ClassicalSuitesProvider {
+        crypto: openmls_rust_crypto::RustCrypto,
+        storage: SnapshotStorageProvider,
+    }
+
+    impl OpenMlsProvider for ClassicalSuitesProvider {
+        type CryptoProvider = openmls_rust_crypto::RustCrypto;
+        type RandProvider = openmls_rust_crypto::RustCrypto;
+        type StorageProvider = SnapshotStorageProvider;
+
+        fn storage(&self) -> &Self::StorageProvider {
+            &self.storage
+        }
+
+        fn crypto(&self) -> &Self::CryptoProvider {
+            &self.crypto
+        }
+
+        fn rand(&self) -> &Self::RandProvider {
+            &self.crypto
+        }
+    }
+
+    fn store_group_from_another_build(engine: &MlsEngine, ciphersuite: Ciphersuite) -> Vec<u8> {
+        let provider = ClassicalSuitesProvider {
+            crypto: openmls_rust_crypto::RustCrypto::default(),
+            storage: SnapshotStorageProvider::from_entries(vec![]),
+        };
+        let signer =
+            openmls_basic_credential::SignatureKeyPair::new(ciphersuite.signature_algorithm())
+                .expect("signature key pair");
+        let credential = CredentialWithKey {
+            credential: BasicCredential::new(b"earlier build".to_vec()).into(),
+            signature_key: signer.public().into(),
+        };
+        let group_id = MlsGroup::builder()
+            .ciphersuite(ciphersuite)
+            .build(&provider, &signer, credential)
+            .expect("group on the classical provider")
+            .group_id()
+            .as_slice()
+            .to_vec();
+        let updates = provider.storage.into_updates();
+        block_on(
+            engine
+                .db()
+                .expect("db")
+                .save_updates(updates, Some(&group_id)),
+        )
+        .expect("rows stored");
+        group_id
+    }
+
+    #[cfg(not(feature = "all-ciphersuites"))]
+    #[test]
+    fn a_stored_group_on_an_unexecuted_ciphersuite_is_refused_but_deletable() {
+        let alice = Member::new();
+        let group_id = store_group_from_another_build(
+            &alice.engine,
+            Ciphersuite::MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
+        );
+
+        let refused = block_on(alice.engine.export_secret(
+            group_id.clone(),
+            "label".to_string(),
+            vec![],
+            32,
+        ))
+        .expect_err("a group this build does not execute is refused");
+        assert!(refused.contains("0x0002"), "{refused}");
+
+        block_on(alice.engine.delete_group(group_id.clone())).expect("it can still be deleted");
+        let gone = block_on(alice.engine.group_epoch(group_id)).expect_err("deleted");
+        assert!(gone.contains("No group found"), "{gone}");
     }
 }

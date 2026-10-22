@@ -413,6 +413,20 @@ jobs:
         run: make rust-test ARGS="--features all-ciphersuites"
         shell: bash
 
+      # The full API on the default suite set, where the refusals have
+      # something to refuse.
+      - name: Rust unit tests (full-api)
+        if: matrix.name == 'Linux x86_64'
+        run: make rust-test ARGS="--features full-api"
+        shell: bash
+
+      # The one Rust test whose answer depends on the platform: SQLCipher runs
+      # on CommonCrypto on Apple and on OpenSSL everywhere else.
+      - name: SQLCipher crypto provider (macOS)
+        if: matrix.name == 'macOS ARM64'
+        run: make rust-test ARGS="sqlcipher_crypto_provider_matches_the_platform"
+        shell: bash
+
       # The Web target is compiled by nothing else in this workflow: `make
       # build` is host-only, so without this step a change that breaks the
       # wasm32 build reaches a release tag before anyone finds out.
@@ -468,6 +482,7 @@ jobs:
           fi
           echo "using $driver ($("$driver" --version))"
           make test-web CHROMEDRIVER="$driver"
+          make test-web CHROMEDRIVER="$driver" ARGS="--features full-api"
         shell: bash
 
       - name: Analyze
@@ -595,13 +610,16 @@ jobs:
 
       # The committed bindings export only what the creatika app calls. This
       # regenerates the whole API (rewriting lib/src/rust/ in this checkout,
-      # hence last) and runs the tests written against it.
+      # hence last) and runs the tests written against it: with every suite,
+      # then on the default suite set, where suites are refused.
       - name: Full API tests
         if: matrix.name == 'Linux x86_64'
         run: |
           make codegen ARGS="--rust-features full-api"
           make build ARGS="--features full-api,all-ciphersuites"
           make test ARGS="test test_full_api"
+          make build ARGS="--features full-api"
+          make test ARGS="test_full_api"
         shell: bash
 
   # ============================================

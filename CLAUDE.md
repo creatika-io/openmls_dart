@@ -189,6 +189,8 @@ step runs them the same way locally:
 make codegen ARGS="--rust-features full-api"   # rewrites lib/src/rust/ — do not commit
 make build ARGS="--features full-api,all-ciphersuites"
 make test ARGS="test test_full_api"
+make build ARGS="--features full-api"          # the default suites, where suites are refused
+make test ARGS="test_full_api"
 make codegen                                   # back to the committed bindings
 ```
 

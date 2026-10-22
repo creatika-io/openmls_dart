@@ -8,6 +8,8 @@ import 'package:test/test.dart';
 import 'test_helpers.dart';
 
 const _mandatoryCiphersuiteCodePoint = 0x0001;
+const _unexecutedSuite = MlsCiphersuite.mls128DhkemP256Aes128GcmSha256P256;
+const _ecdsaP256SignatureScheme = 0x0403;
 const _basicCredentialType = 1;
 const _exporterLabel = 'group flow test';
 final _groupId = Uint8List.fromList(utf8.encode('group-flow'));
@@ -118,6 +120,94 @@ void main() {
         unorderedEquals(MlsCiphersuite.values),
       ),
     );
+  });
+
+  group('on a build without the P-256 suite', () {
+    final refusedAsUnsupported = throwsA(
+      isA<String>().having(
+        (message) => message,
+        'message',
+        contains('is not supported by this build'),
+      ),
+    );
+
+    bool skipWhenP256IsExecuted() {
+      if (!supportedCiphersuites().contains(_unexecutedSuite)) return false;
+      markTestSkipped('this build executes $_unexecutedSuite');
+      return true;
+    }
+
+    test('its signature keys are refused', () {
+      if (skipWhenP256IsExecuted()) return;
+      expect(
+        () => MlsSignatureKeyPair.generate(ciphersuite: _unexecutedSuite),
+        refusedAsUnsupported,
+      );
+      expect(
+        () => serializeSigner(
+          ciphersuite: _unexecutedSuite,
+          privateKey: Uint8List(32),
+          publicKey: aliceId.publicKey,
+        ),
+        refusedAsUnsupported,
+      );
+    });
+
+    test('creating a group on it is refused', () async {
+      if (skipWhenP256IsExecuted()) return;
+      await expectLater(
+        alice.createGroupWithBuilder(
+          config: MlsGroupConfig.defaultConfig(ciphersuite: _unexecutedSuite),
+          signerBytes: aliceId.signerBytes,
+          credentialIdentity: aliceId.credentialIdentity,
+          signerPublicKey: aliceId.publicKey,
+        ),
+        refusedAsUnsupported,
+      );
+    });
+
+    test('advertising it in explicit capabilities is refused', () async {
+      if (skipWhenP256IsExecuted()) return;
+      await expectLater(
+        alice.createGroupWithBuilder(
+          config: defaultConfig(),
+          signerBytes: aliceId.signerBytes,
+          credentialIdentity: aliceId.credentialIdentity,
+          signerPublicKey: aliceId.publicKey,
+          capabilities: MlsCapabilities(
+            versions: Uint16List(0),
+            ciphersuites: Uint16List.fromList([
+              _mandatoryCiphersuiteCodePoint,
+              0x0002,
+            ]),
+            extensions: Uint16List(0),
+            proposals: Uint16List(0),
+            credentials: Uint16List(0),
+          ),
+        ),
+        refusedAsUnsupported,
+      );
+    });
+
+    test('a stored signer with its signature scheme is refused', () async {
+      if (skipWhenP256IsExecuted()) return;
+      final p256Signer = utf8.encode(
+        jsonEncode({
+          'private': List.filled(32, 1),
+          'public': List.filled(65, 2),
+          'scheme': _ecdsaP256SignatureScheme,
+        }),
+      );
+      await expectLater(
+        alice.createGroupWithBuilder(
+          config: defaultConfig(),
+          signerBytes: p256Signer,
+          credentialIdentity: aliceId.credentialIdentity,
+          signerPublicKey: aliceId.publicKey,
+        ),
+        refusedAsUnsupported,
+      );
+    });
   });
 
   test('serializeSigner writes the JSON shape signers are stored in', () {
