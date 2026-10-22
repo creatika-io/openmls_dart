@@ -8,16 +8,67 @@
   GHSA-gc79-23g3-8g52, fixed upstream in openmls 0.9.1; every earlier release
   of this package is affected.
 - **A malformed X-Wing key from a peer no longer panics** — RUSTSEC-2026-0331,
-  on the 0x004D suite only.
+  on the 0x004D suite only, which only an `all-ciphersuites` build has.
+- **The default native library runs only ciphersuite 0x0001 (breaking)** — the
+  `all-ciphersuites` Cargo feature restores the other twelve.
+- **The default bindings export only what the creatika app calls
+  (breaking)** — the `full-api` Cargo feature restores the rest.
+- **The native library is less than half its size** — together with
+  SQLCipher on CommonCrypto on Apple platforms, the stripped iOS device
+  library goes from 8.1 MB to 3.5 MB (gzip 4.0 MB to 1.7 MB) and the WASM
+  module from 2.5 MB to 1.6 MB (gzip 886 KB to 611 KB).
 - **Async calls no longer wait forever when another isolate shuts down during
   `Openmls.init()`** — native platforms; see *Fixed*.
 - **Web apps built with `--wasm` (dart2wasm) now work** — the bindings are
   regenerated with `flutter_rust_bridge` 2.14.0-beta.2, a prerelease.
 - **openmls v0.9.1** — a patch release: the GHSA-gc79-23g3-8g52 fix, and
   nothing else this package's API exposes.
-- **openmls_frb v2.4.1** — Rust FFI bindings
+- **openmls_frb v3.0.0** — Rust FFI bindings
+
+#### Changed (Breaking)
+
+- **The default native library executes only RFC 9420's
+  mandatory-to-implement ciphersuite, 0x0001** (`rust/Cargo.toml`,
+  `rust/src/mandatory_ciphersuite_crypto.rs`, `rust/src/lib.rs`,
+  `rust/src/api/types.rs`) — a build without the new `all-ciphersuites`
+  Cargo feature runs on `MandatoryCiphersuiteCrypto` instead of
+  `HybridCrypto`: RustCrypto, accepting suite 0x0001 alone and handing it
+  each of that suite's algorithms as a constant, so link-time optimisation
+  drops the code of every other one. libcrux (`openmls_libcrux_crypto`) and
+  openmls's `draft-ietf-mls-pq-ciphersuites` feature are compiled only with
+  `all-ciphersuites`, which builds what earlier releases built: thirteen
+  suites, X-Wing on libcrux. `supportedCiphersuites()` says which build is
+  loaded; on the default one, a group, key package or signature key on any
+  other suite fails with an error rather than reaching openmls.
+  **Action required:** an app that uses a suite other than 0x0001 builds the
+  native library itself with `--features all-ciphersuites`; the released
+  binaries are the default build.
+- **The committed bindings export only what the creatika app calls**
+  (`rust/src/api/`, `lib/src/rust/`, `rust/Cargo.toml`) — the rest of the API
+  is compiled only with the new `full-api` Cargo feature, and
+  flutter_rust_bridge reads the API through `cargo expand`, so the bindings
+  follow the features codegen saw. `README.md` (*Implementation Status*)
+  lists what stays: engine create/close, group creation, external commit
+  joins, `flexibleCommit`, message processing, the group queries and exports
+  the app uses, signature keys and basic credentials. Welcome joins, key
+  packages, proposals, member management and the other queries are gone from
+  the default bindings, and the linker drops the openmls code only they
+  reached. **Action required:** an app calling anything else regenerates the
+  bindings with `make codegen ARGS="--rust-features full-api"` and builds the
+  native library with `--features full-api`; `RustLib.init()` refuses
+  full-API bindings on a released binary, whose `rustContentHash` differs.
 
 #### Changed
+
+- **On Apple platforms SQLCipher uses CommonCrypto instead of a bundled
+  OpenSSL** (`rust/Cargo.toml`, `rust/src/encrypted_db.rs`) — iOS and macOS
+  builds take rusqlite's `bundled-sqlcipher` feature, whose SQLCipher links
+  the system's CommonCrypto, so OpenSSL is no longer compiled into them;
+  Android, Linux and Windows keep `bundled-sqlcipher-vendored-openssl`.
+  `PRAGMA cipher_provider` answers `commoncrypto` there and `openssl`
+  elsewhere, which a test asserts. The database format does not depend on
+  the provider: a macOS database written by a 2.4 build, on OpenSSL, opens
+  and takes a commit in this one, and the other way round.
 
 - **The build hook uses a local host build only when `make build` stamped it
   with the current crate version** (`hook/build.dart`, `Makefile`) — a
@@ -69,7 +120,9 @@
   init key of a key package being added, another member's tree node, the
   `GroupInfo` of an external join. The native library now checks its length
   before libcrux sees it, and the operation fails with the ordinary error the
-  fixed `libcrux-kem` 0.0.10 returns. Nothing leaked and nothing could be
+  fixed `libcrux-kem` 0.0.10 returns; from this release only a library built
+  with `all-ciphersuites` contains X-Wing and libcrux at all (see *Changed
+  (Breaking)*). Nothing leaked and nothing could be
   forged (CVSS `VC:N/VI:N/VA:H`), and no other suite touches libcrux. The
   crate itself stays at 0.0.9: OpenMLS pins it — 0.9.1 too — and the fix
   needs an OpenMLS release that does not exist yet. It is recorded in
@@ -79,8 +132,9 @@
   covers the releases that still panic.
 - **This fork's `openmls_frb` 2.4.0 is affected by both, like 2.3.1** — the
   `creatika-io/openmls_dart` release was built from openmls 0.9.0 without the
-  X-Wing length check. The crate moves to 2.4.1 so the fixed binaries never
-  share a release or a download cache with 2.4.0's.
+  X-Wing length check. The crate moves to 3.0.0, a major version because the
+  default FFI surface shrank (see *Changed (Breaking)*), so the fixed binaries
+  never share a release or a download cache with 2.4.0's.
 
 #### Fixed
 
@@ -158,7 +212,20 @@
   test-example-wasm`, `example/integration_test/dart2wasm_test.dart`,
   `.github/workflows/test-reusable.yml`) — the test asserts `kIsWasm`, because
   Flutter silently falls back to dart2js when Chrome cannot run the wasm
-  renderer.
+  renderer. It joins by external commit, which the default bindings export,
+  rather than by `Welcome`.
+- **The full API keeps its tests** (`test_full_api/`, `analysis_options.yaml`,
+  `.github/workflows/test-reusable.yml`) — the Dart tests written against the
+  whole API move from `test/` to `test_full_api/`, which `make analyze`
+  excludes because it compiles only against full-API bindings. CI's Linux
+  x86_64 leg regenerates the bindings with `full-api`, builds with
+  `full-api,all-ciphersuites` and runs `make test ARGS="test test_full_api"`;
+  `test/group_flow_test.dart` covers the default surface end to end.
+- **The `all-ciphersuites` backend is unit-tested in CI** (`make rust-test
+  ARGS="--features all-ciphersuites"`) — the libcrux routing tests that
+  `.cargo/audit.toml` cites live in `rust/src/hybrid_crypto.rs`, which the
+  default build no longer compiles. Both backends run the same group
+  lifecycle from `rust/src/test_support.rs`.
 
 #### Changed
 
