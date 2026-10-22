@@ -1,7 +1,7 @@
 import 'package:openmls/openmls.dart';
 import 'package:test/test.dart';
 
-import 'test_helpers.dart';
+import '../test/test_helpers.dart';
 
 void main() {
   late MlsEngine alice;
@@ -81,12 +81,14 @@ void main() {
     const xwing = MlsCiphersuite.mls256XwingChacha20Poly1305Sha256Ed25519;
 
     test('X-Wing ciphersuite uses Ed25519 signature scheme', () {
+      if (skipUnlessSupported(xwing)) return;
       final keyPair = MlsSignatureKeyPair.generate(ciphersuite: xwing);
       // X-Wing suite signs with Ed25519 (scheme value 0x0807).
       expect(keyPair.signatureScheme(), equals(0x0807));
     });
 
     test('creates an X-Wing key package', () async {
+      if (skipUnlessSupported(xwing)) return;
       final xwingId = TestIdentity.create('alice-pq', ciphersuite: xwing);
       final result = await alice.createKeyPackage(
         ciphersuite: xwing,

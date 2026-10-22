@@ -86,6 +86,25 @@ fn routes_to_libcrux(config: &HpkeConfig) -> bool {
     config.0 == kem && config.1 == kdf && config.2 == aead
 }
 
+/// Length of an X-Wing (draft-06) public key: the ML-KEM-768 encapsulation key
+/// (1184 bytes) followed by the X25519 public key (32).
+///
+/// The two sender-side HPKE methods refuse any other length on the libcrux
+/// route before libcrux sees the key, because of RUSTSEC-2026-0331: in
+/// `libcrux-kem` 0.0.9, `XWingKemDraft06PublicKey::decode` slices
+/// `bytes[0..1184]` before it checks the length, so a shorter key panics
+/// instead of failing. The recipient key is peer data — a key package's init
+/// key, another member's tree-node key, a `GroupInfo`'s `external_pub` — and on
+/// wasm32 that panic aborts with the engine's locks held. Every other length is
+/// refused by libcrux as well, so the check turns away nothing that could have
+/// worked, and each method answers with the error `libcrux-kem` 0.0.10 gives.
+///
+/// The receive side needs no such check: it decodes the KEM output with a
+/// fixed-size `try_into` and decrypts with our own key. Once an openmls release
+/// brings `libcrux-kem` 0.0.10 the check is redundant rather than wrong;
+/// whether to keep it, as `wire_decode.rs` was kept, is decided at that bump.
+const XWING_PUBLIC_KEY_LEN: usize = 1184 + 32;
+
 impl OpenMlsCrypto for HybridCrypto {
     fn supports(&self, ciphersuite: Ciphersuite) -> Result<(), CryptoError> {
         if routes_to_libcrux(&ciphersuite.hpke_config()) {
@@ -182,6 +201,10 @@ impl OpenMlsCrypto for HybridCrypto {
         ptxt: &[u8],
     ) -> Result<HpkeCiphertext, CryptoError> {
         if routes_to_libcrux(&config) {
+            // RUSTSEC-2026-0331: see `XWING_PUBLIC_KEY_LEN`.
+            if pk_r.len() != XWING_PUBLIC_KEY_LEN {
+                return Err(CryptoError::HpkeEncryptionError);
+            }
             self.libcrux()?.hpke_seal(config, pk_r, info, aad, ptxt)
         } else {
             self.rust.hpke_seal(config, pk_r, info, aad, ptxt)
@@ -212,6 +235,10 @@ impl OpenMlsCrypto for HybridCrypto {
         exporter_length: usize,
     ) -> Result<(KemOutput, ExporterSecret), CryptoError> {
         if routes_to_libcrux(&config) {
+            // RUSTSEC-2026-0331: see `XWING_PUBLIC_KEY_LEN`.
+            if pk_r.len() != XWING_PUBLIC_KEY_LEN {
+                return Err(CryptoError::SenderSetupError);
+            }
             self.libcrux()?.hpke_setup_sender_and_export(
                 config,
                 pk_r,
@@ -288,32 +315,8 @@ impl OpenMlsRand for HybridCrypto {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::snapshot_storage::{SnapshotOpenMlsProvider, SnapshotStorageProvider};
-    use openmls::prelude::{tls_codec::*, *};
-    use openmls_basic_credential::SignatureKeyPair;
-    use openmls_traits::OpenMlsProvider;
-
-    /// The PRODUCTION provider with empty in-memory storage — the lifecycle
-    /// test must exercise the exact provider wiring that ships, not a copy.
-    fn test_provider() -> SnapshotOpenMlsProvider {
-        SnapshotOpenMlsProvider::new(SnapshotStorageProvider::from_entries(vec![]))
-    }
-
-    fn make_identity(
-        provider: &SnapshotOpenMlsProvider,
-        name: &[u8],
-        cs: Ciphersuite,
-    ) -> (CredentialWithKey, SignatureKeyPair) {
-        let credential = BasicCredential::new(name.to_vec());
-        let signer =
-            SignatureKeyPair::new(cs.signature_algorithm()).expect("signature keypair gen");
-        signer.store(provider.storage()).expect("store signer");
-        let cwk = CredentialWithKey {
-            credential: credential.into(),
-            signature_key: signer.public().into(),
-        };
-        (cwk, signer)
-    }
+    use crate::test_support::full_group_lifecycle;
+    use openmls::prelude::*;
 
     /// RustCrypto alone must NOT support X-Wing — proves delegation is required.
     #[test]
@@ -343,8 +346,8 @@ mod tests {
     /// proves lazy init keeps classical suites independent of libcrux.
     ///
     /// This test also MECHANICALLY ENFORCES the reasoning `.cargo/audit.toml`
-    /// records: its ignore list is empty, and the libcrux advisories it used to
-    /// carry — RUSTSEC-2026-0075 (libcrux-ed25519) and RUSTSEC-2026-0124
+    /// records. The libcrux advisories it carried until openmls 0.9.0 —
+    /// RUSTSEC-2026-0075 (libcrux-ed25519) and RUSTSEC-2026-0124
     /// (libcrux-chacha20poly1305) among them — were justified on the grounds
     /// that signature and AEAD operations never route to libcrux. openmls 0.9.0
     /// moved the tree past every one of them, so none matches today. If a future
@@ -418,7 +421,8 @@ mod tests {
         let api_list = crate::api::types::supported_ciphersuites();
 
         for api_cs in &api_list {
-            let native = crate::api::types::ciphersuite_to_native(api_cs);
+            let native = crate::api::types::ciphersuite_to_native(api_cs)
+                .expect("every supported suite has a native ciphersuite");
             hybrid
                 .supports(native)
                 .unwrap_or_else(|e| panic!("API advertises {native:?} but provider rejects it: {e:?}"));
@@ -542,10 +546,10 @@ mod tests {
     /// Every ciphersuite OpenMLS advertises **by default** must be one this
     /// provider can actually execute, and one the public API can name.
     ///
-    /// `capabilities_to_native` (api/types.rs) passes `None` for an empty
-    /// ciphersuite list, and `Capabilities::new(None, ..)` fills that with
-    /// `default_ciphersuites()` — so this list is what goes out in a leaf node
-    /// whenever the caller does not pin capabilities. Advertising a suite the
+    /// `capabilities_to_native` (api/types.rs) fills an absent or empty
+    /// ciphersuite list from the provider, but a leaf node OpenMLS builds
+    /// without capabilities from this crate gets `default_ciphersuites()`, so
+    /// the two lists must agree. Advertising a suite the
     /// provider cannot run makes peers pick it and fail; advertising one the
     /// enum cannot name makes `inspect_welcome` reject the group before the
     /// application can decide whether to join.
@@ -635,6 +639,49 @@ mod tests {
         full_group_lifecycle(cs);
     }
 
+    /// RUSTSEC-2026-0331: a malformed X-Wing recipient key must come back as an
+    /// error from both sender-side methods, never as a panic inside libcrux.
+    ///
+    /// Only the lengths under 1184 tell the guard apart from its absence —
+    /// `libcrux-kem` 0.0.9 panics on exactly those, and returns an error for
+    /// the others. With the two checks removed, this test panics on the first
+    /// key, which is how it was verified. The well-formed key at the end is the
+    /// other half: the guard must not refuse a key libcrux accepts.
+    #[test]
+    fn xwing_malformed_recipient_key_is_an_error_not_a_panic() {
+        let cs = LIBCRUX_CIPHERSUITE;
+        let hybrid = HybridCrypto::new();
+
+        // Pin the constant against a real key rather than restating it.
+        let kp = hybrid
+            .derive_hpke_keypair(cs.hpke_config(), &[5u8; 32])
+            .expect("derive X-Wing HPKE keypair");
+        assert_eq!(kp.public.len(), XWING_PUBLIC_KEY_LEN, "X-Wing public key length");
+
+        for len in [0, 1, 32, 1183, 1184, 1215, 1217] {
+            let pk_r = vec![0x42u8; len];
+            assert_eq!(
+                hybrid.hpke_seal(cs.hpke_config(), &pk_r, b"info", b"aad", b"ptxt").err(),
+                Some(CryptoError::HpkeEncryptionError),
+                "hpke_seal to a {len}-byte X-Wing key"
+            );
+            assert_eq!(
+                hybrid
+                    .hpke_setup_sender_and_export(cs.hpke_config(), &pk_r, b"info", b"ctx", 32)
+                    .err(),
+                Some(CryptoError::SenderSetupError),
+                "hpke_setup_sender_and_export to a {len}-byte X-Wing key"
+            );
+        }
+
+        hybrid
+            .hpke_seal(cs.hpke_config(), &kp.public, b"info", b"aad", b"ptxt")
+            .expect("hpke_seal to a well-formed X-Wing key");
+        hybrid
+            .hpke_setup_sender_and_export(cs.hpke_config(), &kp.public, b"info", b"ctx", 32)
+            .expect("hpke_setup_sender_and_export to a well-formed X-Wing key");
+    }
+
     /// Every ciphersuite the public API advertises must survive a complete
     /// group lifecycle — not merely be accepted by `supports()`.
     ///
@@ -649,116 +696,9 @@ mod tests {
     #[test]
     fn all_supported_ciphersuites_full_group_lifecycle() {
         for api_cs in crate::api::types::supported_ciphersuites() {
-            full_group_lifecycle(crate::api::types::ciphersuite_to_native(&api_cs));
-        }
-    }
-
-    /// One full MLS group lifecycle on `cs`, against the production provider
-    /// wiring: create group → key package → add member (commit + Welcome) →
-    /// join → application messages in both directions.
-    fn full_group_lifecycle(cs: Ciphersuite) {
-        // Captured output is replayed on failure, so the last line printed
-        // names the suite whose lifecycle broke.
-        println!("full_group_lifecycle: {cs:?}");
-
-        let alice_provider = test_provider();
-        let bob_provider = test_provider();
-
-        let (alice_cwk, alice_signer) = make_identity(&alice_provider, b"alice", cs);
-        let (bob_cwk, bob_signer) = make_identity(&bob_provider, b"bob", cs);
-
-        // Alice creates the group (X-Wing HPKE keys in the leaf node).
-        let mut alice_group = MlsGroup::builder()
-            .ciphersuite(cs)
-            .use_ratchet_tree_extension(true)
-            .build(&alice_provider, &alice_signer, alice_cwk)
-            .expect("alice creates group");
-
-        // Bob creates a key package (X-Wing HPKE init key), serialized round-trip.
-        let bob_kp_bundle = KeyPackage::builder()
-            .build(cs, &bob_provider, &bob_signer, bob_cwk)
-            .expect("bob key package");
-        let bob_kp_bytes = bob_kp_bundle
-            .key_package()
-            .tls_serialize_detached()
-            .expect("kp serialize");
-
-        // Alice validates and adds Bob — commit + Welcome (HPKE seal to X-Wing key).
-        let bob_kp_in =
-            KeyPackageIn::tls_deserialize_exact_bytes(&bob_kp_bytes).expect("kp deserialize");
-        let bob_kp = bob_kp_in
-            .validate(alice_provider.crypto(), ProtocolVersion::Mls10)
-            .expect("kp validate");
-
-        let (_commit, welcome_out, _group_info) = alice_group
-            .add_members(&alice_provider, &alice_signer, &[bob_kp])
-            .expect("alice adds bob");
-        alice_group
-            .merge_pending_commit(&alice_provider)
-            .expect("alice merges add commit");
-
-        // Bob joins via Welcome (HPKE open with X-Wing key), serialized round-trip.
-        let welcome_bytes = welcome_out
-            .tls_serialize_detached()
-            .expect("welcome serialize");
-        let welcome_msg =
-            MlsMessageIn::tls_deserialize_exact_bytes(&welcome_bytes).expect("welcome deserialize");
-        let welcome = match welcome_msg.extract() {
-            MlsMessageBodyIn::Welcome(w) => w,
-            _ => panic!("expected a Welcome message"),
-        };
-        let mut bob_group = StagedWelcome::new_from_welcome(
-            &bob_provider,
-            &MlsGroupJoinConfig::default(),
-            welcome,
-            None, // ratchet tree extension enabled
-        )
-        .expect("bob stages welcome")
-        .into_group(&bob_provider)
-        .expect("bob joins group");
-
-        assert_eq!(alice_group.epoch(), bob_group.epoch());
-        assert_eq!(alice_group.members().count(), 2);
-        assert_eq!(bob_group.members().count(), 2);
-        assert_eq!(alice_group.ciphersuite(), cs);
-        assert_eq!(bob_group.ciphersuite(), cs);
-
-        // Alice → Bob application message.
-        let msg_out = alice_group
-            .create_message(&alice_provider, &alice_signer, b"hello bob")
-            .expect("alice creates message");
-        let msg_bytes = msg_out.tls_serialize_detached().expect("msg serialize");
-        let protocol_msg = MlsMessageIn::tls_deserialize_exact_bytes(&msg_bytes)
-            .expect("msg deserialize")
-            .try_into_protocol_message()
-            .expect("protocol message");
-        let processed = bob_group
-            .process_message(&bob_provider, protocol_msg)
-            .expect("bob processes message");
-        match processed.into_content() {
-            ProcessedMessageContent::ApplicationMessage(am) => {
-                assert_eq!(am.into_bytes(), b"hello bob".to_vec());
-            }
-            _ => panic!("expected application message"),
-        }
-
-        // Bob → Alice application message.
-        let msg_out = bob_group
-            .create_message(&bob_provider, &bob_signer, b"hi alice")
-            .expect("bob creates message");
-        let msg_bytes = msg_out.tls_serialize_detached().expect("msg serialize");
-        let protocol_msg = MlsMessageIn::tls_deserialize_exact_bytes(&msg_bytes)
-            .expect("msg deserialize")
-            .try_into_protocol_message()
-            .expect("protocol message");
-        let processed = alice_group
-            .process_message(&alice_provider, protocol_msg)
-            .expect("alice processes message");
-        match processed.into_content() {
-            ProcessedMessageContent::ApplicationMessage(am) => {
-                assert_eq!(am.into_bytes(), b"hi alice".to_vec());
-            }
-            _ => panic!("expected application message"),
+            let native = crate::api::types::ciphersuite_to_native(&api_cs)
+                .expect("every supported suite has a native ciphersuite");
+            full_group_lifecycle(native);
         }
     }
 }

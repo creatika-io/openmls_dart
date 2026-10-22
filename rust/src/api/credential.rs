@@ -3,9 +3,9 @@
 //! Wraps `BasicCredential`, X.509, and `Credential` types.
 
 use openmls::prelude::*;
-use openmls::prelude::tls_codec::{
-    DeserializeBytes as TlsDeserializeBytes, Serialize as TlsSerialize,
-};
+#[cfg(feature = "full-api")]
+use openmls::prelude::tls_codec::DeserializeBytes as TlsDeserializeBytes;
+use openmls::prelude::tls_codec::Serialize as TlsSerialize;
 
 /// An opaque wrapper around an OpenMLS Credential.
 pub struct MlsCredential {
@@ -41,6 +41,7 @@ impl MlsCredential {
     /// signatures, revocation, or trust anchors). The application layer is
     /// responsible for verifying the X.509 chain before passing it here.
     #[flutter_rust_bridge::frb(sync)]
+    #[cfg(feature = "full-api")]
     pub fn x509(certificate_chain: Vec<Vec<u8>>) -> Result<MlsCredential, String> {
         // MLS wire format for X.509: Certificate chain<V>
         // Certificate = opaque cert_data<V> (TLS VLBytes)
@@ -71,6 +72,7 @@ impl MlsCredential {
     /// Each entry is a DER-encoded X.509 certificate.
     /// Returns an error if this is not an X.509 credential.
     #[flutter_rust_bridge::frb(sync)]
+    #[cfg(feature = "full-api")]
     pub fn certificates(&self) -> Result<Vec<Vec<u8>>, String> {
         if self.inner.credential_type() != CredentialType::X509 {
             return Err("Not an X.509 credential".to_string());
@@ -92,12 +94,14 @@ impl MlsCredential {
     /// For BasicCredential, this is the identity bytes.
     /// For X.509, this is the TLS-serialized certificate chain.
     #[flutter_rust_bridge::frb(sync)]
+    #[cfg(feature = "full-api")]
     pub fn serialized_content(&self) -> Vec<u8> {
         self.inner.serialized_content().to_vec()
     }
 
     /// Returns the credential type value (1 = Basic, 2 = X509).
     #[flutter_rust_bridge::frb(sync)]
+    #[cfg(feature = "full-api")]
     pub fn credential_type(&self) -> u16 {
         match self.inner.credential_type() {
             CredentialType::Basic => 1,

@@ -21,18 +21,24 @@ use openmls::prelude::*;
 use openmls::prelude::tls_codec::{
     DeserializeBytes as TlsDeserializeBytes, Serialize as TlsSerialize,
 };
-use openmls::ciphersuite::hash_ref::ProposalRef;
-use openmls::schedule::PreSharedKeyId;
+#[cfg(feature = "full-api")]
+use openmls::{ciphersuite::hash_ref::ProposalRef, schedule::PreSharedKeyId};
 use openmls_traits::OpenMlsProvider;
+#[cfg(feature = "full-api")]
 use openmls_traits::storage::StorageProvider;
 
 use super::config::MlsGroupConfig;
 use super::keys::signer_from_bytes;
 use super::types::{
-    ciphersuite_to_native, native_to_ciphersuite, capabilities_to_native, extensions_from_mls,
-    FlexibleCommitOptions, KeyPackageOptions, MlsCapabilities, MlsCiphersuite, MlsExtension,
-    MlsGroupContextInfo, MlsLeafNodeInfo, MlsMemberInfo, MlsPendingProposalInfo, MlsProposalType,
-    MlsWireFormatPolicy, ProcessedMessageType, StagedCommitInfo, WelcomeInspectResult,
+    ciphersuite_to_native, capabilities_to_native, extensions_from_mls,
+    require_executed_ciphersuite, FlexibleCommitOptions,
+    MlsCapabilities, MlsCiphersuite, MlsExtension, MlsMemberInfo, MlsProposalType,
+    MlsWireFormatPolicy, ProcessedMessageType, StagedCommitInfo,
+};
+#[cfg(feature = "full-api")]
+use super::types::{
+    native_to_ciphersuite, KeyPackageOptions, MlsGroupContextInfo, MlsLeafNodeInfo,
+    MlsPendingProposalInfo, WelcomeInspectResult,
 };
 use crate::snapshot_storage::{SnapshotOpenMlsProvider, SnapshotStorageProvider};
 
@@ -58,8 +64,18 @@ fn build_credential_with_key(
     })
 }
 
-/// Load an MlsGroup from the provider's storage.
+/// Load an MlsGroup whose ciphersuite this build executes.
 fn load_group<P: OpenMlsProvider>(group_id: &[u8], provider: &P) -> Result<MlsGroup, String> {
+    let group = load_stored_group(group_id, provider)?;
+    require_executed_ciphersuite(group.ciphersuite())?;
+    Ok(group)
+}
+
+/// Load an MlsGroup whatever its ciphersuite, for deleting it.
+fn load_stored_group<P: OpenMlsProvider>(
+    group_id: &[u8],
+    provider: &P,
+) -> Result<MlsGroup, String> {
     let gid = GroupId::from_slice(group_id);
     MlsGroup::load(provider.storage(), &gid)
         .map_err(|e| format!("Failed to load group: {}", e))?
@@ -434,14 +450,16 @@ impl MlsEngine {
     /// ciphersuite and the credential.
     ///
     /// Those defaults include the advertised capabilities, and the ciphersuite
-    /// list inside them is every suite `supportedCiphersuites` returns — ten of
-    /// them experimental post-quantum suites on provisional code points. A peer
-    /// reading this key package may therefore pick one of those for a group.
+    /// list inside them is every suite `supportedCiphersuites` returns — in a
+    /// build with them, ten experimental post-quantum suites on provisional
+    /// code points. A peer reading this key package may pick one of those for a
+    /// group.
     ///
     /// To advertise a narrower set, or to change the lifetime, mark the package
     /// last-resort, or attach extensions, use `createKeyPackageWithOptions`
     /// instead: `KeyPackageOptions.capabilities` is where the ciphersuite list
     /// goes.
+    #[cfg(feature = "full-api")]
     pub async fn create_key_package(
         &self,
         ciphersuite: MlsCiphersuite,
@@ -450,7 +468,7 @@ impl MlsEngine {
         signer_public_key: Vec<u8>,
         credential_bytes: Option<Vec<u8>>,
     ) -> Result<KeyPackageResult, String> {
-        let cs = ciphersuite_to_native(&ciphersuite);
+        let cs = ciphersuite_to_native(&ciphersuite)?;
         let signer = signer_from_bytes(signer_bytes)?;
         let credential_with_key = build_credential_with_key(
             &credential_identity, &signer_public_key, credential_bytes.as_deref(),
@@ -459,6 +477,7 @@ impl MlsEngine {
         let provider = self.load_global().await?;
 
         let key_package_bundle = KeyPackage::builder()
+            .leaf_node_capabilities(capabilities_to_native(None)?)
             .build(cs, &provider, &signer, credential_with_key)
             .map_err(|e| format!("Failed to create key package: {}", e))?;
 
@@ -482,6 +501,7 @@ impl MlsEngine {
     /// setting `MlsCapabilities.ciphersuites` to an explicit list of raw code
     /// points is the only way to stop a key package advertising every suite
     /// this provider supports, experimental ones included.
+    #[cfg(feature = "full-api")]
     pub async fn create_key_package_with_options(
         &self,
         ciphersuite: MlsCiphersuite,
@@ -491,23 +511,21 @@ impl MlsEngine {
         options: KeyPackageOptions,
         credential_bytes: Option<Vec<u8>>,
     ) -> Result<KeyPackageResult, String> {
-        let cs = ciphersuite_to_native(&ciphersuite);
+        let cs = ciphersuite_to_native(&ciphersuite)?;
         let signer = signer_from_bytes(signer_bytes)?;
         let credential_with_key = build_credential_with_key(
             &credential_identity, &signer_public_key, credential_bytes.as_deref(),
         )?;
 
         let provider = self.load_global().await?;
-        let mut builder = KeyPackage::builder();
+        let mut builder = KeyPackage::builder()
+            .leaf_node_capabilities(capabilities_to_native(options.capabilities.as_ref())?);
 
         if let Some(lifetime_secs) = options.lifetime_seconds {
             builder = builder.key_package_lifetime(Lifetime::new(lifetime_secs));
         }
         if options.last_resort {
             builder = builder.mark_as_last_resort();
-        }
-        if let Some(ref caps) = options.capabilities {
-            builder = builder.leaf_node_capabilities(capabilities_to_native(caps)?);
         }
         if let Some(ref leaf_exts) = options.leaf_node_extensions {
             let extensions = Extensions::from_vec(extensions_from_mls(leaf_exts))
@@ -540,6 +558,7 @@ impl MlsEngine {
     // GROUP CREATION
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn create_group(
         &self,
         config: MlsGroupConfig,
@@ -555,7 +574,7 @@ impl MlsEngine {
         )?;
 
         let provider = self.load_global().await?;
-        let create_config = config.to_create_config();
+        let create_config = config.to_create_config()?;
 
         signer
             .store(provider.storage())
@@ -606,7 +625,7 @@ impl MlsEngine {
             .store(provider.storage())
             .map_err(|e| format!("Failed to store signer: {}", e))?;
 
-        let cs = super::types::ciphersuite_to_native(&config.ciphersuite);
+        let cs = ciphersuite_to_native(&config.ciphersuite)?;
         let wf = super::types::wire_format_to_native(&config.wire_format_policy);
 
         let mut builder = MlsGroup::builder()
@@ -638,11 +657,9 @@ impl MlsEngine {
                 .with_leaf_node_extensions(extensions)
                 .map_err(|e| format!("Failed to set leaf node extensions: {}", e))?;
         }
-        if let Some(ref caps) = capabilities {
-            builder = builder.with_capabilities(capabilities_to_native(caps)?);
-        }
 
         let mls_group = builder
+            .with_capabilities(capabilities_to_native(capabilities.as_ref())?)
             .build(&provider, &signer, credential_with_key)
             .map_err(|e| format!("Failed to create group: {}", e))?;
 
@@ -657,6 +674,7 @@ impl MlsEngine {
     // JOINING A GROUP
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn join_group_from_welcome(
         &self,
         config: MlsGroupConfig,
@@ -699,6 +717,7 @@ impl MlsEngine {
         Ok(JoinGroupResult { group_id: gid })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn join_group_from_welcome_with_options(
         &self,
         config: MlsGroupConfig,
@@ -748,6 +767,7 @@ impl MlsEngine {
         Ok(JoinGroupResult { group_id: gid })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn inspect_welcome(
         &self,
         config: MlsGroupConfig,
@@ -803,6 +823,7 @@ impl MlsEngine {
     /// keys). So a Welcome that carries PSKs resolves them here or fails here
     /// for the same reason it would there — this function is never the narrower
     /// of the two.
+    #[cfg(feature = "full-api")]
     pub async fn export_welcome_secret(
         &self,
         config: MlsGroupConfig,
@@ -831,6 +852,7 @@ impl MlsEngine {
 
     #[allow(deprecated)]
     #[allow(clippy::too_many_arguments)]
+    #[cfg(feature = "full-api")]
     pub async fn join_group_external_commit(
         &self,
         config: MlsGroupConfig,
@@ -867,7 +889,8 @@ impl MlsEngine {
             .transpose()?;
 
         let (mls_group, commit_out, group_info_opt) = MlsGroup::join_by_external_commit(
-            &provider, &signer, ratchet_tree, verifiable_group_info, &join_config, None, None, &[], credential_with_key,
+            &provider, &signer, ratchet_tree, verifiable_group_info, &join_config,
+            Some(capabilities_to_native(None)?), None, &[], credential_with_key,
         )
         .map_err(|e| format!("Failed to join group via external commit: {}", e))?;
 
@@ -937,6 +960,11 @@ impl MlsEngine {
             .build_group(&provider, verifiable_group_info, credential_with_key)
             .map_err(|e| format!("Failed to build external commit group: {}", e))?;
         let commit_builder = commit_builder
+            .leaf_node_parameters(
+                LeafNodeParameters::builder()
+                    .with_capabilities(capabilities_to_native(None)?)
+                    .build(),
+            )
             .load_psks(provider.storage())
             .map_err(|e| format!("Failed to load PSKs: {}", e))?;
         let commit_builder = commit_builder
@@ -969,6 +997,7 @@ impl MlsEngine {
     // STATE QUERIES (read-only)
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn group_id(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1016,6 +1045,7 @@ impl MlsEngine {
         Ok(members)
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_ciphersuite(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1025,6 +1055,7 @@ impl MlsEngine {
         native_to_ciphersuite(group.ciphersuite())
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_own_index(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1034,6 +1065,7 @@ impl MlsEngine {
         Ok(group.own_leaf_index().u32())
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_credential(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1046,6 +1078,7 @@ impl MlsEngine {
             .map_err(|e| format!("Failed to serialize credential: {}", e))
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_extensions(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1058,6 +1091,7 @@ impl MlsEngine {
             .map_err(|e| format!("Failed to serialize extensions: {}", e))
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_pending_proposals(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1085,6 +1119,7 @@ impl MlsEngine {
         Ok(proposals)
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_has_pending_proposals(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1094,6 +1129,7 @@ impl MlsEngine {
         Ok(group.has_pending_proposals())
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_member_at(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1116,6 +1152,7 @@ impl MlsEngine {
         }
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_member_leaf_index(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1132,6 +1169,7 @@ impl MlsEngine {
     // EXPORT OPERATIONS (read-only)
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn export_ratchet_tree(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1174,6 +1212,7 @@ impl MlsEngine {
             .map_err(|e| format!("Failed to export secret: {}", e))
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn export_group_context(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1196,6 +1235,7 @@ impl MlsEngine {
         })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_confirmation_tag(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1208,6 +1248,7 @@ impl MlsEngine {
             .map_err(|e| format!("Failed to serialize confirmation tag: {}", e))
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_own_leaf_node(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1258,6 +1299,7 @@ impl MlsEngine {
         })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn get_past_resumption_psk(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1274,6 +1316,7 @@ impl MlsEngine {
     // MEMBER MANAGEMENT (mutating)
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn add_members(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1311,6 +1354,7 @@ impl MlsEngine {
         Ok(AddMembersResult { commit: commit_bytes, welcome: welcome_bytes, group_info: gi_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn add_members_without_update(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1344,6 +1388,7 @@ impl MlsEngine {
         Ok(AddMembersResult { commit: commit_bytes, welcome: welcome_bytes, group_info: gi_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn remove_members(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1369,6 +1414,7 @@ impl MlsEngine {
         Ok(CommitResult { commit: commit_bytes, welcome: welcome_bytes, group_info: gi_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn self_update(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1393,6 +1439,7 @@ impl MlsEngine {
         Ok(CommitResult { commit: commit_bytes, welcome: welcome_bytes, group_info: gi_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn self_update_with_new_signer(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1429,6 +1476,7 @@ impl MlsEngine {
         Ok(CommitResult { commit: commit_bytes, welcome: welcome_bytes, group_info: gi_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn swap_members(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1463,6 +1511,7 @@ impl MlsEngine {
         Ok(AddMembersResult { commit: commit_bytes, welcome: welcome_bytes, group_info: gi_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn leave_group(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1480,6 +1529,7 @@ impl MlsEngine {
         Ok(LeaveGroupResult { message: msg_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn leave_group_via_self_remove(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1501,6 +1551,7 @@ impl MlsEngine {
     // PROPOSALS (mutating)
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn propose_add(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1525,6 +1576,7 @@ impl MlsEngine {
         Ok(ProposalResult { proposal_message: msg_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn propose_remove(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1544,6 +1596,7 @@ impl MlsEngine {
         Ok(ProposalResult { proposal_message: msg_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn propose_self_update(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1557,7 +1610,7 @@ impl MlsEngine {
 
         let mut ln_builder = LeafNodeParameters::builder();
         if let Some(ref caps) = leaf_node_capabilities {
-            ln_builder = ln_builder.with_capabilities(capabilities_to_native(caps)?);
+            ln_builder = ln_builder.with_capabilities(capabilities_to_native(Some(caps))?);
         }
         if let Some(ref exts) = leaf_node_extensions {
             let extensions = Extensions::from_vec(extensions_from_mls(exts))
@@ -1607,6 +1660,7 @@ impl MlsEngine {
     /// `test-utils` was deliberately dropped from the shipped binary in 3.0.0,
     /// so `not(virtual-clients-draft)` is the only arm holding it open here.
     #[allow(clippy::too_many_arguments)]
+    #[cfg(feature = "full-api")]
     pub async fn propose_self_update_with_new_signer(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1632,7 +1686,7 @@ impl MlsEngine {
 
         let mut ln_builder = LeafNodeParameters::builder();
         if let Some(ref caps) = leaf_node_capabilities {
-            ln_builder = ln_builder.with_capabilities(capabilities_to_native(caps)?);
+            ln_builder = ln_builder.with_capabilities(capabilities_to_native(Some(caps))?);
         }
         if let Some(ref exts) = leaf_node_extensions {
             let extensions = Extensions::from_vec(extensions_from_mls(exts))
@@ -1651,6 +1705,7 @@ impl MlsEngine {
         Ok(ProposalResult { proposal_message: msg_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn propose_external_psk(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1672,6 +1727,7 @@ impl MlsEngine {
         Ok(ProposalResult { proposal_message: msg_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn propose_group_context_extensions(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1694,6 +1750,7 @@ impl MlsEngine {
         Ok(ProposalResult { proposal_message: msg_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn propose_custom_proposal(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1715,6 +1772,7 @@ impl MlsEngine {
         Ok(ProposalResult { proposal_message: msg_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn propose_remove_member_by_credential(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1740,6 +1798,7 @@ impl MlsEngine {
     // COMMIT / MERGE OPERATIONS (mutating)
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn commit_to_pending_proposals(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1774,6 +1833,7 @@ impl MlsEngine {
         self.commit(provider, Some(&group_id_bytes)).await
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn clear_pending_commit(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1785,6 +1845,7 @@ impl MlsEngine {
         self.commit(provider, Some(&group_id_bytes)).await
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn clear_pending_proposals(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1807,6 +1868,7 @@ impl MlsEngine {
     /// `setPastEpochDeletionPolicyKeepAll` made earlier, along with the past
     /// epoch secrets the lower number no longer admits. When both are used,
     /// set the policy after the configuration, not before.
+    #[cfg(feature = "full-api")]
     pub async fn set_configuration(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1820,6 +1882,7 @@ impl MlsEngine {
         self.commit(provider, Some(&group_id_bytes)).await
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn update_group_context_extensions(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1907,6 +1970,7 @@ impl MlsEngine {
     // MESSAGES (mutating)
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn create_message(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2018,6 +2082,7 @@ impl MlsEngine {
         })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn process_message_with_inspect(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2128,7 +2193,7 @@ impl MlsEngine {
         group_id_bytes: Vec<u8>,
     ) -> Result<(), String> {
         let session = self.load_for_group(&group_id_bytes).await?;
-        let mut group = load_group(&group_id_bytes, &session)?;
+        let mut group = load_stored_group(&group_id_bytes, &session)?;
         group.delete(session.storage()).map_err(|e| format!("Failed to delete group: {}", e))?;
 
         // One transaction for the final state and the purge of whatever rows
@@ -2140,6 +2205,7 @@ impl MlsEngine {
             .await
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn delete_key_package(
         &self,
         key_package_ref_bytes: Vec<u8>,
@@ -2157,6 +2223,7 @@ impl MlsEngine {
     // ADDITIONAL STATE QUERIES / MUTATING
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn remove_pending_proposal(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2172,6 +2239,7 @@ impl MlsEngine {
         self.commit(provider, Some(&group_id_bytes)).await
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_epoch_authenticator(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2181,6 +2249,7 @@ impl MlsEngine {
         Ok(group.epoch_authenticator().as_slice().to_vec())
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_configuration(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2213,6 +2282,7 @@ impl MlsEngine {
     /// A group that was never told otherwise reports the `maxPastEpochs` its
     /// `MlsGroupConfig` carried when it was created or joined — the two are
     /// the same setting.
+    #[cfg(feature = "full-api")]
     pub async fn past_epoch_deletion_policy(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2241,6 +2311,7 @@ impl MlsEngine {
     /// `usize` is 32 bits — the Web and 32-bit Android — so accepting it would
     /// make two settings one stored value there and two everywhere else. Use
     /// `setPastEpochDeletionPolicyKeepAll` if that is what you mean.
+    #[cfg(feature = "full-api")]
     pub async fn set_past_epoch_deletion_policy_max_epochs(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2265,6 +2336,7 @@ impl MlsEngine {
     ///
     /// It does not bring back what an earlier policy already discarded, and
     /// like the one above it is reset by `setConfiguration`.
+    #[cfg(feature = "full-api")]
     pub async fn set_past_epoch_deletion_policy_keep_all(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2283,6 +2355,7 @@ impl MlsEngine {
     /// `setPastEpochDeletionPolicyKeepAll` the next commit starts recording
     /// past epochs again, so this is a sweep to be repeated rather than a
     /// switch. To stop it, set a `maxEpochs` policy.
+    #[cfg(feature = "full-api")]
     pub async fn delete_all_past_epoch_secrets(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2307,6 +2380,7 @@ impl MlsEngine {
     /// upgrade they sit alongside dated ones and a retention window built only
     /// out of this method keeps them forever.
     /// `deletePastEpochSecretsWithoutTimestamps` is the step that clears them.
+    #[cfg(feature = "full-api")]
     pub async fn delete_past_epoch_secrets_older_than(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2334,6 +2408,7 @@ impl MlsEngine {
     /// first, and a present-day millisecond count is about a thousand times
     /// too large: that lands past the year 9999 and is refused here, rather
     /// than quietly deleting every past epoch the group has.
+    #[cfg(feature = "full-api")]
     pub async fn delete_past_epoch_secrets_before(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2362,6 +2437,7 @@ impl MlsEngine {
     ///
     /// `maxPastEpochs` additionally caps what survives at that many of the
     /// newest past epochs; omit it to apply no cap.
+    #[cfg(feature = "full-api")]
     pub async fn delete_past_epoch_secrets_without_timestamps(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2416,6 +2492,7 @@ impl MlsEngine {
     /// After a successful `create()`, this is always `LATEST_SCHEMA_VERSION`.
     /// Useful for diagnostics and debugging migration issues.
     #[flutter_rust_bridge::frb(sync)]
+    #[cfg(feature = "full-api")]
     pub fn schema_version(&self) -> u32 {
         crate::encrypted_db::LATEST_SCHEMA_VERSION
     }
@@ -2440,6 +2517,7 @@ impl MlsEngine {
 
     /// Check whether this engine has been closed.
     #[flutter_rust_bridge::frb(sync)]
+    #[cfg(feature = "full-api")]
     pub fn is_closed(&self) -> bool {
         self.db.read().is_none()
     }
@@ -2455,6 +2533,7 @@ impl MlsEngine {
 /// `processMessage`. Returns an error if the message is not a protocol
 /// message (i.e. it's a Welcome, GroupInfo, or KeyPackage).
 #[flutter_rust_bridge::frb(sync)]
+#[cfg(feature = "full-api")]
 pub fn mls_message_extract_group_id(message_bytes: Vec<u8>) -> Result<Vec<u8>, String> {
     let msg_in = MlsMessageIn::tls_deserialize_exact_bytes(&message_bytes)
         .map_err(|e| format!("Failed to deserialize message: {}", e))?;
@@ -2536,10 +2615,11 @@ pub struct LifetimeVerdict {
 /// of functions can apply an authority stricter than the local clock, not
 /// rescue a package the local clock has already rejected.
 #[flutter_rust_bridge::frb(sync)]
+#[cfg(feature = "full-api")]
 pub fn key_package_lifetime(key_package_bytes: Vec<u8>) -> Result<KeyPackageLifetime, String> {
     let kp_in = KeyPackageIn::tls_deserialize_exact_bytes(&key_package_bytes)
         .map_err(|e| format!("Failed to deserialize key package: {}", e))?;
-    let crypto = crate::hybrid_crypto::HybridCrypto::new();
+    let crypto = crate::CryptoBackend::new();
     let kp = kp_in
         .validate(&crypto, ProtocolVersion::Mls10)
         .map_err(|e| format!("Failed to validate key package: {}", e))?;
@@ -2623,6 +2703,7 @@ fn unix_seconds_to_system_time(unix_seconds: u64) -> Result<SystemTime, String> 
 /// loudly here instead of returning a confident verdict about a date tens of
 /// thousands of years out.
 #[flutter_rust_bridge::frb(sync)]
+#[cfg(feature = "full-api")]
 pub fn check_lifetime_at(
     not_before: u64,
     not_after: u64,
@@ -2728,7 +2809,7 @@ mod past_epoch_policy_tests {
 /// and the keep-all encoding round-trips by itself. Only here does the
 /// normalization above carry the result, and only execution can show it: a
 /// wasm32 body is a different implementation of the same function.
-#[cfg(all(test, target_arch = "wasm32"))]
+#[cfg(all(test, target_arch = "wasm32", feature = "full-api"))]
 mod past_epoch_web_tests {
     use super::*;
     use wasm_bindgen_test::{wasm_bindgen_test, wasm_bindgen_test_configure};
@@ -2790,5 +2871,277 @@ mod past_epoch_web_tests {
             after.keep_all,
             "keep-all must survive the Web storage round trip"
         );
+    }
+}
+
+/// A build advertises and operates only the ciphersuites its crypto backend
+/// executes, through every entry point that writes or loads a leaf node.
+#[cfg(all(test, not(target_arch = "wasm32")))]
+mod executed_ciphersuite_tests {
+    use super::*;
+    use crate::api::keys::{serialize_signer, MlsSignatureKeyPair};
+    use futures::executor::block_on;
+    use openmls_traits::crypto::OpenMlsCrypto;
+
+    const SUITE: MlsCiphersuite = MlsCiphersuite::Mls128DhkemX25519Aes128gcmSha256Ed25519;
+
+    struct Member {
+        engine: MlsEngine,
+        signer: Vec<u8>,
+        public_key: Vec<u8>,
+    }
+
+    impl Member {
+        fn new() -> Self {
+            let engine = block_on(MlsEngine::create(":memory:".to_string(), vec![7; 32]))
+                .expect("engine opens");
+            let keys = MlsSignatureKeyPair::generate(SUITE).expect("signature key pair");
+            let signer =
+                serialize_signer(SUITE, keys.private_key(), keys.public_key()).expect("signer");
+            Self { engine, signer, public_key: keys.public_key() }
+        }
+
+        fn create_group(&self, capabilities: Option<MlsCapabilities>) -> Vec<u8> {
+            block_on(self.engine.create_group_with_builder(
+                MlsGroupConfig::default_config(SUITE),
+                self.signer.clone(),
+                b"member".to_vec(),
+                self.public_key.clone(),
+                None,
+                None,
+                None,
+                None,
+                capabilities,
+                None,
+            ))
+            .expect("group is created")
+            .group_id
+        }
+
+        fn advertised_ciphersuites(&self, group_id: &[u8]) -> Vec<u16> {
+            let session = block_on(self.engine.load_for_group(group_id)).expect("session");
+            let group = load_group(group_id, &session).expect("group loads");
+            serialized_ciphersuites(group.own_leaf_node().expect("own leaf").capabilities())
+        }
+    }
+
+    fn serialized_ciphersuites(capabilities: &Capabilities) -> Vec<u16> {
+        let bytes = capabilities
+            .tls_serialize_detached()
+            .expect("capabilities serialize");
+        let decoded =
+            Capabilities::tls_deserialize_exact_bytes(&bytes).expect("capabilities deserialize");
+        let mut code_points: Vec<u16> =
+            decoded.ciphersuites().iter().map(|cs| cs.value()).collect();
+        code_points.sort_unstable();
+        code_points
+    }
+
+    fn executed_ciphersuites() -> Vec<u16> {
+        let mut code_points: Vec<u16> = crate::CryptoBackend::new()
+            .supported_ciphersuites()
+            .into_iter()
+            .map(u16::from)
+            .collect();
+        code_points.sort_unstable();
+        code_points
+    }
+
+    fn capabilities_without_ciphersuites() -> MlsCapabilities {
+        MlsCapabilities {
+            versions: vec![],
+            ciphersuites: vec![],
+            extensions: vec![],
+            proposals: vec![],
+            credentials: vec![],
+        }
+    }
+
+    #[test]
+    fn a_created_group_advertises_only_executed_ciphersuites() {
+        let alice = Member::new();
+        for capabilities in [None, Some(capabilities_without_ciphersuites())] {
+            let group_id = alice.create_group(capabilities);
+            assert_eq!(
+                alice.advertised_ciphersuites(&group_id),
+                executed_ciphersuites()
+            );
+        }
+    }
+
+    #[test]
+    fn a_self_update_keeps_advertising_only_executed_ciphersuites() {
+        let alice = Member::new();
+        let group_id = alice.create_group(None);
+        block_on(alice.engine.flexible_commit(
+            group_id.clone(),
+            alice.signer.clone(),
+            FlexibleCommitOptions {
+                add_key_packages: vec![],
+                remove_indices: vec![],
+                force_self_update: true,
+                consume_pending_proposals: false,
+                group_context_extensions: None,
+                aad: None,
+                create_group_info: false,
+                use_ratchet_tree_extension: true,
+            },
+        ))
+        .expect("self update");
+        assert_eq!(
+            alice.advertised_ciphersuites(&group_id),
+            executed_ciphersuites()
+        );
+    }
+
+    #[test]
+    fn an_external_joiner_advertises_only_executed_ciphersuites() {
+        let alice = Member::new();
+        let bob = Member::new();
+        let group_id = alice.create_group(None);
+        let group_info = block_on(
+            alice
+                .engine
+                .export_group_info(group_id, alice.signer.clone()),
+        )
+        .expect("group info");
+        let joined = block_on(bob.engine.join_group_external_commit_v2(
+            MlsGroupConfig::default_config(SUITE),
+            group_info,
+            None,
+            bob.signer.clone(),
+            b"bob".to_vec(),
+            bob.public_key.clone(),
+            None,
+            false,
+            None,
+        ))
+        .expect("bob joins");
+        assert_eq!(
+            bob.advertised_ciphersuites(&joined.group_id),
+            executed_ciphersuites()
+        );
+    }
+
+    #[cfg(feature = "full-api")]
+    #[test]
+    fn a_key_package_advertises_only_executed_ciphersuites() {
+        let bob = Member::new();
+        let with_options = |capabilities| {
+            block_on(bob.engine.create_key_package_with_options(
+                SUITE,
+                bob.signer.clone(),
+                b"bob".to_vec(),
+                bob.public_key.clone(),
+                KeyPackageOptions {
+                    lifetime_seconds: None,
+                    last_resort: false,
+                    capabilities,
+                    leaf_node_extensions: None,
+                    key_package_extensions: None,
+                },
+                None,
+            ))
+        };
+        let key_packages = [
+            block_on(bob.engine.create_key_package(
+                SUITE,
+                bob.signer.clone(),
+                b"bob".to_vec(),
+                bob.public_key.clone(),
+                None,
+            )),
+            with_options(None),
+            with_options(Some(capabilities_without_ciphersuites())),
+        ];
+        for key_package in key_packages {
+            let bytes = key_package.expect("key package").key_package_bytes;
+            let validated = KeyPackageIn::tls_deserialize_exact_bytes(&bytes)
+                .expect("key package deserializes")
+                .validate(&crate::CryptoBackend::new(), ProtocolVersion::Mls10)
+                .expect("key package validates");
+            assert_eq!(
+                serialized_ciphersuites(validated.leaf_node().capabilities()),
+                executed_ciphersuites()
+            );
+        }
+    }
+
+    /// A provider that executes every classical suite, standing in for an
+    /// earlier build that stored a group this one does not execute.
+    struct ClassicalSuitesProvider {
+        crypto: openmls_rust_crypto::RustCrypto,
+        storage: SnapshotStorageProvider,
+    }
+
+    impl OpenMlsProvider for ClassicalSuitesProvider {
+        type CryptoProvider = openmls_rust_crypto::RustCrypto;
+        type RandProvider = openmls_rust_crypto::RustCrypto;
+        type StorageProvider = SnapshotStorageProvider;
+
+        fn storage(&self) -> &Self::StorageProvider {
+            &self.storage
+        }
+
+        fn crypto(&self) -> &Self::CryptoProvider {
+            &self.crypto
+        }
+
+        fn rand(&self) -> &Self::RandProvider {
+            &self.crypto
+        }
+    }
+
+    fn store_group_from_another_build(engine: &MlsEngine, ciphersuite: Ciphersuite) -> Vec<u8> {
+        let provider = ClassicalSuitesProvider {
+            crypto: openmls_rust_crypto::RustCrypto::default(),
+            storage: SnapshotStorageProvider::from_entries(vec![]),
+        };
+        let signer =
+            openmls_basic_credential::SignatureKeyPair::new(ciphersuite.signature_algorithm())
+                .expect("signature key pair");
+        let credential = CredentialWithKey {
+            credential: BasicCredential::new(b"earlier build".to_vec()).into(),
+            signature_key: signer.public().into(),
+        };
+        let group_id = MlsGroup::builder()
+            .ciphersuite(ciphersuite)
+            .build(&provider, &signer, credential)
+            .expect("group on the classical provider")
+            .group_id()
+            .as_slice()
+            .to_vec();
+        let updates = provider.storage.into_updates();
+        block_on(
+            engine
+                .db()
+                .expect("db")
+                .save_updates(updates, Some(&group_id)),
+        )
+        .expect("rows stored");
+        group_id
+    }
+
+    #[cfg(not(feature = "all-ciphersuites"))]
+    #[test]
+    fn a_stored_group_on_an_unexecuted_ciphersuite_is_refused_but_deletable() {
+        let alice = Member::new();
+        let group_id = store_group_from_another_build(
+            &alice.engine,
+            Ciphersuite::MLS_128_DHKEMP256_AES128GCM_SHA256_P256,
+        );
+
+        let refused = block_on(alice.engine.export_secret(
+            group_id.clone(),
+            "label".to_string(),
+            vec![],
+            32,
+        ))
+        .expect_err("a group this build does not execute is refused");
+        assert!(refused.contains("0x0002"), "{refused}");
+
+        block_on(alice.engine.delete_group(group_id.clone())).expect("it can still be deleted");
+        let gone = block_on(alice.engine.group_epoch(group_id)).expect_err("deleted");
+        assert!(gone.contains("No group found"), "{gone}");
     }
 }

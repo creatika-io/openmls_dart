@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:openmls/openmls.dart';
 import 'package:test/test.dart';
 
-import 'test_helpers.dart';
+import '../test/test_helpers.dart';
 
 void main() {
   late MlsEngine alice;
@@ -389,6 +389,7 @@ void main() {
     MlsGroupConfig xwingConfig() => defaultConfig(suite: xwing);
 
     test('full lifecycle: create, add, welcome join, messaging', () async {
+      if (skipUnlessSupported(xwing)) return;
       final aliceXId = TestIdentity.create('alice-pq', ciphersuite: xwing);
       final bobXId = TestIdentity.create('bob-pq', ciphersuite: xwing);
 
@@ -490,6 +491,7 @@ void main() {
     });
 
     test('external commit join on X-Wing', () async {
+      if (skipUnlessSupported(xwing)) return;
       // External commits exercise the hpke_setup_sender_and_export /
       // hpke_setup_receiver_and_export delegation arms (external init via
       // schedule/mod.rs) — the only HPKE paths not covered by the
@@ -544,6 +546,7 @@ void main() {
     });
 
     test('X-Wing group state survives engine close and reopen', () async {
+      if (skipUnlessSupported(xwing)) return;
       // Persistence round-trip: X-Wing key material and group state are
       // serialized to the encrypted DB and restored on reopen.
       final dir = Directory.systemTemp.createTempSync('openmls_xwing_test');
@@ -632,8 +635,33 @@ void main() {
     // serializes enums by index, so a mis-ordered variant would silently create
     // a group on a different ciphersuite than the caller asked for — no error,
     // wrong crypto.
+    test('a suite this build does not execute is refused', () async {
+      final supported = supportedCiphersuites();
+      final unsupported = MlsCiphersuite.values.where(
+        (suite) => !supported.contains(suite),
+      );
+      Future<void> createGroupOn(MlsCiphersuite suite) async {
+        final identity = TestIdentity.create('refused', ciphersuite: suite);
+        await alice.createGroup(
+          config: MlsGroupConfig.defaultConfig(ciphersuite: suite),
+          signerBytes: identity.signerBytes,
+          credentialIdentity: identity.credentialIdentity,
+          signerPublicKey: identity.publicKey,
+        );
+      }
+
+      for (final suite in unsupported) {
+        await expectLater(
+          createGroupOn(suite),
+          throwsA(anything),
+          reason: '$suite is not in supportedCiphersuites()',
+        );
+      }
+    });
+
     for (final suite in MlsCiphersuite.values) {
       test('$suite: create, add, welcome join, messaging', () async {
+        if (skipUnlessSupported(suite)) return;
         final aliceCs = TestIdentity.create('alice-cs', ciphersuite: suite);
         final bobCs = TestIdentity.create('bob-cs', ciphersuite: suite);
         final config = MlsGroupConfig.defaultConfig(ciphersuite: suite);

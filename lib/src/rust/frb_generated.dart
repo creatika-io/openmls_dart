@@ -69,7 +69,7 @@ class RustLib extends BaseEntrypoint<RustLibApi, RustLibApiImpl, RustLibWire> {
   String get codegenVersion => '2.14.0-beta.2';
 
   @override
-  int get rustContentHash => -734665338;
+  int get rustContentHash => -1374080895;
 
   static const kDefaultExternalLibraryLoaderConfig =
       ExternalLibraryLoaderConfig(
@@ -85,14 +85,6 @@ abstract class RustLibApi extends BaseApi {
     required List<int> identity,
   });
 
-  List<Uint8List> crateApiCredentialMlsCredentialCertificates({
-    required MlsCredential that,
-  });
-
-  int crateApiCredentialMlsCredentialCredentialType({
-    required MlsCredential that,
-  });
-
   MlsCredential crateApiCredentialMlsCredentialDeserialize({
     required List<int> bytes,
   });
@@ -105,59 +97,11 @@ abstract class RustLibApi extends BaseApi {
     required MlsCredential that,
   });
 
-  Uint8List crateApiCredentialMlsCredentialSerializedContent({
-    required MlsCredential that,
-  });
-
-  MlsCredential crateApiCredentialMlsCredentialX509({
-    required List<Uint8List> certificateChain,
-  });
-
-  Future<AddMembersResult> crateApiEngineMlsEngineAddMembers({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<Uint8List> keyPackagesBytes,
-  });
-
-  Future<AddMembersResult> crateApiEngineMlsEngineAddMembersWithoutUpdate({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<Uint8List> keyPackagesBytes,
-  });
-
-  Future<void> crateApiEngineMlsEngineClearPendingCommit({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
-  Future<void> crateApiEngineMlsEngineClearPendingProposals({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
   Future<void> crateApiEngineMlsEngineClose({required MlsEngine that});
-
-  Future<CommitResult> crateApiEngineMlsEngineCommitToPendingProposals({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-  });
 
   Future<MlsEngine> crateApiEngineMlsEngineCreate({
     required String dbPath,
     required List<int> encryptionKey,
-  });
-
-  Future<CreateGroupResult> crateApiEngineMlsEngineCreateGroup({
-    required MlsEngine that,
-    required MlsGroupConfig config,
-    required List<int> signerBytes,
-    required List<int> credentialIdentity,
-    required List<int> signerPublicKey,
-    Uint8List? groupId,
-    Uint8List? credentialBytes,
   });
 
   Future<CreateGroupResult> crateApiEngineMlsEngineCreateGroupWithBuilder({
@@ -174,69 +118,7 @@ abstract class RustLibApi extends BaseApi {
     Uint8List? credentialBytes,
   });
 
-  Future<KeyPackageResult> crateApiEngineMlsEngineCreateKeyPackage({
-    required MlsEngine that,
-    required MlsCiphersuite ciphersuite,
-    required List<int> signerBytes,
-    required List<int> credentialIdentity,
-    required List<int> signerPublicKey,
-    Uint8List? credentialBytes,
-  });
-
-  Future<KeyPackageResult> crateApiEngineMlsEngineCreateKeyPackageWithOptions({
-    required MlsEngine that,
-    required MlsCiphersuite ciphersuite,
-    required List<int> signerBytes,
-    required List<int> credentialIdentity,
-    required List<int> signerPublicKey,
-    required KeyPackageOptions options,
-    Uint8List? credentialBytes,
-  });
-
-  Future<CreateMessageResult> crateApiEngineMlsEngineCreateMessage({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> message,
-    Uint8List? aad,
-  });
-
-  Future<void> crateApiEngineMlsEngineDeleteAllPastEpochSecrets({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
   Future<void> crateApiEngineMlsEngineDeleteGroup({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
-  Future<void> crateApiEngineMlsEngineDeleteKeyPackage({
-    required MlsEngine that,
-    required List<int> keyPackageRefBytes,
-  });
-
-  Future<void> crateApiEngineMlsEngineDeletePastEpochSecretsBefore({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required BigInt unixSeconds,
-    int? maxPastEpochs,
-  });
-
-  Future<void> crateApiEngineMlsEngineDeletePastEpochSecretsOlderThan({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required BigInt seconds,
-    int? maxPastEpochs,
-  });
-
-  Future<void> crateApiEngineMlsEngineDeletePastEpochSecretsWithoutTimestamps({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    int? maxPastEpochs,
-  });
-
-  Future<MlsGroupContextInfo> crateApiEngineMlsEngineExportGroupContext({
     required MlsEngine that,
     required List<int> groupIdBytes,
   });
@@ -247,23 +129,9 @@ abstract class RustLibApi extends BaseApi {
     required List<int> signerBytes,
   });
 
-  Future<Uint8List> crateApiEngineMlsEngineExportRatchetTree({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
   Future<Uint8List> crateApiEngineMlsEngineExportSecret({
     required MlsEngine that,
     required List<int> groupIdBytes,
-    required String label,
-    required List<int> context,
-    required int keyLength,
-  });
-
-  Future<Uint8List> crateApiEngineMlsEngineExportWelcomeSecret({
-    required MlsEngine that,
-    required MlsGroupConfig config,
-    required List<int> welcomeBytes,
     required String label,
     required List<int> context,
     required int keyLength,
@@ -276,53 +144,7 @@ abstract class RustLibApi extends BaseApi {
     required FlexibleCommitOptions options,
   });
 
-  Future<Uint8List?> crateApiEngineMlsEngineGetPastResumptionPsk({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required BigInt epoch,
-  });
-
-  Future<MlsCiphersuite> crateApiEngineMlsEngineGroupCiphersuite({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
-  Future<GroupConfigurationResult> crateApiEngineMlsEngineGroupConfiguration({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
-  Future<Uint8List> crateApiEngineMlsEngineGroupConfirmationTag({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
-  Future<Uint8List> crateApiEngineMlsEngineGroupCredential({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
   Future<BigInt> crateApiEngineMlsEngineGroupEpoch({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
-  Future<Uint8List> crateApiEngineMlsEngineGroupEpochAuthenticator({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
-  Future<Uint8List> crateApiEngineMlsEngineGroupExtensions({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
-  Future<bool> crateApiEngineMlsEngineGroupHasPendingProposals({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
-  Future<Uint8List> crateApiEngineMlsEngineGroupId({
     required MlsEngine that,
     required List<int> groupIdBytes,
   });
@@ -332,56 +154,9 @@ abstract class RustLibApi extends BaseApi {
     required List<int> groupIdBytes,
   });
 
-  Future<MlsMemberInfo?> crateApiEngineMlsEngineGroupMemberAt({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required int leafIndex,
-  });
-
-  Future<int?> crateApiEngineMlsEngineGroupMemberLeafIndex({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> credentialBytes,
-  });
-
   Future<List<MlsMemberInfo>> crateApiEngineMlsEngineGroupMembers({
     required MlsEngine that,
     required List<int> groupIdBytes,
-  });
-
-  Future<int> crateApiEngineMlsEngineGroupOwnIndex({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
-  Future<MlsLeafNodeInfo> crateApiEngineMlsEngineGroupOwnLeafNode({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
-  Future<List<MlsPendingProposalInfo>>
-  crateApiEngineMlsEngineGroupPendingProposals({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
-  Future<WelcomeInspectResult> crateApiEngineMlsEngineInspectWelcome({
-    required MlsEngine that,
-    required MlsGroupConfig config,
-    required List<int> welcomeBytes,
-  });
-
-  bool crateApiEngineMlsEngineIsClosed({required MlsEngine that});
-
-  Future<ExternalJoinResult> crateApiEngineMlsEngineJoinGroupExternalCommit({
-    required MlsEngine that,
-    required MlsGroupConfig config,
-    required List<int> groupInfoBytes,
-    Uint8List? ratchetTreeBytes,
-    required List<int> signerBytes,
-    required List<int> credentialIdentity,
-    required List<int> signerPublicKey,
-    Uint8List? credentialBytes,
   });
 
   Future<ExternalJoinResult> crateApiEngineMlsEngineJoinGroupExternalCommitV2({
@@ -397,43 +172,7 @@ abstract class RustLibApi extends BaseApi {
     Uint8List? credentialBytes,
   });
 
-  Future<JoinGroupResult> crateApiEngineMlsEngineJoinGroupFromWelcome({
-    required MlsEngine that,
-    required MlsGroupConfig config,
-    required List<int> welcomeBytes,
-    Uint8List? ratchetTreeBytes,
-    required List<int> signerBytes,
-  });
-
-  Future<JoinGroupResult>
-  crateApiEngineMlsEngineJoinGroupFromWelcomeWithOptions({
-    required MlsEngine that,
-    required MlsGroupConfig config,
-    required List<int> welcomeBytes,
-    Uint8List? ratchetTreeBytes,
-    required List<int> signerBytes,
-    required bool skipLifetimeValidation,
-  });
-
-  Future<LeaveGroupResult> crateApiEngineMlsEngineLeaveGroup({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-  });
-
-  Future<LeaveGroupResult> crateApiEngineMlsEngineLeaveGroupViaSelfRemove({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-  });
-
   Future<void> crateApiEngineMlsEngineMergePendingCommit({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
-  Future<PastEpochDeletionPolicyResult>
-  crateApiEngineMlsEnginePastEpochDeletionPolicy({
     required MlsEngine that,
     required List<int> groupIdBytes,
   });
@@ -442,151 +181,6 @@ abstract class RustLibApi extends BaseApi {
     required MlsEngine that,
     required List<int> groupIdBytes,
     required List<int> messageBytes,
-  });
-
-  Future<ProcessedMessageInspectResult>
-  crateApiEngineMlsEngineProcessMessageWithInspect({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> messageBytes,
-  });
-
-  Future<ProposalResult> crateApiEngineMlsEngineProposeAdd({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> keyPackageBytes,
-  });
-
-  Future<ProposalResult> crateApiEngineMlsEngineProposeCustomProposal({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required int proposalType,
-    required List<int> payload,
-  });
-
-  Future<ProposalResult> crateApiEngineMlsEngineProposeExternalPsk({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> pskId,
-    required List<int> pskNonce,
-  });
-
-  Future<ProposalResult> crateApiEngineMlsEngineProposeGroupContextExtensions({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<MlsExtension> extensions,
-  });
-
-  Future<ProposalResult> crateApiEngineMlsEngineProposeRemove({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required int memberIndex,
-  });
-
-  Future<ProposalResult>
-  crateApiEngineMlsEngineProposeRemoveMemberByCredential({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> credentialBytes,
-  });
-
-  Future<ProposalResult> crateApiEngineMlsEngineProposeSelfUpdate({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    MlsCapabilities? leafNodeCapabilities,
-    List<MlsExtension>? leafNodeExtensions,
-  });
-
-  Future<ProposalResult> crateApiEngineMlsEngineProposeSelfUpdateWithNewSigner({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> oldSignerBytes,
-    required List<int> newSignerBytes,
-    required List<int> newCredentialIdentity,
-    required List<int> newSignerPublicKey,
-    Uint8List? newCredentialBytes,
-    MlsCapabilities? leafNodeCapabilities,
-    List<MlsExtension>? leafNodeExtensions,
-  });
-
-  Future<CommitResult> crateApiEngineMlsEngineRemoveMembers({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> memberIndices,
-  });
-
-  Future<void> crateApiEngineMlsEngineRemovePendingProposal({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> proposalRefBytes,
-  });
-
-  int crateApiEngineMlsEngineSchemaVersion({required MlsEngine that});
-
-  Future<CommitResult> crateApiEngineMlsEngineSelfUpdate({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-  });
-
-  Future<CommitResult> crateApiEngineMlsEngineSelfUpdateWithNewSigner({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> oldSignerBytes,
-    required List<int> newSignerBytes,
-    required List<int> newCredentialIdentity,
-    required List<int> newSignerPublicKey,
-    Uint8List? newCredentialBytes,
-  });
-
-  Future<void> crateApiEngineMlsEngineSetConfiguration({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required MlsGroupConfig config,
-  });
-
-  Future<void> crateApiEngineMlsEngineSetPastEpochDeletionPolicyKeepAll({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  });
-
-  Future<void> crateApiEngineMlsEngineSetPastEpochDeletionPolicyMaxEpochs({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required int maxEpochs,
-  });
-
-  Future<AddMembersResult> crateApiEngineMlsEngineSwapMembers({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> removeIndices,
-    required List<Uint8List> addKeyPackagesBytes,
-  });
-
-  Future<CommitResult> crateApiEngineMlsEngineUpdateGroupContextExtensions({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<MlsExtension> extensions,
-  });
-
-  MlsSignatureKeyPair crateApiKeysMlsSignatureKeyPairDeserializePublic({
-    required List<int> bytes,
-  });
-
-  MlsSignatureKeyPair crateApiKeysMlsSignatureKeyPairFromRaw({
-    required MlsCiphersuite ciphersuite,
-    required List<int> privateKey,
-    required List<int> publicKey,
   });
 
   MlsSignatureKeyPair crateApiKeysMlsSignatureKeyPairGenerate({
@@ -601,27 +195,9 @@ abstract class RustLibApi extends BaseApi {
     required MlsSignatureKeyPair that,
   });
 
-  Uint8List crateApiKeysMlsSignatureKeyPairSerialize({
-    required MlsSignatureKeyPair that,
-  });
-
-  int crateApiKeysMlsSignatureKeyPairSignatureScheme({
-    required MlsSignatureKeyPair that,
-  });
-
-  LifetimeVerdict crateApiEngineCheckLifetimeAt({
-    required BigInt notBefore,
-    required BigInt notAfter,
-    required BigInt nowUnixSeconds,
-  });
-
   void crateApiInitInitOpenmls({required String libraryPath});
 
   bool crateApiInitIsOpenmlsInitialized();
-
-  KeyPackageLifetime crateApiEngineKeyPackageLifetime({
-    required List<int> keyPackageBytes,
-  });
 
   MlsGroupConfig crateApiConfigMlsGroupConfigDefaultConfig({
     required MlsCiphersuite ciphersuite,
@@ -630,10 +206,6 @@ abstract class RustLibApi extends BaseApi {
   String crateApiEngineMlsMessageContentType({required List<int> messageBytes});
 
   BigInt crateApiEngineMlsMessageExtractEpoch({
-    required List<int> messageBytes,
-  });
-
-  Uint8List crateApiEngineMlsMessageExtractGroupId({
     required List<int> messageBytes,
   });
 
@@ -706,71 +278,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(
         debugName: "MlsCredential_basic",
         argNames: ["identity"],
-      );
-
-  @override
-  List<Uint8List> crateApiCredentialMlsCredentialCertificates({
-    required MlsCredential that,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
-                that,
-              );
-          return wire.wire__crate__api__credential__MlsCredential_certificates(
-            arg0,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_list_list_prim_u_8_strict,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiCredentialMlsCredentialCertificatesConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiCredentialMlsCredentialCertificatesConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsCredential_certificates",
-        argNames: ["that"],
-      );
-
-  @override
-  int crateApiCredentialMlsCredentialCredentialType({
-    required MlsCredential that,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
-                that,
-              );
-          return wire
-              .wire__crate__api__credential__MlsCredential_credential_type(
-                arg0,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_u_16,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiCredentialMlsCredentialCredentialTypeConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiCredentialMlsCredentialCredentialTypeConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsCredential_credential_type",
-        argNames: ["that"],
       );
 
   @override
@@ -868,226 +375,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Uint8List crateApiCredentialMlsCredentialSerializedContent({
-    required MlsCredential that,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential(
-                that,
-              );
-          return wire
-              .wire__crate__api__credential__MlsCredential_serialized_content(
-                arg0,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_list_prim_u_8_strict,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiCredentialMlsCredentialSerializedContentConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta
-  get kCrateApiCredentialMlsCredentialSerializedContentConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsCredential_serialized_content",
-        argNames: ["that"],
-      );
-
-  @override
-  MlsCredential crateApiCredentialMlsCredentialX509({
-    required List<Uint8List> certificateChain,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          var arg0 = cst_encode_list_list_prim_u_8_strict(certificateChain);
-          return wire.wire__crate__api__credential__MlsCredential_x509(arg0);
-        },
-        codec: DcoCodec(
-          decodeSuccessData:
-              dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsCredential,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiCredentialMlsCredentialX509ConstMeta,
-        argValues: [certificateChain],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiCredentialMlsCredentialX509ConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsCredential_x509",
-        argNames: ["certificateChain"],
-      );
-
-  @override
-  Future<AddMembersResult> crateApiEngineMlsEngineAddMembers({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<Uint8List> keyPackagesBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg3 = cst_encode_list_list_prim_u_8_strict(keyPackagesBytes);
-          return wire.wire__crate__api__engine__MlsEngine_add_members(
-            port_,
-            arg0,
-            arg1,
-            arg2,
-            arg3,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_add_members_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineAddMembersConstMeta,
-        argValues: [that, groupIdBytes, signerBytes, keyPackagesBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineAddMembersConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_add_members",
-        argNames: ["that", "groupIdBytes", "signerBytes", "keyPackagesBytes"],
-      );
-
-  @override
-  Future<AddMembersResult> crateApiEngineMlsEngineAddMembersWithoutUpdate({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<Uint8List> keyPackagesBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg3 = cst_encode_list_list_prim_u_8_strict(keyPackagesBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_add_members_without_update(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-                arg3,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_add_members_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineAddMembersWithoutUpdateConstMeta,
-        argValues: [that, groupIdBytes, signerBytes, keyPackagesBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineAddMembersWithoutUpdateConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_add_members_without_update",
-        argNames: ["that", "groupIdBytes", "signerBytes", "keyPackagesBytes"],
-      );
-
-  @override
-  Future<void> crateApiEngineMlsEngineClearPendingCommit({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire.wire__crate__api__engine__MlsEngine_clear_pending_commit(
-            port_,
-            arg0,
-            arg1,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_unit,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineClearPendingCommitConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineClearPendingCommitConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_clear_pending_commit",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
-  Future<void> crateApiEngineMlsEngineClearPendingProposals({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_clear_pending_proposals(
-                port_,
-                arg0,
-                arg1,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_unit,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineClearPendingProposalsConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineClearPendingProposalsConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_clear_pending_proposals",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
   Future<void> crateApiEngineMlsEngineClose({required MlsEngine that}) {
     return handler.executeNormal(
       NormalTask(
@@ -1111,46 +398,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiEngineMlsEngineCloseConstMeta =>
       const TaskConstMeta(debugName: "MlsEngine_close", argNames: ["that"]);
-
-  @override
-  Future<CommitResult> crateApiEngineMlsEngineCommitToPendingProposals({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_commit_to_pending_proposals(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_commit_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineCommitToPendingProposalsConstMeta,
-        argValues: [that, groupIdBytes, signerBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineCommitToPendingProposalsConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_commit_to_pending_proposals",
-        argNames: ["that", "groupIdBytes", "signerBytes"],
-      );
 
   @override
   Future<MlsEngine> crateApiEngineMlsEngineCreate({
@@ -1184,73 +431,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(
         debugName: "MlsEngine_create",
         argNames: ["dbPath", "encryptionKey"],
-      );
-
-  @override
-  Future<CreateGroupResult> crateApiEngineMlsEngineCreateGroup({
-    required MlsEngine that,
-    required MlsGroupConfig config,
-    required List<int> signerBytes,
-    required List<int> credentialIdentity,
-    required List<int> signerPublicKey,
-    Uint8List? groupId,
-    Uint8List? credentialBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_box_autoadd_mls_group_config(config);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg3 = cst_encode_list_prim_u_8_loose(credentialIdentity);
-          var arg4 = cst_encode_list_prim_u_8_loose(signerPublicKey);
-          var arg5 = cst_encode_opt_list_prim_u_8_strict(groupId);
-          var arg6 = cst_encode_opt_list_prim_u_8_strict(credentialBytes);
-          return wire.wire__crate__api__engine__MlsEngine_create_group(
-            port_,
-            arg0,
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-            arg6,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_create_group_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineCreateGroupConstMeta,
-        argValues: [
-          that,
-          config,
-          signerBytes,
-          credentialIdentity,
-          signerPublicKey,
-          groupId,
-          credentialBytes,
-        ],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineCreateGroupConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_create_group",
-        argNames: [
-          "that",
-          "config",
-          "signerBytes",
-          "credentialIdentity",
-          "signerPublicKey",
-          "groupId",
-          "credentialBytes",
-        ],
       );
 
   @override
@@ -1342,220 +522,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<KeyPackageResult> crateApiEngineMlsEngineCreateKeyPackage({
-    required MlsEngine that,
-    required MlsCiphersuite ciphersuite,
-    required List<int> signerBytes,
-    required List<int> credentialIdentity,
-    required List<int> signerPublicKey,
-    Uint8List? credentialBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_mls_ciphersuite(ciphersuite);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg3 = cst_encode_list_prim_u_8_loose(credentialIdentity);
-          var arg4 = cst_encode_list_prim_u_8_loose(signerPublicKey);
-          var arg5 = cst_encode_opt_list_prim_u_8_strict(credentialBytes);
-          return wire.wire__crate__api__engine__MlsEngine_create_key_package(
-            port_,
-            arg0,
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_key_package_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineCreateKeyPackageConstMeta,
-        argValues: [
-          that,
-          ciphersuite,
-          signerBytes,
-          credentialIdentity,
-          signerPublicKey,
-          credentialBytes,
-        ],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineCreateKeyPackageConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_create_key_package",
-        argNames: [
-          "that",
-          "ciphersuite",
-          "signerBytes",
-          "credentialIdentity",
-          "signerPublicKey",
-          "credentialBytes",
-        ],
-      );
-
-  @override
-  Future<KeyPackageResult> crateApiEngineMlsEngineCreateKeyPackageWithOptions({
-    required MlsEngine that,
-    required MlsCiphersuite ciphersuite,
-    required List<int> signerBytes,
-    required List<int> credentialIdentity,
-    required List<int> signerPublicKey,
-    required KeyPackageOptions options,
-    Uint8List? credentialBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_mls_ciphersuite(ciphersuite);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg3 = cst_encode_list_prim_u_8_loose(credentialIdentity);
-          var arg4 = cst_encode_list_prim_u_8_loose(signerPublicKey);
-          var arg5 = cst_encode_box_autoadd_key_package_options(options);
-          var arg6 = cst_encode_opt_list_prim_u_8_strict(credentialBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_create_key_package_with_options(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-                arg3,
-                arg4,
-                arg5,
-                arg6,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_key_package_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineCreateKeyPackageWithOptionsConstMeta,
-        argValues: [
-          that,
-          ciphersuite,
-          signerBytes,
-          credentialIdentity,
-          signerPublicKey,
-          options,
-          credentialBytes,
-        ],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta
-  get kCrateApiEngineMlsEngineCreateKeyPackageWithOptionsConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_create_key_package_with_options",
-        argNames: [
-          "that",
-          "ciphersuite",
-          "signerBytes",
-          "credentialIdentity",
-          "signerPublicKey",
-          "options",
-          "credentialBytes",
-        ],
-      );
-
-  @override
-  Future<CreateMessageResult> crateApiEngineMlsEngineCreateMessage({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> message,
-    Uint8List? aad,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg3 = cst_encode_list_prim_u_8_loose(message);
-          var arg4 = cst_encode_opt_list_prim_u_8_strict(aad);
-          return wire.wire__crate__api__engine__MlsEngine_create_message(
-            port_,
-            arg0,
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_create_message_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineCreateMessageConstMeta,
-        argValues: [that, groupIdBytes, signerBytes, message, aad],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineCreateMessageConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_create_message",
-        argNames: ["that", "groupIdBytes", "signerBytes", "message", "aad"],
-      );
-
-  @override
-  Future<void> crateApiEngineMlsEngineDeleteAllPastEpochSecrets({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_delete_all_past_epoch_secrets(
-                port_,
-                arg0,
-                arg1,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_unit,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineDeleteAllPastEpochSecretsConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta
-  get kCrateApiEngineMlsEngineDeleteAllPastEpochSecretsConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_delete_all_past_epoch_secrets",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
   Future<void> crateApiEngineMlsEngineDeleteGroup({
     required MlsEngine that,
     required List<int> groupIdBytes,
@@ -1588,210 +554,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiEngineMlsEngineDeleteGroupConstMeta =>
       const TaskConstMeta(
         debugName: "MlsEngine_delete_group",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
-  Future<void> crateApiEngineMlsEngineDeleteKeyPackage({
-    required MlsEngine that,
-    required List<int> keyPackageRefBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(keyPackageRefBytes);
-          return wire.wire__crate__api__engine__MlsEngine_delete_key_package(
-            port_,
-            arg0,
-            arg1,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_unit,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineDeleteKeyPackageConstMeta,
-        argValues: [that, keyPackageRefBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineDeleteKeyPackageConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_delete_key_package",
-        argNames: ["that", "keyPackageRefBytes"],
-      );
-
-  @override
-  Future<void> crateApiEngineMlsEngineDeletePastEpochSecretsBefore({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required BigInt unixSeconds,
-    int? maxPastEpochs,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_u_64(unixSeconds);
-          var arg3 = cst_encode_opt_box_autoadd_u_32(maxPastEpochs);
-          return wire
-              .wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_before(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-                arg3,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_unit,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta:
-            kCrateApiEngineMlsEngineDeletePastEpochSecretsBeforeConstMeta,
-        argValues: [that, groupIdBytes, unixSeconds, maxPastEpochs],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta
-  get kCrateApiEngineMlsEngineDeletePastEpochSecretsBeforeConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_delete_past_epoch_secrets_before",
-        argNames: ["that", "groupIdBytes", "unixSeconds", "maxPastEpochs"],
-      );
-
-  @override
-  Future<void> crateApiEngineMlsEngineDeletePastEpochSecretsOlderThan({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required BigInt seconds,
-    int? maxPastEpochs,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_u_64(seconds);
-          var arg3 = cst_encode_opt_box_autoadd_u_32(maxPastEpochs);
-          return wire
-              .wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_older_than(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-                arg3,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_unit,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta:
-            kCrateApiEngineMlsEngineDeletePastEpochSecretsOlderThanConstMeta,
-        argValues: [that, groupIdBytes, seconds, maxPastEpochs],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta
-  get kCrateApiEngineMlsEngineDeletePastEpochSecretsOlderThanConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_delete_past_epoch_secrets_older_than",
-        argNames: ["that", "groupIdBytes", "seconds", "maxPastEpochs"],
-      );
-
-  @override
-  Future<void> crateApiEngineMlsEngineDeletePastEpochSecretsWithoutTimestamps({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    int? maxPastEpochs,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_opt_box_autoadd_u_32(maxPastEpochs);
-          return wire
-              .wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_without_timestamps(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_unit,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta:
-            kCrateApiEngineMlsEngineDeletePastEpochSecretsWithoutTimestampsConstMeta,
-        argValues: [that, groupIdBytes, maxPastEpochs],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta
-  get kCrateApiEngineMlsEngineDeletePastEpochSecretsWithoutTimestampsConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_delete_past_epoch_secrets_without_timestamps",
-        argNames: ["that", "groupIdBytes", "maxPastEpochs"],
-      );
-
-  @override
-  Future<MlsGroupContextInfo> crateApiEngineMlsEngineExportGroupContext({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire.wire__crate__api__engine__MlsEngine_export_group_context(
-            port_,
-            arg0,
-            arg1,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_mls_group_context_info,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineExportGroupContextConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineExportGroupContextConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_export_group_context",
         argNames: ["that", "groupIdBytes"],
       );
 
@@ -1832,42 +594,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(
         debugName: "MlsEngine_export_group_info",
         argNames: ["that", "groupIdBytes", "signerBytes"],
-      );
-
-  @override
-  Future<Uint8List> crateApiEngineMlsEngineExportRatchetTree({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire.wire__crate__api__engine__MlsEngine_export_ratchet_tree(
-            port_,
-            arg0,
-            arg1,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_list_prim_u_8_strict,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineExportRatchetTreeConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineExportRatchetTreeConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_export_ratchet_tree",
-        argNames: ["that", "groupIdBytes"],
       );
 
   @override
@@ -1916,61 +642,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<Uint8List> crateApiEngineMlsEngineExportWelcomeSecret({
-    required MlsEngine that,
-    required MlsGroupConfig config,
-    required List<int> welcomeBytes,
-    required String label,
-    required List<int> context,
-    required int keyLength,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_box_autoadd_mls_group_config(config);
-          var arg2 = cst_encode_list_prim_u_8_loose(welcomeBytes);
-          var arg3 = cst_encode_String(label);
-          var arg4 = cst_encode_list_prim_u_8_loose(context);
-          var arg5 = cst_encode_u_32(keyLength);
-          return wire.wire__crate__api__engine__MlsEngine_export_welcome_secret(
-            port_,
-            arg0,
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-            arg5,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_list_prim_u_8_strict,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineExportWelcomeSecretConstMeta,
-        argValues: [that, config, welcomeBytes, label, context, keyLength],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineExportWelcomeSecretConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_export_welcome_secret",
-        argNames: [
-          "that",
-          "config",
-          "welcomeBytes",
-          "label",
-          "context",
-          "keyLength",
-        ],
-      );
-
-  @override
   Future<CommitResult> crateApiEngineMlsEngineFlexibleCommit({
     required MlsEngine that,
     required List<int> groupIdBytes,
@@ -2013,191 +684,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<Uint8List?> crateApiEngineMlsEngineGetPastResumptionPsk({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required BigInt epoch,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_u_64(epoch);
-          return wire
-              .wire__crate__api__engine__MlsEngine_get_past_resumption_psk(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_opt_list_prim_u_8_strict,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineGetPastResumptionPskConstMeta,
-        argValues: [that, groupIdBytes, epoch],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineGetPastResumptionPskConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_get_past_resumption_psk",
-        argNames: ["that", "groupIdBytes", "epoch"],
-      );
-
-  @override
-  Future<MlsCiphersuite> crateApiEngineMlsEngineGroupCiphersuite({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire.wire__crate__api__engine__MlsEngine_group_ciphersuite(
-            port_,
-            arg0,
-            arg1,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_mls_ciphersuite,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineGroupCiphersuiteConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineGroupCiphersuiteConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_group_ciphersuite",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
-  Future<GroupConfigurationResult> crateApiEngineMlsEngineGroupConfiguration({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire.wire__crate__api__engine__MlsEngine_group_configuration(
-            port_,
-            arg0,
-            arg1,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_group_configuration_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineGroupConfigurationConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineGroupConfigurationConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_group_configuration",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
-  Future<Uint8List> crateApiEngineMlsEngineGroupConfirmationTag({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_group_confirmation_tag(
-                port_,
-                arg0,
-                arg1,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_list_prim_u_8_strict,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineGroupConfirmationTagConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineGroupConfirmationTagConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_group_confirmation_tag",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
-  Future<Uint8List> crateApiEngineMlsEngineGroupCredential({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire.wire__crate__api__engine__MlsEngine_group_credential(
-            port_,
-            arg0,
-            arg1,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_list_prim_u_8_strict,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineGroupCredentialConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineGroupCredentialConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_group_credential",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
   Future<BigInt> crateApiEngineMlsEngineGroupEpoch({
     required MlsEngine that,
     required List<int> groupIdBytes,
@@ -2230,152 +716,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiEngineMlsEngineGroupEpochConstMeta =>
       const TaskConstMeta(
         debugName: "MlsEngine_group_epoch",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
-  Future<Uint8List> crateApiEngineMlsEngineGroupEpochAuthenticator({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_group_epoch_authenticator(
-                port_,
-                arg0,
-                arg1,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_list_prim_u_8_strict,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineGroupEpochAuthenticatorConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineGroupEpochAuthenticatorConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_group_epoch_authenticator",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
-  Future<Uint8List> crateApiEngineMlsEngineGroupExtensions({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire.wire__crate__api__engine__MlsEngine_group_extensions(
-            port_,
-            arg0,
-            arg1,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_list_prim_u_8_strict,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineGroupExtensionsConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineGroupExtensionsConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_group_extensions",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
-  Future<bool> crateApiEngineMlsEngineGroupHasPendingProposals({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_group_has_pending_proposals(
-                port_,
-                arg0,
-                arg1,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_bool,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineGroupHasPendingProposalsConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineGroupHasPendingProposalsConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_group_has_pending_proposals",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
-  Future<Uint8List> crateApiEngineMlsEngineGroupId({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire.wire__crate__api__engine__MlsEngine_group_id(
-            port_,
-            arg0,
-            arg1,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_list_prim_u_8_strict,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineGroupIdConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineGroupIdConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_group_id",
         argNames: ["that", "groupIdBytes"],
       );
 
@@ -2416,85 +756,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<MlsMemberInfo?> crateApiEngineMlsEngineGroupMemberAt({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required int leafIndex,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_u_32(leafIndex);
-          return wire.wire__crate__api__engine__MlsEngine_group_member_at(
-            port_,
-            arg0,
-            arg1,
-            arg2,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_opt_box_autoadd_mls_member_info,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineGroupMemberAtConstMeta,
-        argValues: [that, groupIdBytes, leafIndex],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineGroupMemberAtConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_group_member_at",
-        argNames: ["that", "groupIdBytes", "leafIndex"],
-      );
-
-  @override
-  Future<int?> crateApiEngineMlsEngineGroupMemberLeafIndex({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> credentialBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(credentialBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_group_member_leaf_index(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_opt_box_autoadd_u_32,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineGroupMemberLeafIndexConstMeta,
-        argValues: [that, groupIdBytes, credentialBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineGroupMemberLeafIndexConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_group_member_leaf_index",
-        argNames: ["that", "groupIdBytes", "credentialBytes"],
-      );
-
-  @override
   Future<List<MlsMemberInfo>> crateApiEngineMlsEngineGroupMembers({
     required MlsEngine that,
     required List<int> groupIdBytes,
@@ -2528,253 +789,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(
         debugName: "MlsEngine_group_members",
         argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
-  Future<int> crateApiEngineMlsEngineGroupOwnIndex({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire.wire__crate__api__engine__MlsEngine_group_own_index(
-            port_,
-            arg0,
-            arg1,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_u_32,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineGroupOwnIndexConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineGroupOwnIndexConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_group_own_index",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
-  Future<MlsLeafNodeInfo> crateApiEngineMlsEngineGroupOwnLeafNode({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire.wire__crate__api__engine__MlsEngine_group_own_leaf_node(
-            port_,
-            arg0,
-            arg1,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_mls_leaf_node_info,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineGroupOwnLeafNodeConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineGroupOwnLeafNodeConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_group_own_leaf_node",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
-  Future<List<MlsPendingProposalInfo>>
-  crateApiEngineMlsEngineGroupPendingProposals({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_group_pending_proposals(
-                port_,
-                arg0,
-                arg1,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_list_mls_pending_proposal_info,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineGroupPendingProposalsConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineGroupPendingProposalsConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_group_pending_proposals",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
-  Future<WelcomeInspectResult> crateApiEngineMlsEngineInspectWelcome({
-    required MlsEngine that,
-    required MlsGroupConfig config,
-    required List<int> welcomeBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_box_autoadd_mls_group_config(config);
-          var arg2 = cst_encode_list_prim_u_8_loose(welcomeBytes);
-          return wire.wire__crate__api__engine__MlsEngine_inspect_welcome(
-            port_,
-            arg0,
-            arg1,
-            arg2,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_welcome_inspect_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineInspectWelcomeConstMeta,
-        argValues: [that, config, welcomeBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineInspectWelcomeConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_inspect_welcome",
-        argNames: ["that", "config", "welcomeBytes"],
-      );
-
-  @override
-  bool crateApiEngineMlsEngineIsClosed({required MlsEngine that}) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          return wire.wire__crate__api__engine__MlsEngine_is_closed(arg0);
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_bool,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiEngineMlsEngineIsClosedConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineIsClosedConstMeta =>
-      const TaskConstMeta(debugName: "MlsEngine_is_closed", argNames: ["that"]);
-
-  @override
-  Future<ExternalJoinResult> crateApiEngineMlsEngineJoinGroupExternalCommit({
-    required MlsEngine that,
-    required MlsGroupConfig config,
-    required List<int> groupInfoBytes,
-    Uint8List? ratchetTreeBytes,
-    required List<int> signerBytes,
-    required List<int> credentialIdentity,
-    required List<int> signerPublicKey,
-    Uint8List? credentialBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_box_autoadd_mls_group_config(config);
-          var arg2 = cst_encode_list_prim_u_8_loose(groupInfoBytes);
-          var arg3 = cst_encode_opt_list_prim_u_8_strict(ratchetTreeBytes);
-          var arg4 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg5 = cst_encode_list_prim_u_8_loose(credentialIdentity);
-          var arg6 = cst_encode_list_prim_u_8_loose(signerPublicKey);
-          var arg7 = cst_encode_opt_list_prim_u_8_strict(credentialBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_join_group_external_commit(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-                arg3,
-                arg4,
-                arg5,
-                arg6,
-                arg7,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_external_join_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineJoinGroupExternalCommitConstMeta,
-        argValues: [
-          that,
-          config,
-          groupInfoBytes,
-          ratchetTreeBytes,
-          signerBytes,
-          credentialIdentity,
-          signerPublicKey,
-          credentialBytes,
-        ],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineJoinGroupExternalCommitConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_join_group_external_commit",
-        argNames: [
-          "that",
-          "config",
-          "groupInfoBytes",
-          "ratchetTreeBytes",
-          "signerBytes",
-          "credentialIdentity",
-          "signerPublicKey",
-          "credentialBytes",
-        ],
       );
 
   @override
@@ -2862,203 +876,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Future<JoinGroupResult> crateApiEngineMlsEngineJoinGroupFromWelcome({
-    required MlsEngine that,
-    required MlsGroupConfig config,
-    required List<int> welcomeBytes,
-    Uint8List? ratchetTreeBytes,
-    required List<int> signerBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_box_autoadd_mls_group_config(config);
-          var arg2 = cst_encode_list_prim_u_8_loose(welcomeBytes);
-          var arg3 = cst_encode_opt_list_prim_u_8_strict(ratchetTreeBytes);
-          var arg4 = cst_encode_list_prim_u_8_loose(signerBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_join_group_from_welcome(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-                arg3,
-                arg4,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_join_group_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineJoinGroupFromWelcomeConstMeta,
-        argValues: [that, config, welcomeBytes, ratchetTreeBytes, signerBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineJoinGroupFromWelcomeConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_join_group_from_welcome",
-        argNames: [
-          "that",
-          "config",
-          "welcomeBytes",
-          "ratchetTreeBytes",
-          "signerBytes",
-        ],
-      );
-
-  @override
-  Future<JoinGroupResult>
-  crateApiEngineMlsEngineJoinGroupFromWelcomeWithOptions({
-    required MlsEngine that,
-    required MlsGroupConfig config,
-    required List<int> welcomeBytes,
-    Uint8List? ratchetTreeBytes,
-    required List<int> signerBytes,
-    required bool skipLifetimeValidation,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_box_autoadd_mls_group_config(config);
-          var arg2 = cst_encode_list_prim_u_8_loose(welcomeBytes);
-          var arg3 = cst_encode_opt_list_prim_u_8_strict(ratchetTreeBytes);
-          var arg4 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg5 = cst_encode_bool(skipLifetimeValidation);
-          return wire
-              .wire__crate__api__engine__MlsEngine_join_group_from_welcome_with_options(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-                arg3,
-                arg4,
-                arg5,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_join_group_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta:
-            kCrateApiEngineMlsEngineJoinGroupFromWelcomeWithOptionsConstMeta,
-        argValues: [
-          that,
-          config,
-          welcomeBytes,
-          ratchetTreeBytes,
-          signerBytes,
-          skipLifetimeValidation,
-        ],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta
-  get kCrateApiEngineMlsEngineJoinGroupFromWelcomeWithOptionsConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_join_group_from_welcome_with_options",
-        argNames: [
-          "that",
-          "config",
-          "welcomeBytes",
-          "ratchetTreeBytes",
-          "signerBytes",
-          "skipLifetimeValidation",
-        ],
-      );
-
-  @override
-  Future<LeaveGroupResult> crateApiEngineMlsEngineLeaveGroup({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          return wire.wire__crate__api__engine__MlsEngine_leave_group(
-            port_,
-            arg0,
-            arg1,
-            arg2,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_leave_group_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineLeaveGroupConstMeta,
-        argValues: [that, groupIdBytes, signerBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineLeaveGroupConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_leave_group",
-        argNames: ["that", "groupIdBytes", "signerBytes"],
-      );
-
-  @override
-  Future<LeaveGroupResult> crateApiEngineMlsEngineLeaveGroupViaSelfRemove({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_leave_group_via_self_remove(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_leave_group_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineLeaveGroupViaSelfRemoveConstMeta,
-        argValues: [that, groupIdBytes, signerBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineLeaveGroupViaSelfRemoveConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_leave_group_via_self_remove",
-        argNames: ["that", "groupIdBytes", "signerBytes"],
-      );
-
-  @override
   Future<void> crateApiEngineMlsEngineMergePendingCommit({
     required MlsEngine that,
     required List<int> groupIdBytes,
@@ -3091,44 +908,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiEngineMlsEngineMergePendingCommitConstMeta =>
       const TaskConstMeta(
         debugName: "MlsEngine_merge_pending_commit",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
-  Future<PastEpochDeletionPolicyResult>
-  crateApiEngineMlsEnginePastEpochDeletionPolicy({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_past_epoch_deletion_policy(
-                port_,
-                arg0,
-                arg1,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_past_epoch_deletion_policy_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEnginePastEpochDeletionPolicyConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEnginePastEpochDeletionPolicyConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_past_epoch_deletion_policy",
         argNames: ["that", "groupIdBytes"],
       );
 
@@ -3169,968 +948,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       const TaskConstMeta(
         debugName: "MlsEngine_process_message",
         argNames: ["that", "groupIdBytes", "messageBytes"],
-      );
-
-  @override
-  Future<ProcessedMessageInspectResult>
-  crateApiEngineMlsEngineProcessMessageWithInspect({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> messageBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(messageBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_process_message_with_inspect(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_processed_message_inspect_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineProcessMessageWithInspectConstMeta,
-        argValues: [that, groupIdBytes, messageBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta
-  get kCrateApiEngineMlsEngineProcessMessageWithInspectConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_process_message_with_inspect",
-        argNames: ["that", "groupIdBytes", "messageBytes"],
-      );
-
-  @override
-  Future<ProposalResult> crateApiEngineMlsEngineProposeAdd({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> keyPackageBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg3 = cst_encode_list_prim_u_8_loose(keyPackageBytes);
-          return wire.wire__crate__api__engine__MlsEngine_propose_add(
-            port_,
-            arg0,
-            arg1,
-            arg2,
-            arg3,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_proposal_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineProposeAddConstMeta,
-        argValues: [that, groupIdBytes, signerBytes, keyPackageBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineProposeAddConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_propose_add",
-        argNames: ["that", "groupIdBytes", "signerBytes", "keyPackageBytes"],
-      );
-
-  @override
-  Future<ProposalResult> crateApiEngineMlsEngineProposeCustomProposal({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required int proposalType,
-    required List<int> payload,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg3 = cst_encode_u_16(proposalType);
-          var arg4 = cst_encode_list_prim_u_8_loose(payload);
-          return wire
-              .wire__crate__api__engine__MlsEngine_propose_custom_proposal(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-                arg3,
-                arg4,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_proposal_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineProposeCustomProposalConstMeta,
-        argValues: [that, groupIdBytes, signerBytes, proposalType, payload],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineProposeCustomProposalConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_propose_custom_proposal",
-        argNames: [
-          "that",
-          "groupIdBytes",
-          "signerBytes",
-          "proposalType",
-          "payload",
-        ],
-      );
-
-  @override
-  Future<ProposalResult> crateApiEngineMlsEngineProposeExternalPsk({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> pskId,
-    required List<int> pskNonce,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg3 = cst_encode_list_prim_u_8_loose(pskId);
-          var arg4 = cst_encode_list_prim_u_8_loose(pskNonce);
-          return wire.wire__crate__api__engine__MlsEngine_propose_external_psk(
-            port_,
-            arg0,
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_proposal_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineProposeExternalPskConstMeta,
-        argValues: [that, groupIdBytes, signerBytes, pskId, pskNonce],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineProposeExternalPskConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_propose_external_psk",
-        argNames: ["that", "groupIdBytes", "signerBytes", "pskId", "pskNonce"],
-      );
-
-  @override
-  Future<ProposalResult> crateApiEngineMlsEngineProposeGroupContextExtensions({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<MlsExtension> extensions,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg3 = cst_encode_list_mls_extension(extensions);
-          return wire
-              .wire__crate__api__engine__MlsEngine_propose_group_context_extensions(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-                arg3,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_proposal_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta:
-            kCrateApiEngineMlsEngineProposeGroupContextExtensionsConstMeta,
-        argValues: [that, groupIdBytes, signerBytes, extensions],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta
-  get kCrateApiEngineMlsEngineProposeGroupContextExtensionsConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_propose_group_context_extensions",
-        argNames: ["that", "groupIdBytes", "signerBytes", "extensions"],
-      );
-
-  @override
-  Future<ProposalResult> crateApiEngineMlsEngineProposeRemove({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required int memberIndex,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg3 = cst_encode_u_32(memberIndex);
-          return wire.wire__crate__api__engine__MlsEngine_propose_remove(
-            port_,
-            arg0,
-            arg1,
-            arg2,
-            arg3,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_proposal_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineProposeRemoveConstMeta,
-        argValues: [that, groupIdBytes, signerBytes, memberIndex],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineProposeRemoveConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_propose_remove",
-        argNames: ["that", "groupIdBytes", "signerBytes", "memberIndex"],
-      );
-
-  @override
-  Future<ProposalResult>
-  crateApiEngineMlsEngineProposeRemoveMemberByCredential({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> credentialBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg3 = cst_encode_list_prim_u_8_loose(credentialBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_propose_remove_member_by_credential(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-                arg3,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_proposal_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta:
-            kCrateApiEngineMlsEngineProposeRemoveMemberByCredentialConstMeta,
-        argValues: [that, groupIdBytes, signerBytes, credentialBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta
-  get kCrateApiEngineMlsEngineProposeRemoveMemberByCredentialConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_propose_remove_member_by_credential",
-        argNames: ["that", "groupIdBytes", "signerBytes", "credentialBytes"],
-      );
-
-  @override
-  Future<ProposalResult> crateApiEngineMlsEngineProposeSelfUpdate({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    MlsCapabilities? leafNodeCapabilities,
-    List<MlsExtension>? leafNodeExtensions,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg3 = cst_encode_opt_box_autoadd_mls_capabilities(
-            leafNodeCapabilities,
-          );
-          var arg4 = cst_encode_opt_list_mls_extension(leafNodeExtensions);
-          return wire.wire__crate__api__engine__MlsEngine_propose_self_update(
-            port_,
-            arg0,
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_proposal_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineProposeSelfUpdateConstMeta,
-        argValues: [
-          that,
-          groupIdBytes,
-          signerBytes,
-          leafNodeCapabilities,
-          leafNodeExtensions,
-        ],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineProposeSelfUpdateConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_propose_self_update",
-        argNames: [
-          "that",
-          "groupIdBytes",
-          "signerBytes",
-          "leafNodeCapabilities",
-          "leafNodeExtensions",
-        ],
-      );
-
-  @override
-  Future<ProposalResult> crateApiEngineMlsEngineProposeSelfUpdateWithNewSigner({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> oldSignerBytes,
-    required List<int> newSignerBytes,
-    required List<int> newCredentialIdentity,
-    required List<int> newSignerPublicKey,
-    Uint8List? newCredentialBytes,
-    MlsCapabilities? leafNodeCapabilities,
-    List<MlsExtension>? leafNodeExtensions,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(oldSignerBytes);
-          var arg3 = cst_encode_list_prim_u_8_loose(newSignerBytes);
-          var arg4 = cst_encode_list_prim_u_8_loose(newCredentialIdentity);
-          var arg5 = cst_encode_list_prim_u_8_loose(newSignerPublicKey);
-          var arg6 = cst_encode_opt_list_prim_u_8_strict(newCredentialBytes);
-          var arg7 = cst_encode_opt_box_autoadd_mls_capabilities(
-            leafNodeCapabilities,
-          );
-          var arg8 = cst_encode_opt_list_mls_extension(leafNodeExtensions);
-          return wire
-              .wire__crate__api__engine__MlsEngine_propose_self_update_with_new_signer(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-                arg3,
-                arg4,
-                arg5,
-                arg6,
-                arg7,
-                arg8,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_proposal_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta:
-            kCrateApiEngineMlsEngineProposeSelfUpdateWithNewSignerConstMeta,
-        argValues: [
-          that,
-          groupIdBytes,
-          oldSignerBytes,
-          newSignerBytes,
-          newCredentialIdentity,
-          newSignerPublicKey,
-          newCredentialBytes,
-          leafNodeCapabilities,
-          leafNodeExtensions,
-        ],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta
-  get kCrateApiEngineMlsEngineProposeSelfUpdateWithNewSignerConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_propose_self_update_with_new_signer",
-        argNames: [
-          "that",
-          "groupIdBytes",
-          "oldSignerBytes",
-          "newSignerBytes",
-          "newCredentialIdentity",
-          "newSignerPublicKey",
-          "newCredentialBytes",
-          "leafNodeCapabilities",
-          "leafNodeExtensions",
-        ],
-      );
-
-  @override
-  Future<CommitResult> crateApiEngineMlsEngineRemoveMembers({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> memberIndices,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg3 = cst_encode_list_prim_u_32_loose(memberIndices);
-          return wire.wire__crate__api__engine__MlsEngine_remove_members(
-            port_,
-            arg0,
-            arg1,
-            arg2,
-            arg3,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_commit_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineRemoveMembersConstMeta,
-        argValues: [that, groupIdBytes, signerBytes, memberIndices],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineRemoveMembersConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_remove_members",
-        argNames: ["that", "groupIdBytes", "signerBytes", "memberIndices"],
-      );
-
-  @override
-  Future<void> crateApiEngineMlsEngineRemovePendingProposal({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> proposalRefBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(proposalRefBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_remove_pending_proposal(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_unit,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineRemovePendingProposalConstMeta,
-        argValues: [that, groupIdBytes, proposalRefBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineRemovePendingProposalConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_remove_pending_proposal",
-        argNames: ["that", "groupIdBytes", "proposalRefBytes"],
-      );
-
-  @override
-  int crateApiEngineMlsEngineSchemaVersion({required MlsEngine that}) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          return wire.wire__crate__api__engine__MlsEngine_schema_version(arg0);
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_u_32,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiEngineMlsEngineSchemaVersionConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineSchemaVersionConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_schema_version",
-        argNames: ["that"],
-      );
-
-  @override
-  Future<CommitResult> crateApiEngineMlsEngineSelfUpdate({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          return wire.wire__crate__api__engine__MlsEngine_self_update(
-            port_,
-            arg0,
-            arg1,
-            arg2,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_commit_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineSelfUpdateConstMeta,
-        argValues: [that, groupIdBytes, signerBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineSelfUpdateConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_self_update",
-        argNames: ["that", "groupIdBytes", "signerBytes"],
-      );
-
-  @override
-  Future<CommitResult> crateApiEngineMlsEngineSelfUpdateWithNewSigner({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> oldSignerBytes,
-    required List<int> newSignerBytes,
-    required List<int> newCredentialIdentity,
-    required List<int> newSignerPublicKey,
-    Uint8List? newCredentialBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(oldSignerBytes);
-          var arg3 = cst_encode_list_prim_u_8_loose(newSignerBytes);
-          var arg4 = cst_encode_list_prim_u_8_loose(newCredentialIdentity);
-          var arg5 = cst_encode_list_prim_u_8_loose(newSignerPublicKey);
-          var arg6 = cst_encode_opt_list_prim_u_8_strict(newCredentialBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_self_update_with_new_signer(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-                arg3,
-                arg4,
-                arg5,
-                arg6,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_commit_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineSelfUpdateWithNewSignerConstMeta,
-        argValues: [
-          that,
-          groupIdBytes,
-          oldSignerBytes,
-          newSignerBytes,
-          newCredentialIdentity,
-          newSignerPublicKey,
-          newCredentialBytes,
-        ],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineSelfUpdateWithNewSignerConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_self_update_with_new_signer",
-        argNames: [
-          "that",
-          "groupIdBytes",
-          "oldSignerBytes",
-          "newSignerBytes",
-          "newCredentialIdentity",
-          "newSignerPublicKey",
-          "newCredentialBytes",
-        ],
-      );
-
-  @override
-  Future<void> crateApiEngineMlsEngineSetConfiguration({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required MlsGroupConfig config,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_box_autoadd_mls_group_config(config);
-          return wire.wire__crate__api__engine__MlsEngine_set_configuration(
-            port_,
-            arg0,
-            arg1,
-            arg2,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_unit,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineSetConfigurationConstMeta,
-        argValues: [that, groupIdBytes, config],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineSetConfigurationConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_set_configuration",
-        argNames: ["that", "groupIdBytes", "config"],
-      );
-
-  @override
-  Future<void> crateApiEngineMlsEngineSetPastEpochDeletionPolicyKeepAll({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          return wire
-              .wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_keep_all(
-                port_,
-                arg0,
-                arg1,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_unit,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta:
-            kCrateApiEngineMlsEngineSetPastEpochDeletionPolicyKeepAllConstMeta,
-        argValues: [that, groupIdBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta
-  get kCrateApiEngineMlsEngineSetPastEpochDeletionPolicyKeepAllConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_set_past_epoch_deletion_policy_keep_all",
-        argNames: ["that", "groupIdBytes"],
-      );
-
-  @override
-  Future<void> crateApiEngineMlsEngineSetPastEpochDeletionPolicyMaxEpochs({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required int maxEpochs,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_u_32(maxEpochs);
-          return wire
-              .wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_max_epochs(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_unit,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta:
-            kCrateApiEngineMlsEngineSetPastEpochDeletionPolicyMaxEpochsConstMeta,
-        argValues: [that, groupIdBytes, maxEpochs],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta
-  get kCrateApiEngineMlsEngineSetPastEpochDeletionPolicyMaxEpochsConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_set_past_epoch_deletion_policy_max_epochs",
-        argNames: ["that", "groupIdBytes", "maxEpochs"],
-      );
-
-  @override
-  Future<AddMembersResult> crateApiEngineMlsEngineSwapMembers({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> removeIndices,
-    required List<Uint8List> addKeyPackagesBytes,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg3 = cst_encode_list_prim_u_32_loose(removeIndices);
-          var arg4 = cst_encode_list_list_prim_u_8_strict(addKeyPackagesBytes);
-          return wire.wire__crate__api__engine__MlsEngine_swap_members(
-            port_,
-            arg0,
-            arg1,
-            arg2,
-            arg3,
-            arg4,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_add_members_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsEngineSwapMembersConstMeta,
-        argValues: [
-          that,
-          groupIdBytes,
-          signerBytes,
-          removeIndices,
-          addKeyPackagesBytes,
-        ],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsEngineSwapMembersConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_swap_members",
-        argNames: [
-          "that",
-          "groupIdBytes",
-          "signerBytes",
-          "removeIndices",
-          "addKeyPackagesBytes",
-        ],
-      );
-
-  @override
-  Future<CommitResult> crateApiEngineMlsEngineUpdateGroupContextExtensions({
-    required MlsEngine that,
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<MlsExtension> extensions,
-  }) {
-    return handler.executeNormal(
-      NormalTask(
-        callFfi: (port_) {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsEngine(
-                that,
-              );
-          var arg1 = cst_encode_list_prim_u_8_loose(groupIdBytes);
-          var arg2 = cst_encode_list_prim_u_8_loose(signerBytes);
-          var arg3 = cst_encode_list_mls_extension(extensions);
-          return wire
-              .wire__crate__api__engine__MlsEngine_update_group_context_extensions(
-                port_,
-                arg0,
-                arg1,
-                arg2,
-                arg3,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_commit_result,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta:
-            kCrateApiEngineMlsEngineUpdateGroupContextExtensionsConstMeta,
-        argValues: [that, groupIdBytes, signerBytes, extensions],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta
-  get kCrateApiEngineMlsEngineUpdateGroupContextExtensionsConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsEngine_update_group_context_extensions",
-        argNames: ["that", "groupIdBytes", "signerBytes", "extensions"],
-      );
-
-  @override
-  MlsSignatureKeyPair crateApiKeysMlsSignatureKeyPairDeserializePublic({
-    required List<int> bytes,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          var arg0 = cst_encode_list_prim_u_8_loose(bytes);
-          return wire
-              .wire__crate__api__keys__MlsSignatureKeyPair_deserialize_public(
-                arg0,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData:
-              dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPair,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiKeysMlsSignatureKeyPairDeserializePublicConstMeta,
-        argValues: [bytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta
-  get kCrateApiKeysMlsSignatureKeyPairDeserializePublicConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsSignatureKeyPair_deserialize_public",
-        argNames: ["bytes"],
-      );
-
-  @override
-  MlsSignatureKeyPair crateApiKeysMlsSignatureKeyPairFromRaw({
-    required MlsCiphersuite ciphersuite,
-    required List<int> privateKey,
-    required List<int> publicKey,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          var arg0 = cst_encode_mls_ciphersuite(ciphersuite);
-          var arg1 = cst_encode_list_prim_u_8_loose(privateKey);
-          var arg2 = cst_encode_list_prim_u_8_loose(publicKey);
-          return wire.wire__crate__api__keys__MlsSignatureKeyPair_from_raw(
-            arg0,
-            arg1,
-            arg2,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData:
-              dco_decode_Auto_Owned_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPair,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiKeysMlsSignatureKeyPairFromRawConstMeta,
-        argValues: [ciphersuite, privateKey, publicKey],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiKeysMlsSignatureKeyPairFromRawConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsSignatureKeyPair_from_raw",
-        argNames: ["ciphersuite", "privateKey", "publicKey"],
       );
 
   @override
@@ -4228,106 +1045,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       );
 
   @override
-  Uint8List crateApiKeysMlsSignatureKeyPairSerialize({
-    required MlsSignatureKeyPair that,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPair(
-                that,
-              );
-          return wire.wire__crate__api__keys__MlsSignatureKeyPair_serialize(
-            arg0,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_list_prim_u_8_strict,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiKeysMlsSignatureKeyPairSerializeConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiKeysMlsSignatureKeyPairSerializeConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsSignatureKeyPair_serialize",
-        argNames: ["that"],
-      );
-
-  @override
-  int crateApiKeysMlsSignatureKeyPairSignatureScheme({
-    required MlsSignatureKeyPair that,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          var arg0 =
-              cst_encode_Auto_Ref_RustOpaque_flutter_rust_bridgefor_generatedRustAutoOpaqueInnerMlsSignatureKeyPair(
-                that,
-              );
-          return wire
-              .wire__crate__api__keys__MlsSignatureKeyPair_signature_scheme(
-                arg0,
-              );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_u_16,
-          decodeErrorData: null,
-        ),
-        constMeta: kCrateApiKeysMlsSignatureKeyPairSignatureSchemeConstMeta,
-        argValues: [that],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiKeysMlsSignatureKeyPairSignatureSchemeConstMeta =>
-      const TaskConstMeta(
-        debugName: "MlsSignatureKeyPair_signature_scheme",
-        argNames: ["that"],
-      );
-
-  @override
-  LifetimeVerdict crateApiEngineCheckLifetimeAt({
-    required BigInt notBefore,
-    required BigInt notAfter,
-    required BigInt nowUnixSeconds,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          var arg0 = cst_encode_u_64(notBefore);
-          var arg1 = cst_encode_u_64(notAfter);
-          var arg2 = cst_encode_u_64(nowUnixSeconds);
-          return wire.wire__crate__api__engine__check_lifetime_at(
-            arg0,
-            arg1,
-            arg2,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_lifetime_verdict,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineCheckLifetimeAtConstMeta,
-        argValues: [notBefore, notAfter, nowUnixSeconds],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineCheckLifetimeAtConstMeta =>
-      const TaskConstMeta(
-        debugName: "check_lifetime_at",
-        argNames: ["notBefore", "notAfter", "nowUnixSeconds"],
-      );
-
-  @override
   void crateApiInitInitOpenmls({required String libraryPath}) {
     return handler.executeSync(
       SyncTask(
@@ -4369,33 +1086,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
   TaskConstMeta get kCrateApiInitIsOpenmlsInitializedConstMeta =>
       const TaskConstMeta(debugName: "is_openmls_initialized", argNames: []);
-
-  @override
-  KeyPackageLifetime crateApiEngineKeyPackageLifetime({
-    required List<int> keyPackageBytes,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          var arg0 = cst_encode_list_prim_u_8_loose(keyPackageBytes);
-          return wire.wire__crate__api__engine__key_package_lifetime(arg0);
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_key_package_lifetime,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineKeyPackageLifetimeConstMeta,
-        argValues: [keyPackageBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineKeyPackageLifetimeConstMeta =>
-      const TaskConstMeta(
-        debugName: "key_package_lifetime",
-        argNames: ["keyPackageBytes"],
-      );
 
   @override
   MlsGroupConfig crateApiConfigMlsGroupConfigDefaultConfig({
@@ -4477,35 +1167,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   TaskConstMeta get kCrateApiEngineMlsMessageExtractEpochConstMeta =>
       const TaskConstMeta(
         debugName: "mls_message_extract_epoch",
-        argNames: ["messageBytes"],
-      );
-
-  @override
-  Uint8List crateApiEngineMlsMessageExtractGroupId({
-    required List<int> messageBytes,
-  }) {
-    return handler.executeSync(
-      SyncTask(
-        callFfi: () {
-          var arg0 = cst_encode_list_prim_u_8_loose(messageBytes);
-          return wire.wire__crate__api__engine__mls_message_extract_group_id(
-            arg0,
-          );
-        },
-        codec: DcoCodec(
-          decodeSuccessData: dco_decode_list_prim_u_8_strict,
-          decodeErrorData: dco_decode_String,
-        ),
-        constMeta: kCrateApiEngineMlsMessageExtractGroupIdConstMeta,
-        argValues: [messageBytes],
-        apiImpl: this,
-      ),
-    );
-  }
-
-  TaskConstMeta get kCrateApiEngineMlsMessageExtractGroupIdConstMeta =>
-      const TaskConstMeta(
-        debugName: "mls_message_extract_group_id",
         argNames: ["messageBytes"],
       );
 
@@ -4677,19 +1338,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  AddMembersResult dco_decode_add_members_result(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 3)
-      throw Exception('unexpected arr length: expect 3 but see ${arr.length}');
-    return AddMembersResult(
-      commit: dco_decode_list_prim_u_8_strict(arr[0]),
-      welcome: dco_decode_list_prim_u_8_strict(arr[1]),
-      groupInfo: dco_decode_opt_list_prim_u_8_strict(arr[2]),
-    );
-  }
-
-  @protected
   bool dco_decode_bool(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as bool;
@@ -4701,12 +1349,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_flexible_commit_options(raw);
-  }
-
-  @protected
-  KeyPackageOptions dco_decode_box_autoadd_key_package_options(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_key_package_options(raw);
   }
 
   @protected
@@ -4722,21 +1364,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  MlsMemberInfo dco_decode_box_autoadd_mls_member_info(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_mls_member_info(raw);
-  }
-
-  @protected
   MlsProposalType dco_decode_box_autoadd_mls_proposal_type(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dco_decode_mls_proposal_type(raw);
-  }
-
-  @protected
-  StagedCommitInfo dco_decode_box_autoadd_staged_commit_info(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dco_decode_staged_commit_info(raw);
   }
 
   @protected
@@ -4774,17 +1404,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  CreateMessageResult dco_decode_create_message_result(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 1)
-      throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
-    return CreateMessageResult(
-      ciphertext: dco_decode_list_prim_u_8_strict(arr[0]),
-    );
-  }
-
-  @protected
   ExternalJoinResult dco_decode_external_join_result(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = dcoDecodeList(raw);
@@ -4816,92 +1435,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  GroupConfigurationResult dco_decode_group_configuration_result(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 5)
-      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
-    return GroupConfigurationResult(
-      ciphersuite: dco_decode_mls_ciphersuite(arr[0]),
-      wireFormatPolicy: dco_decode_mls_wire_format_policy(arr[1]),
-      paddingSize: dco_decode_u_32(arr[2]),
-      senderRatchetMaxOutOfOrder: dco_decode_u_32(arr[3]),
-      senderRatchetMaxForwardDistance: dco_decode_u_32(arr[4]),
-    );
-  }
-
-  @protected
   int dco_decode_i_32(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dcoDecodePrimitiveInt(raw);
-  }
-
-  @protected
-  JoinGroupResult dco_decode_join_group_result(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 1)
-      throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
-    return JoinGroupResult(groupId: dco_decode_list_prim_u_8_strict(arr[0]));
-  }
-
-  @protected
-  KeyPackageLifetime dco_decode_key_package_lifetime(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return KeyPackageLifetime(
-      notBefore: dco_decode_u_64(arr[0]),
-      notAfter: dco_decode_u_64(arr[1]),
-    );
-  }
-
-  @protected
-  KeyPackageOptions dco_decode_key_package_options(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 5)
-      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
-    return KeyPackageOptions(
-      lifetimeSeconds: dco_decode_opt_box_autoadd_u_64(arr[0]),
-      lastResort: dco_decode_bool(arr[1]),
-      capabilities: dco_decode_opt_box_autoadd_mls_capabilities(arr[2]),
-      leafNodeExtensions: dco_decode_opt_list_mls_extension(arr[3]),
-      keyPackageExtensions: dco_decode_opt_list_mls_extension(arr[4]),
-    );
-  }
-
-  @protected
-  KeyPackageResult dco_decode_key_package_result(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 1)
-      throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
-    return KeyPackageResult(
-      keyPackageBytes: dco_decode_list_prim_u_8_strict(arr[0]),
-    );
-  }
-
-  @protected
-  LeaveGroupResult dco_decode_leave_group_result(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 1)
-      throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
-    return LeaveGroupResult(message: dco_decode_list_prim_u_8_strict(arr[0]));
-  }
-
-  @protected
-  LifetimeVerdict dco_decode_lifetime_verdict(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return LifetimeVerdict(
-      valid: dco_decode_bool(arr[0]),
-      reason: dco_decode_opt_String(arr[1]),
-    );
   }
 
   @protected
@@ -4929,25 +1465,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<MlsPendingProposalInfo> dco_decode_list_mls_pending_proposal_info(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return dcoDecodeList(
-      raw,
-    ).map(dco_decode_mls_pending_proposal_info).toList();
-  }
-
-  @protected
   Uint16List dco_decode_list_prim_u_16_strict(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw as Uint16List;
-  }
-
-  @protected
-  List<int> dco_decode_list_prim_u_32_loose(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw as List<int>;
   }
 
   @protected
@@ -5020,37 +1540,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  MlsGroupContextInfo dco_decode_mls_group_context_info(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 6)
-      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
-    return MlsGroupContextInfo(
-      groupId: dco_decode_list_prim_u_8_strict(arr[0]),
-      epoch: dco_decode_u_64(arr[1]),
-      ciphersuite: dco_decode_mls_ciphersuite(arr[2]),
-      treeHash: dco_decode_list_prim_u_8_strict(arr[3]),
-      confirmedTranscriptHash: dco_decode_list_prim_u_8_strict(arr[4]),
-      extensions: dco_decode_list_prim_u_8_strict(arr[5]),
-    );
-  }
-
-  @protected
-  MlsLeafNodeInfo dco_decode_mls_leaf_node_info(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 5)
-      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
-    return MlsLeafNodeInfo(
-      credential: dco_decode_list_prim_u_8_strict(arr[0]),
-      signatureKey: dco_decode_list_prim_u_8_strict(arr[1]),
-      encryptionKey: dco_decode_list_prim_u_8_strict(arr[2]),
-      capabilities: dco_decode_mls_capabilities(arr[3]),
-      extensions: dco_decode_list_mls_extension(arr[4]),
-    );
-  }
-
-  @protected
   MlsMemberInfo dco_decode_mls_member_info(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = dcoDecodeList(raw);
@@ -5060,18 +1549,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       index: dco_decode_u_32(arr[0]),
       credential: dco_decode_list_prim_u_8_strict(arr[1]),
       signatureKey: dco_decode_list_prim_u_8_strict(arr[2]),
-    );
-  }
-
-  @protected
-  MlsPendingProposalInfo dco_decode_mls_pending_proposal_info(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return MlsPendingProposalInfo(
-      proposalType: dco_decode_mls_proposal_type(arr[0]),
-      senderIndex: dco_decode_opt_box_autoadd_u_32(arr[1]),
     );
   }
 
@@ -5088,33 +1565,15 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  String? dco_decode_opt_String(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_String(raw);
-  }
-
-  @protected
   MlsCapabilities? dco_decode_opt_box_autoadd_mls_capabilities(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_mls_capabilities(raw);
   }
 
   @protected
-  MlsMemberInfo? dco_decode_opt_box_autoadd_mls_member_info(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_box_autoadd_mls_member_info(raw);
-  }
-
-  @protected
   MlsProposalType? dco_decode_opt_box_autoadd_mls_proposal_type(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return raw == null ? null : dco_decode_box_autoadd_mls_proposal_type(raw);
-  }
-
-  @protected
-  StagedCommitInfo? dco_decode_opt_box_autoadd_staged_commit_info(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    return raw == null ? null : dco_decode_box_autoadd_staged_commit_info(raw);
   }
 
   @protected
@@ -5142,38 +1601,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  PastEpochDeletionPolicyResult dco_decode_past_epoch_deletion_policy_result(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 2)
-      throw Exception('unexpected arr length: expect 2 but see ${arr.length}');
-    return PastEpochDeletionPolicyResult(
-      keepAll: dco_decode_bool(arr[0]),
-      maxEpochs: dco_decode_u_32(arr[1]),
-    );
-  }
-
-  @protected
-  ProcessedMessageInspectResult dco_decode_processed_message_inspect_result(
-    dynamic raw,
-  ) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 6)
-      throw Exception('unexpected arr length: expect 6 but see ${arr.length}');
-    return ProcessedMessageInspectResult(
-      messageType: dco_decode_processed_message_type(arr[0]),
-      senderIndex: dco_decode_opt_box_autoadd_u_32(arr[1]),
-      epoch: dco_decode_u_64(arr[2]),
-      applicationMessage: dco_decode_opt_list_prim_u_8_strict(arr[3]),
-      stagedCommitInfo: dco_decode_opt_box_autoadd_staged_commit_info(arr[4]),
-      proposalType: dco_decode_opt_box_autoadd_mls_proposal_type(arr[5]),
-    );
-  }
-
-  @protected
   ProcessedMessageResult dco_decode_processed_message_result(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = dcoDecodeList(raw);
@@ -5194,32 +1621,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ProcessedMessageType dco_decode_processed_message_type(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return ProcessedMessageType.values[dcoDecodePrimitiveInt(raw)];
-  }
-
-  @protected
-  ProposalResult dco_decode_proposal_result(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 1)
-      throw Exception('unexpected arr length: expect 1 but see ${arr.length}');
-    return ProposalResult(
-      proposalMessage: dco_decode_list_prim_u_8_strict(arr[0]),
-    );
-  }
-
-  @protected
-  StagedCommitInfo dco_decode_staged_commit_info(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 5)
-      throw Exception('unexpected arr length: expect 5 but see ${arr.length}');
-    return StagedCommitInfo(
-      addCredentials: dco_decode_list_list_prim_u_8_strict(arr[0]),
-      removeIndices: dco_decode_list_prim_u_32_strict(arr[1]),
-      hasUpdate: dco_decode_bool(arr[2]),
-      selfRemoved: dco_decode_bool(arr[3]),
-      pskCount: dco_decode_u_32(arr[4]),
-    );
   }
 
   @protected
@@ -5256,20 +1657,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   BigInt dco_decode_usize(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return dcoDecodeU64(raw);
-  }
-
-  @protected
-  WelcomeInspectResult dco_decode_welcome_inspect_result(dynamic raw) {
-    // Codec=Dco (DartCObject based), see doc to use other codecs
-    final arr = dcoDecodeList(raw);
-    if (arr.length != 4)
-      throw Exception('unexpected arr length: expect 4 but see ${arr.length}');
-    return WelcomeInspectResult(
-      groupId: dco_decode_list_prim_u_8_strict(arr[0]),
-      ciphersuite: dco_decode_mls_ciphersuite(arr[1]),
-      pskCount: dco_decode_u_32(arr[2]),
-      epoch: dco_decode_u_64(arr[3]),
-    );
   }
 
   @protected
@@ -5388,19 +1775,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  AddMembersResult sse_decode_add_members_result(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_commit = sse_decode_list_prim_u_8_strict(deserializer);
-    var var_welcome = sse_decode_list_prim_u_8_strict(deserializer);
-    var var_groupInfo = sse_decode_opt_list_prim_u_8_strict(deserializer);
-    return AddMembersResult(
-      commit: var_commit,
-      welcome: var_welcome,
-      groupInfo: var_groupInfo,
-    );
-  }
-
-  @protected
   bool sse_decode_bool(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint8() != 0;
@@ -5412,14 +1786,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_flexible_commit_options(deserializer));
-  }
-
-  @protected
-  KeyPackageOptions sse_decode_box_autoadd_key_package_options(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_key_package_options(deserializer));
   }
 
   @protected
@@ -5439,27 +1805,11 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  MlsMemberInfo sse_decode_box_autoadd_mls_member_info(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_mls_member_info(deserializer));
-  }
-
-  @protected
   MlsProposalType sse_decode_box_autoadd_mls_proposal_type(
     SseDeserializer deserializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return (sse_decode_mls_proposal_type(deserializer));
-  }
-
-  @protected
-  StagedCommitInfo sse_decode_box_autoadd_staged_commit_info(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    return (sse_decode_staged_commit_info(deserializer));
   }
 
   @protected
@@ -5494,15 +1844,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_groupId = sse_decode_list_prim_u_8_strict(deserializer);
     return CreateGroupResult(groupId: var_groupId);
-  }
-
-  @protected
-  CreateMessageResult sse_decode_create_message_result(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_ciphertext = sse_decode_list_prim_u_8_strict(deserializer);
-    return CreateMessageResult(ciphertext: var_ciphertext);
   }
 
   @protected
@@ -5548,92 +1889,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  GroupConfigurationResult sse_decode_group_configuration_result(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_ciphersuite = sse_decode_mls_ciphersuite(deserializer);
-    var var_wireFormatPolicy = sse_decode_mls_wire_format_policy(deserializer);
-    var var_paddingSize = sse_decode_u_32(deserializer);
-    var var_senderRatchetMaxOutOfOrder = sse_decode_u_32(deserializer);
-    var var_senderRatchetMaxForwardDistance = sse_decode_u_32(deserializer);
-    return GroupConfigurationResult(
-      ciphersuite: var_ciphersuite,
-      wireFormatPolicy: var_wireFormatPolicy,
-      paddingSize: var_paddingSize,
-      senderRatchetMaxOutOfOrder: var_senderRatchetMaxOutOfOrder,
-      senderRatchetMaxForwardDistance: var_senderRatchetMaxForwardDistance,
-    );
-  }
-
-  @protected
   int sse_decode_i_32(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getInt32();
-  }
-
-  @protected
-  JoinGroupResult sse_decode_join_group_result(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_groupId = sse_decode_list_prim_u_8_strict(deserializer);
-    return JoinGroupResult(groupId: var_groupId);
-  }
-
-  @protected
-  KeyPackageLifetime sse_decode_key_package_lifetime(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_notBefore = sse_decode_u_64(deserializer);
-    var var_notAfter = sse_decode_u_64(deserializer);
-    return KeyPackageLifetime(notBefore: var_notBefore, notAfter: var_notAfter);
-  }
-
-  @protected
-  KeyPackageOptions sse_decode_key_package_options(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_lifetimeSeconds = sse_decode_opt_box_autoadd_u_64(deserializer);
-    var var_lastResort = sse_decode_bool(deserializer);
-    var var_capabilities = sse_decode_opt_box_autoadd_mls_capabilities(
-      deserializer,
-    );
-    var var_leafNodeExtensions = sse_decode_opt_list_mls_extension(
-      deserializer,
-    );
-    var var_keyPackageExtensions = sse_decode_opt_list_mls_extension(
-      deserializer,
-    );
-    return KeyPackageOptions(
-      lifetimeSeconds: var_lifetimeSeconds,
-      lastResort: var_lastResort,
-      capabilities: var_capabilities,
-      leafNodeExtensions: var_leafNodeExtensions,
-      keyPackageExtensions: var_keyPackageExtensions,
-    );
-  }
-
-  @protected
-  KeyPackageResult sse_decode_key_package_result(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_keyPackageBytes = sse_decode_list_prim_u_8_strict(deserializer);
-    return KeyPackageResult(keyPackageBytes: var_keyPackageBytes);
-  }
-
-  @protected
-  LeaveGroupResult sse_decode_leave_group_result(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_message = sse_decode_list_prim_u_8_strict(deserializer);
-    return LeaveGroupResult(message: var_message);
-  }
-
-  @protected
-  LifetimeVerdict sse_decode_lifetime_verdict(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_valid = sse_decode_bool(deserializer);
-    var var_reason = sse_decode_opt_String(deserializer);
-    return LifetimeVerdict(valid: var_valid, reason: var_reason);
   }
 
   @protected
@@ -5693,31 +1951,10 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  List<MlsPendingProposalInfo> sse_decode_list_mls_pending_proposal_info(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    var len_ = sse_decode_i_32(deserializer);
-    var ans_ = <MlsPendingProposalInfo>[];
-    for (var idx_ = 0; idx_ < len_; ++idx_) {
-      ans_.add(sse_decode_mls_pending_proposal_info(deserializer));
-    }
-    return ans_;
-  }
-
-  @protected
   Uint16List sse_decode_list_prim_u_16_strict(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var len_ = sse_decode_i_32(deserializer);
     return deserializer.buffer.getUint16List(len_);
-  }
-
-  @protected
-  List<int> sse_decode_list_prim_u_32_loose(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var len_ = sse_decode_i_32(deserializer);
-    return deserializer.buffer.getUint32List(len_);
   }
 
   @protected
@@ -5797,46 +2034,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  MlsGroupContextInfo sse_decode_mls_group_context_info(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_groupId = sse_decode_list_prim_u_8_strict(deserializer);
-    var var_epoch = sse_decode_u_64(deserializer);
-    var var_ciphersuite = sse_decode_mls_ciphersuite(deserializer);
-    var var_treeHash = sse_decode_list_prim_u_8_strict(deserializer);
-    var var_confirmedTranscriptHash = sse_decode_list_prim_u_8_strict(
-      deserializer,
-    );
-    var var_extensions = sse_decode_list_prim_u_8_strict(deserializer);
-    return MlsGroupContextInfo(
-      groupId: var_groupId,
-      epoch: var_epoch,
-      ciphersuite: var_ciphersuite,
-      treeHash: var_treeHash,
-      confirmedTranscriptHash: var_confirmedTranscriptHash,
-      extensions: var_extensions,
-    );
-  }
-
-  @protected
-  MlsLeafNodeInfo sse_decode_mls_leaf_node_info(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_credential = sse_decode_list_prim_u_8_strict(deserializer);
-    var var_signatureKey = sse_decode_list_prim_u_8_strict(deserializer);
-    var var_encryptionKey = sse_decode_list_prim_u_8_strict(deserializer);
-    var var_capabilities = sse_decode_mls_capabilities(deserializer);
-    var var_extensions = sse_decode_list_mls_extension(deserializer);
-    return MlsLeafNodeInfo(
-      credential: var_credential,
-      signatureKey: var_signatureKey,
-      encryptionKey: var_encryptionKey,
-      capabilities: var_capabilities,
-      extensions: var_extensions,
-    );
-  }
-
-  @protected
   MlsMemberInfo sse_decode_mls_member_info(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var var_index = sse_decode_u_32(deserializer);
@@ -5846,19 +2043,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       index: var_index,
       credential: var_credential,
       signatureKey: var_signatureKey,
-    );
-  }
-
-  @protected
-  MlsPendingProposalInfo sse_decode_mls_pending_proposal_info(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_proposalType = sse_decode_mls_proposal_type(deserializer);
-    var var_senderIndex = sse_decode_opt_box_autoadd_u_32(deserializer);
-    return MlsPendingProposalInfo(
-      proposalType: var_proposalType,
-      senderIndex: var_senderIndex,
     );
   }
 
@@ -5879,17 +2063,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  String? sse_decode_opt_String(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_String(deserializer));
-    } else {
-      return null;
-    }
-  }
-
-  @protected
   MlsCapabilities? sse_decode_opt_box_autoadd_mls_capabilities(
     SseDeserializer deserializer,
   ) {
@@ -5903,19 +2076,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  MlsMemberInfo? sse_decode_opt_box_autoadd_mls_member_info(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_box_autoadd_mls_member_info(deserializer));
-    } else {
-      return null;
-    }
-  }
-
-  @protected
   MlsProposalType? sse_decode_opt_box_autoadd_mls_proposal_type(
     SseDeserializer deserializer,
   ) {
@@ -5923,19 +2083,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
 
     if (sse_decode_bool(deserializer)) {
       return (sse_decode_box_autoadd_mls_proposal_type(deserializer));
-    } else {
-      return null;
-    }
-  }
-
-  @protected
-  StagedCommitInfo? sse_decode_opt_box_autoadd_staged_commit_info(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    if (sse_decode_bool(deserializer)) {
-      return (sse_decode_box_autoadd_staged_commit_info(deserializer));
     } else {
       return null;
     }
@@ -5988,46 +2135,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  PastEpochDeletionPolicyResult sse_decode_past_epoch_deletion_policy_result(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_keepAll = sse_decode_bool(deserializer);
-    var var_maxEpochs = sse_decode_u_32(deserializer);
-    return PastEpochDeletionPolicyResult(
-      keepAll: var_keepAll,
-      maxEpochs: var_maxEpochs,
-    );
-  }
-
-  @protected
-  ProcessedMessageInspectResult sse_decode_processed_message_inspect_result(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_messageType = sse_decode_processed_message_type(deserializer);
-    var var_senderIndex = sse_decode_opt_box_autoadd_u_32(deserializer);
-    var var_epoch = sse_decode_u_64(deserializer);
-    var var_applicationMessage = sse_decode_opt_list_prim_u_8_strict(
-      deserializer,
-    );
-    var var_stagedCommitInfo = sse_decode_opt_box_autoadd_staged_commit_info(
-      deserializer,
-    );
-    var var_proposalType = sse_decode_opt_box_autoadd_mls_proposal_type(
-      deserializer,
-    );
-    return ProcessedMessageInspectResult(
-      messageType: var_messageType,
-      senderIndex: var_senderIndex,
-      epoch: var_epoch,
-      applicationMessage: var_applicationMessage,
-      stagedCommitInfo: var_stagedCommitInfo,
-      proposalType: var_proposalType,
-    );
-  }
-
-  @protected
   ProcessedMessageResult sse_decode_processed_message_result(
     SseDeserializer deserializer,
   ) {
@@ -6064,30 +2171,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  ProposalResult sse_decode_proposal_result(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_proposalMessage = sse_decode_list_prim_u_8_strict(deserializer);
-    return ProposalResult(proposalMessage: var_proposalMessage);
-  }
-
-  @protected
-  StagedCommitInfo sse_decode_staged_commit_info(SseDeserializer deserializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_addCredentials = sse_decode_list_list_prim_u_8_strict(deserializer);
-    var var_removeIndices = sse_decode_list_prim_u_32_strict(deserializer);
-    var var_hasUpdate = sse_decode_bool(deserializer);
-    var var_selfRemoved = sse_decode_bool(deserializer);
-    var var_pskCount = sse_decode_u_32(deserializer);
-    return StagedCommitInfo(
-      addCredentials: var_addCredentials,
-      removeIndices: var_removeIndices,
-      hasUpdate: var_hasUpdate,
-      selfRemoved: var_selfRemoved,
-      pskCount: var_pskCount,
-    );
-  }
-
-  @protected
   int sse_decode_u_16(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getUint16();
@@ -6120,23 +2203,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   BigInt sse_decode_usize(SseDeserializer deserializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     return deserializer.buffer.getBigUint64();
-  }
-
-  @protected
-  WelcomeInspectResult sse_decode_welcome_inspect_result(
-    SseDeserializer deserializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    var var_groupId = sse_decode_list_prim_u_8_strict(deserializer);
-    var var_ciphersuite = sse_decode_mls_ciphersuite(deserializer);
-    var var_pskCount = sse_decode_u_32(deserializer);
-    var var_epoch = sse_decode_u_64(deserializer);
-    return WelcomeInspectResult(
-      groupId: var_groupId,
-      ciphersuite: var_ciphersuite,
-      pskCount: var_pskCount,
-      epoch: var_epoch,
-    );
   }
 
   @protected
@@ -6413,17 +2479,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_add_members_result(
-    AddMembersResult self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_prim_u_8_strict(self.commit, serializer);
-    sse_encode_list_prim_u_8_strict(self.welcome, serializer);
-    sse_encode_opt_list_prim_u_8_strict(self.groupInfo, serializer);
-  }
-
-  @protected
   void sse_encode_bool(bool self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putUint8(self ? 1 : 0);
@@ -6436,15 +2491,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_flexible_commit_options(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_key_package_options(
-    KeyPackageOptions self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_key_package_options(self, serializer);
   }
 
   @protected
@@ -6466,30 +2512,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_box_autoadd_mls_member_info(
-    MlsMemberInfo self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_mls_member_info(self, serializer);
-  }
-
-  @protected
   void sse_encode_box_autoadd_mls_proposal_type(
     MlsProposalType self,
     SseSerializer serializer,
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_mls_proposal_type(self, serializer);
-  }
-
-  @protected
-  void sse_encode_box_autoadd_staged_commit_info(
-    StagedCommitInfo self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_staged_commit_info(self, serializer);
   }
 
   @protected
@@ -6522,15 +2550,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_create_message_result(
-    CreateMessageResult self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_prim_u_8_strict(self.ciphertext, serializer);
-  }
-
-  @protected
   void sse_encode_external_join_result(
     ExternalJoinResult self,
     SseSerializer serializer,
@@ -6558,82 +2577,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_group_configuration_result(
-    GroupConfigurationResult self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_mls_ciphersuite(self.ciphersuite, serializer);
-    sse_encode_mls_wire_format_policy(self.wireFormatPolicy, serializer);
-    sse_encode_u_32(self.paddingSize, serializer);
-    sse_encode_u_32(self.senderRatchetMaxOutOfOrder, serializer);
-    sse_encode_u_32(self.senderRatchetMaxForwardDistance, serializer);
-  }
-
-  @protected
   void sse_encode_i_32(int self, SseSerializer serializer) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putInt32(self);
-  }
-
-  @protected
-  void sse_encode_join_group_result(
-    JoinGroupResult self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_prim_u_8_strict(self.groupId, serializer);
-  }
-
-  @protected
-  void sse_encode_key_package_lifetime(
-    KeyPackageLifetime self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_u_64(self.notBefore, serializer);
-    sse_encode_u_64(self.notAfter, serializer);
-  }
-
-  @protected
-  void sse_encode_key_package_options(
-    KeyPackageOptions self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_opt_box_autoadd_u_64(self.lifetimeSeconds, serializer);
-    sse_encode_bool(self.lastResort, serializer);
-    sse_encode_opt_box_autoadd_mls_capabilities(self.capabilities, serializer);
-    sse_encode_opt_list_mls_extension(self.leafNodeExtensions, serializer);
-    sse_encode_opt_list_mls_extension(self.keyPackageExtensions, serializer);
-  }
-
-  @protected
-  void sse_encode_key_package_result(
-    KeyPackageResult self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_prim_u_8_strict(self.keyPackageBytes, serializer);
-  }
-
-  @protected
-  void sse_encode_leave_group_result(
-    LeaveGroupResult self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_prim_u_8_strict(self.message, serializer);
-  }
-
-  @protected
-  void sse_encode_lifetime_verdict(
-    LifetimeVerdict self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_bool(self.valid, serializer);
-    sse_encode_opt_String(self.reason, serializer);
   }
 
   @protected
@@ -6685,18 +2631,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_list_mls_pending_proposal_info(
-    List<MlsPendingProposalInfo> self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    for (final item in self) {
-      sse_encode_mls_pending_proposal_info(item, serializer);
-    }
-  }
-
-  @protected
   void sse_encode_list_prim_u_16_strict(
     Uint16List self,
     SseSerializer serializer,
@@ -6704,18 +2638,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.length, serializer);
     serializer.buffer.putUint16List(self);
-  }
-
-  @protected
-  void sse_encode_list_prim_u_32_loose(
-    List<int> self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_i_32(self.length, serializer);
-    serializer.buffer.putUint32List(
-      self is Uint32List ? self : Uint32List.fromList(self),
-    );
   }
 
   @protected
@@ -6796,33 +2718,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_mls_group_context_info(
-    MlsGroupContextInfo self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_prim_u_8_strict(self.groupId, serializer);
-    sse_encode_u_64(self.epoch, serializer);
-    sse_encode_mls_ciphersuite(self.ciphersuite, serializer);
-    sse_encode_list_prim_u_8_strict(self.treeHash, serializer);
-    sse_encode_list_prim_u_8_strict(self.confirmedTranscriptHash, serializer);
-    sse_encode_list_prim_u_8_strict(self.extensions, serializer);
-  }
-
-  @protected
-  void sse_encode_mls_leaf_node_info(
-    MlsLeafNodeInfo self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_prim_u_8_strict(self.credential, serializer);
-    sse_encode_list_prim_u_8_strict(self.signatureKey, serializer);
-    sse_encode_list_prim_u_8_strict(self.encryptionKey, serializer);
-    sse_encode_mls_capabilities(self.capabilities, serializer);
-    sse_encode_list_mls_extension(self.extensions, serializer);
-  }
-
-  @protected
   void sse_encode_mls_member_info(
     MlsMemberInfo self,
     SseSerializer serializer,
@@ -6831,16 +2726,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_u_32(self.index, serializer);
     sse_encode_list_prim_u_8_strict(self.credential, serializer);
     sse_encode_list_prim_u_8_strict(self.signatureKey, serializer);
-  }
-
-  @protected
-  void sse_encode_mls_pending_proposal_info(
-    MlsPendingProposalInfo self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_mls_proposal_type(self.proposalType, serializer);
-    sse_encode_opt_box_autoadd_u_32(self.senderIndex, serializer);
   }
 
   @protected
@@ -6862,16 +2747,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_opt_String(String? self, SseSerializer serializer) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_String(self, serializer);
-    }
-  }
-
-  @protected
   void sse_encode_opt_box_autoadd_mls_capabilities(
     MlsCapabilities? self,
     SseSerializer serializer,
@@ -6885,19 +2760,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_opt_box_autoadd_mls_member_info(
-    MlsMemberInfo? self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_box_autoadd_mls_member_info(self, serializer);
-    }
-  }
-
-  @protected
   void sse_encode_opt_box_autoadd_mls_proposal_type(
     MlsProposalType? self,
     SseSerializer serializer,
@@ -6907,19 +2769,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_bool(self != null, serializer);
     if (self != null) {
       sse_encode_box_autoadd_mls_proposal_type(self, serializer);
-    }
-  }
-
-  @protected
-  void sse_encode_opt_box_autoadd_staged_commit_info(
-    StagedCommitInfo? self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-
-    sse_encode_bool(self != null, serializer);
-    if (self != null) {
-      sse_encode_box_autoadd_staged_commit_info(self, serializer);
     }
   }
 
@@ -6970,33 +2819,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
-  void sse_encode_past_epoch_deletion_policy_result(
-    PastEpochDeletionPolicyResult self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_bool(self.keepAll, serializer);
-    sse_encode_u_32(self.maxEpochs, serializer);
-  }
-
-  @protected
-  void sse_encode_processed_message_inspect_result(
-    ProcessedMessageInspectResult self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_processed_message_type(self.messageType, serializer);
-    sse_encode_opt_box_autoadd_u_32(self.senderIndex, serializer);
-    sse_encode_u_64(self.epoch, serializer);
-    sse_encode_opt_list_prim_u_8_strict(self.applicationMessage, serializer);
-    sse_encode_opt_box_autoadd_staged_commit_info(
-      self.stagedCommitInfo,
-      serializer,
-    );
-    sse_encode_opt_box_autoadd_mls_proposal_type(self.proposalType, serializer);
-  }
-
-  @protected
   void sse_encode_processed_message_result(
     ProcessedMessageResult self,
     SseSerializer serializer,
@@ -7018,28 +2840,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.index, serializer);
-  }
-
-  @protected
-  void sse_encode_proposal_result(
-    ProposalResult self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_prim_u_8_strict(self.proposalMessage, serializer);
-  }
-
-  @protected
-  void sse_encode_staged_commit_info(
-    StagedCommitInfo self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_list_prim_u_8_strict(self.addCredentials, serializer);
-    sse_encode_list_prim_u_32_strict(self.removeIndices, serializer);
-    sse_encode_bool(self.hasUpdate, serializer);
-    sse_encode_bool(self.selfRemoved, serializer);
-    sse_encode_u_32(self.pskCount, serializer);
   }
 
   @protected
@@ -7076,18 +2876,6 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     serializer.buffer.putBigUint64(self);
   }
-
-  @protected
-  void sse_encode_welcome_inspect_result(
-    WelcomeInspectResult self,
-    SseSerializer serializer,
-  ) {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    sse_encode_list_prim_u_8_strict(self.groupId, serializer);
-    sse_encode_mls_ciphersuite(self.ciphersuite, serializer);
-    sse_encode_u_32(self.pskCount, serializer);
-    sse_encode_u_64(self.epoch, serializer);
-  }
 }
 
 @sealed
@@ -7109,17 +2897,6 @@ class MlsCredentialImpl extends RustOpaque implements MlsCredential {
         RustLib.instance.api.rust_arc_decrement_strong_count_MlsCredentialPtr,
   );
 
-  /// Returns the certificate chain from an X.509 credential.
-  ///
-  /// Each entry is a DER-encoded X.509 certificate.
-  /// Returns an error if this is not an X.509 credential.
-  List<Uint8List> certificates() => RustLib.instance.api
-      .crateApiCredentialMlsCredentialCertificates(that: this);
-
-  /// Returns the credential type value (1 = Basic, 2 = X509).
-  int credentialType() => RustLib.instance.api
-      .crateApiCredentialMlsCredentialCredentialType(that: this);
-
   /// Returns the identity bytes from a BasicCredential.
   ///
   /// Returns an error if this is not a BasicCredential.
@@ -7129,13 +2906,6 @@ class MlsCredentialImpl extends RustOpaque implements MlsCredential {
   /// TLS-serialize this credential for wire transmission.
   Uint8List serialize() =>
       RustLib.instance.api.crateApiCredentialMlsCredentialSerialize(that: this);
-
-  /// Returns the raw serialized content of this credential.
-  ///
-  /// For BasicCredential, this is the identity bytes.
-  /// For X.509, this is the TLS-serialized certificate chain.
-  Uint8List serializedContent() => RustLib.instance.api
-      .crateApiCredentialMlsCredentialSerializedContent(that: this);
 }
 
 @sealed
@@ -7157,72 +2927,12 @@ class MlsEngineImpl extends RustOpaque implements MlsEngine {
         RustLib.instance.api.rust_arc_decrement_strong_count_MlsEnginePtr,
   );
 
-  Future<AddMembersResult> addMembers({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<Uint8List> keyPackagesBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineAddMembers(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    signerBytes: signerBytes,
-    keyPackagesBytes: keyPackagesBytes,
-  );
-
-  Future<AddMembersResult> addMembersWithoutUpdate({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<Uint8List> keyPackagesBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineAddMembersWithoutUpdate(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    signerBytes: signerBytes,
-    keyPackagesBytes: keyPackagesBytes,
-  );
-
-  Future<void> clearPendingCommit({required List<int> groupIdBytes}) =>
-      RustLib.instance.api.crateApiEngineMlsEngineClearPendingCommit(
-        that: this,
-        groupIdBytes: groupIdBytes,
-      );
-
-  Future<void> clearPendingProposals({required List<int> groupIdBytes}) =>
-      RustLib.instance.api.crateApiEngineMlsEngineClearPendingProposals(
-        that: this,
-        groupIdBytes: groupIdBytes,
-      );
-
   /// Close the engine, wiping the encryption key from memory and closing the
   /// database connection. After calling this, all operations will fail with
   /// "MlsEngine is closed". Idempotent — calling close on an already-closed
   /// engine is a no-op.
   Future<void> close() =>
       RustLib.instance.api.crateApiEngineMlsEngineClose(that: this);
-
-  Future<CommitResult> commitToPendingProposals({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineCommitToPendingProposals(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    signerBytes: signerBytes,
-  );
-
-  Future<CreateGroupResult> createGroup({
-    required MlsGroupConfig config,
-    required List<int> signerBytes,
-    required List<int> credentialIdentity,
-    required List<int> signerPublicKey,
-    Uint8List? groupId,
-    Uint8List? credentialBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineCreateGroup(
-    that: this,
-    config: config,
-    signerBytes: signerBytes,
-    credentialIdentity: credentialIdentity,
-    signerPublicKey: signerPublicKey,
-    groupId: groupId,
-    credentialBytes: credentialBytes,
-  );
 
   Future<CreateGroupResult> createGroupWithBuilder({
     required MlsGroupConfig config,
@@ -7249,179 +2959,11 @@ class MlsEngineImpl extends RustOpaque implements MlsEngine {
     credentialBytes: credentialBytes,
   );
 
-  /// Builds a key package with OpenMLS's defaults for everything except the
-  /// ciphersuite and the credential.
-  ///
-  /// Those defaults include the advertised capabilities, and the ciphersuite
-  /// list inside them is every suite `supportedCiphersuites` returns — ten of
-  /// them experimental post-quantum suites on provisional code points. A peer
-  /// reading this key package may therefore pick one of those for a group.
-  ///
-  /// To advertise a narrower set, or to change the lifetime, mark the package
-  /// last-resort, or attach extensions, use `createKeyPackageWithOptions`
-  /// instead: `KeyPackageOptions.capabilities` is where the ciphersuite list
-  /// goes.
-  Future<KeyPackageResult> createKeyPackage({
-    required MlsCiphersuite ciphersuite,
-    required List<int> signerBytes,
-    required List<int> credentialIdentity,
-    required List<int> signerPublicKey,
-    Uint8List? credentialBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineCreateKeyPackage(
-    that: this,
-    ciphersuite: ciphersuite,
-    signerBytes: signerBytes,
-    credentialIdentity: credentialIdentity,
-    signerPublicKey: signerPublicKey,
-    credentialBytes: credentialBytes,
-  );
-
-  /// Builds a key package, overriding the defaults `createKeyPackage` leaves
-  /// alone.
-  ///
-  /// Every field of `KeyPackageOptions` is optional and an unset one keeps
-  /// OpenMLS's default. `capabilities` is the one with a wire consequence:
-  /// setting `MlsCapabilities.ciphersuites` to an explicit list of raw code
-  /// points is the only way to stop a key package advertising every suite
-  /// this provider supports, experimental ones included.
-  Future<KeyPackageResult> createKeyPackageWithOptions({
-    required MlsCiphersuite ciphersuite,
-    required List<int> signerBytes,
-    required List<int> credentialIdentity,
-    required List<int> signerPublicKey,
-    required KeyPackageOptions options,
-    Uint8List? credentialBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineCreateKeyPackageWithOptions(
-    that: this,
-    ciphersuite: ciphersuite,
-    signerBytes: signerBytes,
-    credentialIdentity: credentialIdentity,
-    signerPublicKey: signerPublicKey,
-    options: options,
-    credentialBytes: credentialBytes,
-  );
-
-  Future<CreateMessageResult> createMessage({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> message,
-    Uint8List? aad,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineCreateMessage(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    signerBytes: signerBytes,
-    message: message,
-    aad: aad,
-  );
-
-  /// Delete the message secrets of every past epoch, keeping the policy as
-  /// it is.
-  ///
-  /// The group's current epoch is untouched: messages of the current epoch
-  /// keep decrypting. Everything older stops, irreversibly.
-  ///
-  /// ⚠ It clears what has accumulated; it does not stop accumulation. Under
-  /// `setPastEpochDeletionPolicyKeepAll` the next commit starts recording
-  /// past epochs again, so this is a sweep to be repeated rather than a
-  /// switch. To stop it, set a `maxEpochs` policy.
-  Future<void> deleteAllPastEpochSecrets({required List<int> groupIdBytes}) =>
-      RustLib.instance.api.crateApiEngineMlsEngineDeleteAllPastEpochSecrets(
-        that: this,
-        groupIdBytes: groupIdBytes,
-      );
-
   Future<void> deleteGroup({required List<int> groupIdBytes}) =>
       RustLib.instance.api.crateApiEngineMlsEngineDeleteGroup(
         that: this,
         groupIdBytes: groupIdBytes,
       );
-
-  Future<void> deleteKeyPackage({required List<int> keyPackageRefBytes}) =>
-      RustLib.instance.api.crateApiEngineMlsEngineDeleteKeyPackage(
-        that: this,
-        keyPackageRefBytes: keyPackageRefBytes,
-      );
-
-  /// Delete the message secrets of past epochs recorded before
-  /// `unixSeconds`, counted from the Unix epoch, keeping the policy as it is.
-  ///
-  /// `maxPastEpochs` additionally caps what survives at that many of the
-  /// newest past epochs; omit it to apply no cap. Undated entries are
-  /// skipped here too — see `deletePastEpochSecretsOlderThan`.
-  ///
-  /// ⚠ Seconds, not milliseconds. Dart offers `millisecondsSinceEpoch`
-  /// first, and a present-day millisecond count is about a thousand times
-  /// too large: that lands past the year 9999 and is refused here, rather
-  /// than quietly deleting every past epoch the group has.
-  Future<void> deletePastEpochSecretsBefore({
-    required List<int> groupIdBytes,
-    required BigInt unixSeconds,
-    int? maxPastEpochs,
-  }) =>
-      RustLib.instance.api.crateApiEngineMlsEngineDeletePastEpochSecretsBefore(
-        that: this,
-        groupIdBytes: groupIdBytes,
-        unixSeconds: unixSeconds,
-        maxPastEpochs: maxPastEpochs,
-      );
-
-  /// Delete the message secrets of past epochs recorded more than `seconds`
-  /// ago, keeping the policy as it is.
-  ///
-  /// Age is measured from when the secrets were stored, by this device's
-  /// clock, not from anything in the protocol. `maxPastEpochs` additionally
-  /// caps what survives at that many of the newest past epochs; omit it to
-  /// apply no cap.
-  ///
-  /// ⚠ **Entries that carry no timestamp are skipped in silence** — the
-  /// store cannot tell how old an undated one is. Such entries exist only
-  /// where an application ran a version of this package built on OpenMLS
-  /// 0.8.1 or earlier *and* had `maxPastEpochs` above zero, since the
-  /// default records no past epochs at all; in a group that outlived that
-  /// upgrade they sit alongside dated ones and a retention window built only
-  /// out of this method keeps them forever.
-  /// `deletePastEpochSecretsWithoutTimestamps` is the step that clears them.
-  Future<void> deletePastEpochSecretsOlderThan({
-    required List<int> groupIdBytes,
-    required BigInt seconds,
-    int? maxPastEpochs,
-  }) => RustLib.instance.api
-      .crateApiEngineMlsEngineDeletePastEpochSecretsOlderThan(
-        that: this,
-        groupIdBytes: groupIdBytes,
-        seconds: seconds,
-        maxPastEpochs: maxPastEpochs,
-      );
-
-  /// Delete the message secrets of past epochs that carry no timestamp,
-  /// keeping the policy as it is.
-  ///
-  /// This is a migration step, not an exotic option. Secrets recorded by a
-  /// version of this package built on OpenMLS 0.8.1 or earlier have no
-  /// timestamp, so neither `deletePastEpochSecretsOlderThan` nor
-  /// `deletePastEpochSecretsBefore` will ever remove them; a deployment that
-  /// keeps past epochs and has upgraded across that boundary should run this
-  /// once. Where `maxPastEpochs` was left at its default of zero, no past
-  /// epochs were recorded at all and there is nothing here to clear.
-  ///
-  /// `maxPastEpochs` additionally caps what survives at that many of the
-  /// newest past epochs; omit it to apply no cap.
-  Future<void> deletePastEpochSecretsWithoutTimestamps({
-    required List<int> groupIdBytes,
-    int? maxPastEpochs,
-  }) => RustLib.instance.api
-      .crateApiEngineMlsEngineDeletePastEpochSecretsWithoutTimestamps(
-        that: this,
-        groupIdBytes: groupIdBytes,
-        maxPastEpochs: maxPastEpochs,
-      );
-
-  Future<MlsGroupContextInfo> exportGroupContext({
-    required List<int> groupIdBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineExportGroupContext(
-    that: this,
-    groupIdBytes: groupIdBytes,
-  );
 
   Future<Uint8List> exportGroupInfo({
     required List<int> groupIdBytes,
@@ -7432,12 +2974,6 @@ class MlsEngineImpl extends RustOpaque implements MlsEngine {
     signerBytes: signerBytes,
   );
 
-  Future<Uint8List> exportRatchetTree({required List<int> groupIdBytes}) =>
-      RustLib.instance.api.crateApiEngineMlsEngineExportRatchetTree(
-        that: this,
-        groupIdBytes: groupIdBytes,
-      );
-
   Future<Uint8List> exportSecret({
     required List<int> groupIdBytes,
     required String label,
@@ -7446,49 +2982,6 @@ class MlsEngineImpl extends RustOpaque implements MlsEngine {
   }) => RustLib.instance.api.crateApiEngineMlsEngineExportSecret(
     that: this,
     groupIdBytes: groupIdBytes,
-    label: label,
-    context: context,
-    keyLength: keyLength,
-  );
-
-  /// Derives a secret from the epoch a Welcome invites this client into,
-  /// **without joining the group**.
-  ///
-  /// This is `exportSecret` one step earlier: same derivation, same
-  /// `label`/`context`/`keyLength` meaning, but reachable while the
-  /// invitation is still only an invitation. It is what lets a client agree
-  /// a key with the inviter — or prove to a third party that it can read the
-  /// epoch — before it decides whether to accept.
-  ///
-  /// Like `inspectWelcome`, this writes nothing, and that is load-bearing
-  /// rather than incidental. Processing a Welcome consumes the key package
-  /// it was addressed to: OpenMLS deletes it from storage unless it is
-  /// marked last-resort. Here that delete lands in this call's snapshot and
-  /// is discarded with it, because neither this function nor `inspectWelcome`
-  /// commits — so a later `joinGroupFromWelcome` on the same Welcome still
-  /// finds its key package. Committing from either would silently burn the
-  /// invitation.
-  ///
-  /// The secret comes from the unverified group info in the Welcome. The
-  /// confirmation tag is only checked when the Welcome is staged into a
-  /// group, which happens in `joinGroupFromWelcome` and not here.
-  ///
-  /// It sees exactly the storage the real join sees:
-  /// `joinGroupFromWelcome` loads the same global scope, and pre-shared keys
-  /// live in it (they are stored ungrouped, like key packages and signature
-  /// keys). So a Welcome that carries PSKs resolves them here or fails here
-  /// for the same reason it would there — this function is never the narrower
-  /// of the two.
-  Future<Uint8List> exportWelcomeSecret({
-    required MlsGroupConfig config,
-    required List<int> welcomeBytes,
-    required String label,
-    required List<int> context,
-    required int keyLength,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineExportWelcomeSecret(
-    that: this,
-    config: config,
-    welcomeBytes: welcomeBytes,
     label: label,
     context: context,
     keyLength: keyLength,
@@ -7505,69 +2998,11 @@ class MlsEngineImpl extends RustOpaque implements MlsEngine {
     options: options,
   );
 
-  Future<Uint8List?> getPastResumptionPsk({
-    required List<int> groupIdBytes,
-    required BigInt epoch,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineGetPastResumptionPsk(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    epoch: epoch,
-  );
-
-  Future<MlsCiphersuite> groupCiphersuite({required List<int> groupIdBytes}) =>
-      RustLib.instance.api.crateApiEngineMlsEngineGroupCiphersuite(
-        that: this,
-        groupIdBytes: groupIdBytes,
-      );
-
-  Future<GroupConfigurationResult> groupConfiguration({
-    required List<int> groupIdBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineGroupConfiguration(
-    that: this,
-    groupIdBytes: groupIdBytes,
-  );
-
-  Future<Uint8List> groupConfirmationTag({required List<int> groupIdBytes}) =>
-      RustLib.instance.api.crateApiEngineMlsEngineGroupConfirmationTag(
-        that: this,
-        groupIdBytes: groupIdBytes,
-      );
-
-  Future<Uint8List> groupCredential({required List<int> groupIdBytes}) =>
-      RustLib.instance.api.crateApiEngineMlsEngineGroupCredential(
-        that: this,
-        groupIdBytes: groupIdBytes,
-      );
-
   Future<BigInt> groupEpoch({required List<int> groupIdBytes}) =>
       RustLib.instance.api.crateApiEngineMlsEngineGroupEpoch(
         that: this,
         groupIdBytes: groupIdBytes,
       );
-
-  Future<Uint8List> groupEpochAuthenticator({
-    required List<int> groupIdBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineGroupEpochAuthenticator(
-    that: this,
-    groupIdBytes: groupIdBytes,
-  );
-
-  Future<Uint8List> groupExtensions({required List<int> groupIdBytes}) =>
-      RustLib.instance.api.crateApiEngineMlsEngineGroupExtensions(
-        that: this,
-        groupIdBytes: groupIdBytes,
-      );
-
-  Future<bool> groupHasPendingProposals({required List<int> groupIdBytes}) =>
-      RustLib.instance.api.crateApiEngineMlsEngineGroupHasPendingProposals(
-        that: this,
-        groupIdBytes: groupIdBytes,
-      );
-
-  Future<Uint8List> groupId({required List<int> groupIdBytes}) => RustLib
-      .instance
-      .api
-      .crateApiEngineMlsEngineGroupId(that: this, groupIdBytes: groupIdBytes);
 
   Future<bool> groupIsActive({required List<int> groupIdBytes}) =>
       RustLib.instance.api.crateApiEngineMlsEngineGroupIsActive(
@@ -7575,80 +3010,11 @@ class MlsEngineImpl extends RustOpaque implements MlsEngine {
         groupIdBytes: groupIdBytes,
       );
 
-  Future<MlsMemberInfo?> groupMemberAt({
-    required List<int> groupIdBytes,
-    required int leafIndex,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineGroupMemberAt(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    leafIndex: leafIndex,
-  );
-
-  Future<int?> groupMemberLeafIndex({
-    required List<int> groupIdBytes,
-    required List<int> credentialBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineGroupMemberLeafIndex(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    credentialBytes: credentialBytes,
-  );
-
   Future<List<MlsMemberInfo>> groupMembers({required List<int> groupIdBytes}) =>
       RustLib.instance.api.crateApiEngineMlsEngineGroupMembers(
         that: this,
         groupIdBytes: groupIdBytes,
       );
-
-  Future<int> groupOwnIndex({required List<int> groupIdBytes}) =>
-      RustLib.instance.api.crateApiEngineMlsEngineGroupOwnIndex(
-        that: this,
-        groupIdBytes: groupIdBytes,
-      );
-
-  Future<MlsLeafNodeInfo> groupOwnLeafNode({required List<int> groupIdBytes}) =>
-      RustLib.instance.api.crateApiEngineMlsEngineGroupOwnLeafNode(
-        that: this,
-        groupIdBytes: groupIdBytes,
-      );
-
-  Future<List<MlsPendingProposalInfo>> groupPendingProposals({
-    required List<int> groupIdBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineGroupPendingProposals(
-    that: this,
-    groupIdBytes: groupIdBytes,
-  );
-
-  Future<WelcomeInspectResult> inspectWelcome({
-    required MlsGroupConfig config,
-    required List<int> welcomeBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineInspectWelcome(
-    that: this,
-    config: config,
-    welcomeBytes: welcomeBytes,
-  );
-
-  /// Check whether this engine has been closed.
-  bool isClosed() =>
-      RustLib.instance.api.crateApiEngineMlsEngineIsClosed(that: this);
-
-  Future<ExternalJoinResult> joinGroupExternalCommit({
-    required MlsGroupConfig config,
-    required List<int> groupInfoBytes,
-    Uint8List? ratchetTreeBytes,
-    required List<int> signerBytes,
-    required List<int> credentialIdentity,
-    required List<int> signerPublicKey,
-    Uint8List? credentialBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineJoinGroupExternalCommit(
-    that: this,
-    config: config,
-    groupInfoBytes: groupInfoBytes,
-    ratchetTreeBytes: ratchetTreeBytes,
-    signerBytes: signerBytes,
-    credentialIdentity: credentialIdentity,
-    signerPublicKey: signerPublicKey,
-    credentialBytes: credentialBytes,
-  );
 
   Future<ExternalJoinResult> joinGroupExternalCommitV2({
     required MlsGroupConfig config,
@@ -7673,70 +3039,11 @@ class MlsEngineImpl extends RustOpaque implements MlsEngine {
     credentialBytes: credentialBytes,
   );
 
-  Future<JoinGroupResult> joinGroupFromWelcome({
-    required MlsGroupConfig config,
-    required List<int> welcomeBytes,
-    Uint8List? ratchetTreeBytes,
-    required List<int> signerBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineJoinGroupFromWelcome(
-    that: this,
-    config: config,
-    welcomeBytes: welcomeBytes,
-    ratchetTreeBytes: ratchetTreeBytes,
-    signerBytes: signerBytes,
-  );
-
-  Future<JoinGroupResult> joinGroupFromWelcomeWithOptions({
-    required MlsGroupConfig config,
-    required List<int> welcomeBytes,
-    Uint8List? ratchetTreeBytes,
-    required List<int> signerBytes,
-    required bool skipLifetimeValidation,
-  }) => RustLib.instance.api
-      .crateApiEngineMlsEngineJoinGroupFromWelcomeWithOptions(
-        that: this,
-        config: config,
-        welcomeBytes: welcomeBytes,
-        ratchetTreeBytes: ratchetTreeBytes,
-        signerBytes: signerBytes,
-        skipLifetimeValidation: skipLifetimeValidation,
-      );
-
-  Future<LeaveGroupResult> leaveGroup({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineLeaveGroup(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    signerBytes: signerBytes,
-  );
-
-  Future<LeaveGroupResult> leaveGroupViaSelfRemove({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineLeaveGroupViaSelfRemove(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    signerBytes: signerBytes,
-  );
-
   Future<void> mergePendingCommit({required List<int> groupIdBytes}) =>
       RustLib.instance.api.crateApiEngineMlsEngineMergePendingCommit(
         that: this,
         groupIdBytes: groupIdBytes,
       );
-
-  /// Read how many past epochs' message secrets this group keeps.
-  ///
-  /// A group that was never told otherwise reports the `maxPastEpochs` its
-  /// `MlsGroupConfig` carried when it was created or joined — the two are
-  /// the same setting.
-  Future<PastEpochDeletionPolicyResult> pastEpochDeletionPolicy({
-    required List<int> groupIdBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEnginePastEpochDeletionPolicy(
-    that: this,
-    groupIdBytes: groupIdBytes,
-  );
 
   Future<ProcessedMessageResult> processMessage({
     required List<int> groupIdBytes,
@@ -7746,301 +3053,6 @@ class MlsEngineImpl extends RustOpaque implements MlsEngine {
     groupIdBytes: groupIdBytes,
     messageBytes: messageBytes,
   );
-
-  Future<ProcessedMessageInspectResult> processMessageWithInspect({
-    required List<int> groupIdBytes,
-    required List<int> messageBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineProcessMessageWithInspect(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    messageBytes: messageBytes,
-  );
-
-  Future<ProposalResult> proposeAdd({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> keyPackageBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineProposeAdd(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    signerBytes: signerBytes,
-    keyPackageBytes: keyPackageBytes,
-  );
-
-  Future<ProposalResult> proposeCustomProposal({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required int proposalType,
-    required List<int> payload,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineProposeCustomProposal(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    signerBytes: signerBytes,
-    proposalType: proposalType,
-    payload: payload,
-  );
-
-  Future<ProposalResult> proposeExternalPsk({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> pskId,
-    required List<int> pskNonce,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineProposeExternalPsk(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    signerBytes: signerBytes,
-    pskId: pskId,
-    pskNonce: pskNonce,
-  );
-
-  Future<ProposalResult> proposeGroupContextExtensions({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<MlsExtension> extensions,
-  }) =>
-      RustLib.instance.api.crateApiEngineMlsEngineProposeGroupContextExtensions(
-        that: this,
-        groupIdBytes: groupIdBytes,
-        signerBytes: signerBytes,
-        extensions: extensions,
-      );
-
-  Future<ProposalResult> proposeRemove({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required int memberIndex,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineProposeRemove(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    signerBytes: signerBytes,
-    memberIndex: memberIndex,
-  );
-
-  Future<ProposalResult> proposeRemoveMemberByCredential({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> credentialBytes,
-  }) => RustLib.instance.api
-      .crateApiEngineMlsEngineProposeRemoveMemberByCredential(
-        that: this,
-        groupIdBytes: groupIdBytes,
-        signerBytes: signerBytes,
-        credentialBytes: credentialBytes,
-      );
-
-  Future<ProposalResult> proposeSelfUpdate({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    MlsCapabilities? leafNodeCapabilities,
-    List<MlsExtension>? leafNodeExtensions,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineProposeSelfUpdate(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    signerBytes: signerBytes,
-    leafNodeCapabilities: leafNodeCapabilities,
-    leafNodeExtensions: leafNodeExtensions,
-  );
-
-  /// Proposes a self-update that also rotates this member's signature key.
-  ///
-  /// The proposal form of `selfUpdateWithNewSigner`: the same key rotation,
-  /// queued as a proposal instead of committed, so it can be carried by
-  /// somebody else's commit.
-  ///
-  /// Two signers are needed because the message and its payload are
-  /// authenticated against different keys. The envelope is signed with
-  /// `oldSignerBytes`, since this member's leaf in the group tree still
-  /// carries the old signature key at the time the proposal is sent; the new
-  /// leaf inside the proposal is self-signed by `newSignerBytes` so that it
-  /// verifies against the `signatureKey` it announces. Both must therefore be
-  /// real key pairs with private keys.
-  ///
-  /// Upstream requires that a credential set in the leaf-node parameters
-  /// equal the new signer's credential. This wrapper cannot violate that: it
-  /// builds leaf-node parameters from `leafNodeCapabilities` and
-  /// `leafNodeExtensions` only and never sets a credential there, so the
-  /// credential built from `newCredentialIdentity` /
-  /// `newSignerPublicKey` / `newCredentialBytes` is always the one that gets
-  /// folded in.
-  ///
-  /// The new signer is stored before the proposal is created, matching
-  /// `selfUpdateWithNewSigner`, so the key is available to sign with once the
-  /// proposal is committed. Fails if a commit is already pending.
-  ///
-  /// Availability rests on this crate not enabling openmls's
-  /// `virtual-clients-draft` feature. Upstream gates this function on
-  /// `not(virtual-clients-draft)`, its own `test-utils`, or `test` — and that
-  /// `test-utils` was deliberately dropped from the shipped binary in 3.0.0,
-  /// so `not(virtual-clients-draft)` is the only arm holding it open here.
-  Future<ProposalResult> proposeSelfUpdateWithNewSigner({
-    required List<int> groupIdBytes,
-    required List<int> oldSignerBytes,
-    required List<int> newSignerBytes,
-    required List<int> newCredentialIdentity,
-    required List<int> newSignerPublicKey,
-    Uint8List? newCredentialBytes,
-    MlsCapabilities? leafNodeCapabilities,
-    List<MlsExtension>? leafNodeExtensions,
-  }) => RustLib.instance.api
-      .crateApiEngineMlsEngineProposeSelfUpdateWithNewSigner(
-        that: this,
-        groupIdBytes: groupIdBytes,
-        oldSignerBytes: oldSignerBytes,
-        newSignerBytes: newSignerBytes,
-        newCredentialIdentity: newCredentialIdentity,
-        newSignerPublicKey: newSignerPublicKey,
-        newCredentialBytes: newCredentialBytes,
-        leafNodeCapabilities: leafNodeCapabilities,
-        leafNodeExtensions: leafNodeExtensions,
-      );
-
-  Future<CommitResult> removeMembers({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> memberIndices,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineRemoveMembers(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    signerBytes: signerBytes,
-    memberIndices: memberIndices,
-  );
-
-  Future<void> removePendingProposal({
-    required List<int> groupIdBytes,
-    required List<int> proposalRefBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineRemovePendingProposal(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    proposalRefBytes: proposalRefBytes,
-  );
-
-  /// Return the database schema version.
-  ///
-  /// After a successful `create()`, this is always `LATEST_SCHEMA_VERSION`.
-  /// Useful for diagnostics and debugging migration issues.
-  int schemaVersion() =>
-      RustLib.instance.api.crateApiEngineMlsEngineSchemaVersion(that: this);
-
-  Future<CommitResult> selfUpdate({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineSelfUpdate(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    signerBytes: signerBytes,
-  );
-
-  Future<CommitResult> selfUpdateWithNewSigner({
-    required List<int> groupIdBytes,
-    required List<int> oldSignerBytes,
-    required List<int> newSignerBytes,
-    required List<int> newCredentialIdentity,
-    required List<int> newSignerPublicKey,
-    Uint8List? newCredentialBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineSelfUpdateWithNewSigner(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    oldSignerBytes: oldSignerBytes,
-    newSignerBytes: newSignerBytes,
-    newCredentialIdentity: newCredentialIdentity,
-    newSignerPublicKey: newSignerPublicKey,
-    newCredentialBytes: newCredentialBytes,
-  );
-
-  /// Replace the group's runtime configuration.
-  ///
-  /// Every field of `MlsGroupConfig` is written, including the ones this
-  /// call was not made for — the struct carries no "leave as is".
-  ///
-  /// ⚠ **This resets the past epoch deletion policy.** `maxPastEpochs` is
-  /// the same setting as `setPastEpochDeletionPolicyMaxEpochs`, so passing a
-  /// config here writes that number as the policy — silently undoing a
-  /// `setPastEpochDeletionPolicyKeepAll` made earlier, along with the past
-  /// epoch secrets the lower number no longer admits. When both are used,
-  /// set the policy after the configuration, not before.
-  Future<void> setConfiguration({
-    required List<int> groupIdBytes,
-    required MlsGroupConfig config,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineSetConfiguration(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    config: config,
-  );
-
-  /// Keep every past epoch's message secrets, deleting none automatically.
-  ///
-  /// ⚠ **Deletion becomes the application's job.** Nothing in this package
-  /// removes past epoch secrets while this is set, so the group's stored
-  /// state grows with every commit for as long as the group lives, and every
-  /// epoch it ever had stays decryptable by anyone who obtains that store.
-  /// Pair it with one of the `deletePastEpochSecrets…` methods on a schedule
-  /// of your own — a retention window with
-  /// `deletePastEpochSecretsOlderThan`, say — or this is a leak rather than
-  /// a feature.
-  ///
-  /// It does not bring back what an earlier policy already discarded, and
-  /// like the one above it is reset by `setConfiguration`.
-  Future<void> setPastEpochDeletionPolicyKeepAll({
-    required List<int> groupIdBytes,
-  }) => RustLib.instance.api
-      .crateApiEngineMlsEngineSetPastEpochDeletionPolicyKeepAll(
-        that: this,
-        groupIdBytes: groupIdBytes,
-      );
-
-  /// Keep the message secrets of at most `maxEpochs` past epochs, deleting
-  /// the oldest as newer ones arrive.
-  ///
-  /// Takes effect at once: a number below what the group already holds
-  /// deletes the surplus inside this call rather than at the next commit.
-  ///
-  /// ⚠ Above 0 this keeps material that decrypts past traffic — see
-  /// `PastEpochDeletionPolicyResult` for the trade-off. Zero, the default
-  /// for a new group, keeps none.
-  ///
-  /// ⚠ **`setConfiguration` resets this**, because `MlsGroupConfig` carries
-  /// the same setting as `maxPastEpochs`. When both are used, set the policy
-  /// after the configuration, not before.
-  ///
-  /// Errors when `maxEpochs` is 4294967295. That one value is refused rather
-  /// than stored because it is what OpenMLS writes to mean keep-all where
-  /// `usize` is 32 bits — the Web and 32-bit Android — so accepting it would
-  /// make two settings one stored value there and two everywhere else. Use
-  /// `setPastEpochDeletionPolicyKeepAll` if that is what you mean.
-  Future<void> setPastEpochDeletionPolicyMaxEpochs({
-    required List<int> groupIdBytes,
-    required int maxEpochs,
-  }) => RustLib.instance.api
-      .crateApiEngineMlsEngineSetPastEpochDeletionPolicyMaxEpochs(
-        that: this,
-        groupIdBytes: groupIdBytes,
-        maxEpochs: maxEpochs,
-      );
-
-  Future<AddMembersResult> swapMembers({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> removeIndices,
-    required List<Uint8List> addKeyPackagesBytes,
-  }) => RustLib.instance.api.crateApiEngineMlsEngineSwapMembers(
-    that: this,
-    groupIdBytes: groupIdBytes,
-    signerBytes: signerBytes,
-    removeIndices: removeIndices,
-    addKeyPackagesBytes: addKeyPackagesBytes,
-  );
-
-  Future<CommitResult> updateGroupContextExtensions({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<MlsExtension> extensions,
-  }) =>
-      RustLib.instance.api.crateApiEngineMlsEngineUpdateGroupContextExtensions(
-        that: this,
-        groupIdBytes: groupIdBytes,
-        signerBytes: signerBytes,
-        extensions: extensions,
-      );
 }
 
 @sealed
@@ -8082,16 +3094,4 @@ class MlsSignatureKeyPairImpl extends RustOpaque
   /// Returns the public key bytes.
   Uint8List publicKey() =>
       RustLib.instance.api.crateApiKeysMlsSignatureKeyPairPublicKey(that: this);
-
-  /// Serialize the key pair to bytes for storage.
-  ///
-  /// The returned bytes contain the **public key and signature scheme only** —
-  /// no private key material. To reconstruct a full key pair with private key,
-  /// use `fromRaw()` with the original private key bytes.
-  Uint8List serialize() =>
-      RustLib.instance.api.crateApiKeysMlsSignatureKeyPairSerialize(that: this);
-
-  /// Returns the signature scheme as a u16.
-  int signatureScheme() => RustLib.instance.api
-      .crateApiKeysMlsSignatureKeyPairSignatureScheme(that: this);
 }

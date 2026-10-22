@@ -16,15 +16,6 @@ abstract class MlsCredential implements RustOpaqueInterface {
       .api
       .crateApiCredentialMlsCredentialBasic(identity: identity);
 
-  /// Returns the certificate chain from an X.509 credential.
-  ///
-  /// Each entry is a DER-encoded X.509 certificate.
-  /// Returns an error if this is not an X.509 credential.
-  List<Uint8List> certificates();
-
-  /// Returns the credential type value (1 = Basic, 2 = X509).
-  int credentialType();
-
   /// TLS-deserialize a credential from bytes.
   static MlsCredential deserialize({required List<int> bytes}) => RustLib
       .instance
@@ -38,25 +29,4 @@ abstract class MlsCredential implements RustOpaqueInterface {
 
   /// TLS-serialize this credential for wire transmission.
   Uint8List serialize();
-
-  /// Returns the raw serialized content of this credential.
-  ///
-  /// For BasicCredential, this is the identity bytes.
-  /// For X.509, this is the TLS-serialized certificate chain.
-  Uint8List serializedContent();
-
-  /// Create an X.509 credential from a certificate chain.
-  ///
-  /// Each entry in `certificateChain` is a DER-encoded X.509 certificate.
-  /// The first certificate should be the end-entity (leaf) certificate,
-  /// followed by intermediate certificates in order toward the root.
-  ///
-  /// # Security
-  /// This function does **not** validate the certificate chain (expiration,
-  /// signatures, revocation, or trust anchors). The application layer is
-  /// responsible for verifying the X.509 chain before passing it here.
-  static MlsCredential x509({required List<Uint8List> certificateChain}) =>
-      RustLib.instance.api.crateApiCredentialMlsCredentialX509(
-        certificateChain: certificateChain,
-      );
 }

@@ -2,7 +2,10 @@
 
 use openmls::prelude::*;
 
-use super::types::{ciphersuite_to_native, wire_format_to_native, MlsCiphersuite, MlsWireFormatPolicy};
+use super::types::{
+    capabilities_to_native, ciphersuite_to_native, wire_format_to_native, MlsCiphersuite,
+    MlsWireFormatPolicy,
+};
 
 /// Group configuration parameters.
 ///
@@ -46,11 +49,12 @@ impl MlsGroupConfig {
         }
     }
 
-    pub(crate) fn to_create_config(&self) -> MlsGroupCreateConfig {
-        let cs = ciphersuite_to_native(&self.ciphersuite);
+    pub(crate) fn to_create_config(&self) -> Result<MlsGroupCreateConfig, String> {
+        let cs = ciphersuite_to_native(&self.ciphersuite)?;
         let wf = wire_format_to_native(&self.wire_format_policy);
-        MlsGroupCreateConfig::builder()
+        Ok(MlsGroupCreateConfig::builder()
             .ciphersuite(cs)
+            .capabilities(capabilities_to_native(None)?)
             .wire_format_policy(wf)
             .use_ratchet_tree_extension(self.use_ratchet_tree_extension)
             .max_past_epochs(self.max_past_epochs as usize)
@@ -60,7 +64,7 @@ impl MlsGroupConfig {
                 self.sender_ratchet_max_out_of_order,
                 self.sender_ratchet_max_forward_distance,
             ))
-            .build()
+            .build())
     }
 
     pub(crate) fn to_join_config(&self) -> MlsGroupJoinConfig {

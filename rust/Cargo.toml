@@ -1,8 +1,8 @@
 [package]
 name = "openmls_frb"
-version = "2.4.0"
+version = "3.0.0"
 edition = "2024"
-# 1.91 is openmls 0.9.0's floor (its workspace declares it), and that is what
+# 1.91 is the floor openmls's workspace declares (since 0.9.0), and that is what
 # sets this now. The previous 1.89 was ours: `std::fs::File::try_lock`, the
 # single-writer sidecar lock in `encrypted_db.rs`, whose alternative
 # `libc::flock` is an `unsafe fn` this crate would have to make an exception
@@ -38,28 +38,48 @@ parking_lot = "0.12"
 # which is a one-line wrapper over `self.public_group.group_context()`; both
 # `public_group()` and `GroupContext`'s accessors became public in 0.9.0, so
 # `api/engine.rs` calls that chain directly.
-openmls = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.9.0", features = ["draft-ietf-mls-pq-ciphersuites"] }
-openmls_rust_crypto = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.9.0", features = ["draft-ietf-mls-pq-ciphersuites"] }
-# Both features are named explicitly rather than inherited.
-# `draft-ietf-mls-pq-ciphersuites`: without it `SignatureKeyPair::new` has no
-# ML-DSA arms and the four MLDSA ciphersuites cannot build an identity.
+openmls = "=0.9.1"
+openmls_rust_crypto = "0.6.0"
 # `test-utils`: this is *this* crate's feature, not openmls's — it is what makes
 # `SignatureKeyPair::private()` reachable (`api/keys.rs`), and it implies no
 # backtrace.
-openmls_basic_credential = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.9.0", features = ["test-utils", "draft-ietf-mls-pq-ciphersuites"] }
-openmls_traits = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.9.0", features = ["draft-ietf-mls-pq-ciphersuites"] }
+openmls_basic_credential = { version = "0.6.0", features = ["test-utils"] }
+openmls_traits = "0.6.0"
 # libcrux-based provider: only used for the X-Wing hybrid post-quantum KEM
 # (HpkeKemType::XWingKemDraft6); everything else stays on openmls_rust_crypto.
-openmls_libcrux_crypto = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.9.0", features = ["draft-ietf-mls-pq-ciphersuites"] }
+openmls_libcrux_crypto = { version = "0.4.0", features = ["draft-ietf-mls-pq-ciphersuites"], optional = true }
 
+[features]
+# Without `all-ciphersuites` the build executes only RFC 9420's mandatory-to-implement suite 0x0001.
+default = []
+# Adds suites 0x0002, 0x0003 and the experimental post-quantum ones (X-Wing on libcrux).
+all-ciphersuites = [
+    "dep:openmls_libcrux_crypto",
+    "openmls/draft-ietf-mls-pq-ciphersuites",
+    "openmls_rust_crypto/draft-ietf-mls-pq-ciphersuites",
+    "openmls_basic_credential/draft-ietf-mls-pq-ciphersuites",
+    "openmls_traits/draft-ietf-mls-pq-ciphersuites",
+]
+# Exports the whole API, not only what the creatika app calls. FRB reads the API
+# through `cargo expand`, so the Dart bindings follow the features codegen saw:
+# `make codegen ARGS="--rust-features full-api"`.
+full-api = []
 
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+[target.'cfg(all(not(target_arch = "wasm32"), not(target_vendor = "apple")))'.dependencies]
 rusqlite = { version = "0.37", features = ["bundled-sqlcipher-vendored-openssl"] }
+
+# SQLCipher on Apple's CommonCrypto instead of a bundled OpenSSL. libsqlite3-sys
+# links a system libcrypto instead when OPENSSL_DIR, or OPENSSL_LIB_DIR with
+# OPENSSL_INCLUDE_DIR, is set (each also `<TARGET>_`-prefixed), so build.rs
+# refuses those on Apple targets; `sqlcipher_crypto_provider_matches_the_platform`
+# in encrypted_db.rs checks the result.
+[target.'cfg(target_vendor = "apple")'.dependencies]
+rusqlite = { version = "0.37", features = ["bundled-sqlcipher"] }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 # OpenMLS requires `js` feature for WASM: enables fluvio_wasm_timer for time access
 # Cargo merges features from [dependencies] and [target.*.dependencies]
-openmls = { git = "https://github.com/openmls/openmls", tag = "openmls-v0.9.0", features = ["js"] }
+openmls = { version = "=0.9.1", features = ["js"] }
 # getrandom refuses to compile for wasm32-unknown-unknown until its browser
 # backend is selected by name, and three majors coexist in a modern Rust crypto
 # graph. Cargo unions features per package version and per target, so declaring

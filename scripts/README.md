@@ -25,7 +25,7 @@ make check-new-openmls-version
 make check-new-openmls-version ARGS="--update"
 
 # Update to specific version
-make check-new-openmls-version ARGS="--update --version openmls-v0.8.1"
+make check-new-openmls-version ARGS="--update --version 0.9.1"
 
 # Force update even if versions match
 make check-new-openmls-version ARGS="--update --force"
@@ -76,8 +76,8 @@ make check-new-openmls-version ARGS="--update"
 
 # Option 2: Manual update
 # 1. Edit rust/Cargo.toml - update openmls-protocol tag to new version
-# 2. Update Cargo.lock
-cd rust && cargo update && cd ..
+# 2. Update Cargo.lock (also regenerates THIRD_PARTY_NOTICES.txt)
+make rust-update
 
 # Test
 make test

@@ -4,19 +4,173 @@
 
 #### ✨ Highlights
 
+- **A peer can no longer crash the application with nested extensions** —
+  GHSA-gc79-23g3-8g52, fixed upstream in openmls 0.9.1; every earlier release
+  of this package is affected.
+- **A malformed X-Wing key from a peer no longer panics** — RUSTSEC-2026-0331,
+  on the 0x004D suite only, which only an `all-ciphersuites` build has.
+- **The default native library runs only ciphersuite 0x0001 (breaking)** — the
+  `all-ciphersuites` Cargo feature restores the other twelve.
+- **The default bindings export only what the creatika app calls
+  (breaking)** — the `full-api` Cargo feature restores the rest.
+- **The native library is less than half its size** — together with
+  SQLCipher on CommonCrypto on Apple platforms, the stripped iOS device
+  library goes from 8.1 MB to 3.5 MB (gzip 4.0 MB to 1.7 MB) and the WASM
+  module from 2.5 MB to 1.6 MB (gzip 886 KB to 611 KB).
+- **Async calls no longer wait forever when another isolate shuts down during
+  `Openmls.init()`** — native platforms; see *Fixed*.
 - **Web apps built with `--wasm` (dart2wasm) now work** — the bindings are
   regenerated with `flutter_rust_bridge` 2.14.0-beta.2, a prerelease.
-- **openmls v0.9.0** — unchanged this release
-- **openmls_frb v2.4.0** — Rust FFI bindings
+- **openmls v0.9.1** — a patch release: the GHSA-gc79-23g3-8g52 fix, and
+  nothing else this package's API exposes.
+- **openmls_frb v3.0.0** — Rust FFI bindings
+
+#### Changed (Breaking)
+
+- **The default native library executes only RFC 9420's
+  mandatory-to-implement ciphersuite, 0x0001** (`rust/Cargo.toml`,
+  `rust/src/mandatory_ciphersuite_crypto.rs`, `rust/src/lib.rs`,
+  `rust/src/api/types.rs`) — a build without the new `all-ciphersuites`
+  Cargo feature runs on `MandatoryCiphersuiteCrypto` instead of
+  `HybridCrypto`: RustCrypto, accepting suite 0x0001 alone and handing it
+  each of that suite's algorithms as a constant, so link-time optimisation
+  drops the code of every other one. libcrux (`openmls_libcrux_crypto`) and
+  openmls's `draft-ietf-mls-pq-ciphersuites` feature are compiled only with
+  `all-ciphersuites`, which builds what earlier releases built: thirteen
+  suites, X-Wing on libcrux. `supportedCiphersuites()` says which build is
+  loaded. On the default one, a group, key package or signature key on any
+  other suite fails with an error rather than reaching openmls, and so do a
+  stored signer whose signature scheme no executed suite uses and any call on
+  a stored group of such a suite (`deleteGroup` still removes it). Leaf nodes
+  built without an explicit ciphersuite list — groups, key packages, external
+  joins — advertise the suites the build executes instead of OpenMLS's fixed
+  0x0001–0x0003, and an explicit list naming any other suite is refused.
+  **Action required:** an app that uses a suite other than 0x0001 builds the
+  native library itself with `--features all-ciphersuites`; the released
+  binaries are the default build.
+- **The committed bindings export only what the creatika app calls**
+  (`rust/src/api/`, `lib/src/rust/`, `rust/Cargo.toml`) — the rest of the API
+  is compiled only with the new `full-api` Cargo feature, and
+  flutter_rust_bridge reads the API through `cargo expand`, so the bindings
+  follow the features codegen saw. `README.md` (*Implementation Status*)
+  lists what stays: engine create/close, group creation, external commit
+  joins, `flexibleCommit`, message processing, the group queries and exports
+  the app uses, signature keys and basic credentials. Welcome joins, key
+  packages, proposals, member management and the other queries are gone from
+  the default bindings, and the linker drops the openmls code only they
+  reached. **Action required:** an app calling anything else regenerates the
+  bindings with `make codegen ARGS="--rust-features full-api"` and builds the
+  native library with `--features full-api`; `RustLib.init()` refuses
+  full-API bindings on a released binary, whose `rustContentHash` differs.
+
+#### Changed
+
+- **On Apple platforms SQLCipher uses CommonCrypto instead of a bundled
+  OpenSSL** (`rust/Cargo.toml`, `rust/src/encrypted_db.rs`) — iOS and macOS
+  builds take rusqlite's `bundled-sqlcipher` feature, whose SQLCipher links
+  the system's CommonCrypto, so OpenSSL is no longer compiled into them;
+  Android, Linux and Windows keep `bundled-sqlcipher-vendored-openssl`.
+  `PRAGMA cipher_provider` answers `commoncrypto` there and `openssl`
+  elsewhere, which a test asserts. An Apple build fails when `OPENSSL_DIR`,
+  `OPENSSL_LIB_DIR` or `OPENSSL_INCLUDE_DIR` (plain or target-prefixed) is
+  set (`rust/build.rs`), because libsqlite3-sys would then link that
+  OpenSSL's `libcrypto` instead. The database format does not depend on the
+  provider: `test/security/sqlcipher_compat_test.dart` opens and writes a
+  fixture database from each.
+
+- **The build hook uses a local host build only when `make build` stamped it
+  with the current crate version** (`hook/build.dart`, `Makefile`) — a
+  library in `rust/target/release/` or `rust/target/debug/` took priority over
+  the released one on the sole condition that it existed, so one left over
+  from an earlier crate loaded silently, and `rustContentHash`, which hashes
+  only the names of the bridged functions, could not notice a moved wire
+  format. `make build` now writes `rust/target/release/.crate-version`, as
+  `make build-web` already did beside the WASM module; the hook refuses a
+  missing or stale stamp with a `HookException`, and no longer reads
+  `rust/target/debug/`. Only a local build is affected — the published package
+  carries no `rust/target/` — and one built before this change is refused
+  until `make build` runs again.
+
+#### Security
+
+- **A peer can no longer crash the application with nested extensions
+  (GHSA-gc79-23g3-8g52)** — openmls 0.9.0 → 0.9.1 (`rust/Cargo.toml`,
+  `rust/Cargo.lock`). openmls 0.9.0 decoded an extension's body before
+  checking that its type is allowed where it appears, so a `ratchet_tree`
+  extension inside a leaf node was decoded in full, its leaf nodes and their
+  extensions included, one stack frame deeper per level of nesting. Input
+  nested deeply enough ran the stack out, which is not a panic, so no
+  `PanicException` stands in for it. In most environments the process ends;
+  through a C FFI, as here, or in WebAssembly, the advisory says the outcome
+  depends on the environment and linker configuration, at worst memory
+  corruption. Neither was measured here. Every call that decodes
+  a message, `Welcome`, `GroupInfo`, ratchet tree or key package from a peer
+  was exposed, whatever the ciphersuite: incoming messages (`processMessage`,
+  `processMessageWithInspect` and the synchronous `mlsMessageExtractGroupId`,
+  `mlsMessageExtractEpoch` and `mlsMessageContentType`), the `Welcome`,
+  `GroupInfo` and ratchet tree of a join, a `Welcome` that is only inspected
+  (`inspectWelcome`, `exportWelcomeSecret`), and key packages (`addMembers`,
+  `proposeAdd`, `keyPackageLifetime` and the rest). 0.9.1 checks the type
+  first, so the same input fails with an ordinary error. Where that error
+  carries the decoder's message (ratchet trees, key packages, the `GroupInfo`
+  of an external join, unencrypted handshake messages), it now names the
+  extension type that is out of place, where 0.9.0 said "Found duplicate
+  extensions". The fix is upstream's
+  ([advisory](https://github.com/openmls/openmls/security/advisories/GHSA-gc79-23g3-8g52):
+  high, CVSS 4.0 8.7, CWE-674). Every native library released before this
+  one carries an affected openmls, `openmls_frb` 2.3.1 (package 3.2.1)
+  included; `SECURITY.md` (Known Limitations #14) covers them.
+- **A malformed X-Wing key from a peer no longer panics (RUSTSEC-2026-0331)**
+  — up to `openmls_frb` 2.3.1, an X-Wing (0x004D) public key shorter than
+  1184 bytes made the next encryption to it panic inside `libcrux-kem` 0.0.9:
+  a `PanicException` on native, and on the web an abort that left the
+  database unusable until the page was reloaded. The key is peer data — the
+  init key of a key package being added, another member's tree node, the
+  `GroupInfo` of an external join. The native library now checks its length
+  before libcrux sees it, and the operation fails with the ordinary error the
+  fixed `libcrux-kem` 0.0.10 returns; from this release only a library built
+  with `all-ciphersuites` contains X-Wing and libcrux at all (see *Changed
+  (Breaking)*). Nothing leaked and nothing could be
+  forged (CVSS `VC:N/VI:N/VA:H`), and no other suite touches libcrux. The
+  crate itself stays at 0.0.9: OpenMLS pins it — 0.9.1 too — and the fix
+  needs an OpenMLS release that does not exist yet. It is recorded in
+  `.cargo/audit.toml` and `rust/deny.toml` together with RUSTSEC-2026-0329
+  (`libcrux-hmac-drbg`) and RUSTSEC-2026-0330 (`libcrux-kem`), which nothing
+  in the dependency graph can reach; `SECURITY.md` (Known Limitations #13)
+  covers the releases that still panic.
+- **This fork's `openmls_frb` 2.4.0 is affected by both, like 2.3.1** — the
+  `creatika-io/openmls_dart` release was built from openmls 0.9.0 without the
+  X-Wing length check. The crate moves to 3.0.0, a major version because the
+  default FFI surface shrank (see *Changed (Breaking)*), so the fixed binaries
+  never share a release or a download cache with 2.4.0's.
 
 #### Fixed
+
+- **An async call could wait forever when another isolate shut down during
+  `Openmls.init()`** (`lib/src/openmls.dart`,
+  `lib/src/platform/platform_io.dart`, `lib/src/platform/platform_web.dart`) —
+  flutter_rust_bridge sends every Rust-to-Dart message (an async call's
+  result, a store callback) through one process-wide `Dart_PostCObject`
+  pointer and replaces it with a no-op when its count of initialized isolates
+  drops to zero. `RustLib.init()` installs the real pointer *before* it counts
+  the new isolate, so when the last other counted isolate group shut down in
+  that window, the new isolate kept the no-op: sync calls worked, and every
+  async call waited for an answer that had been dropped. `Openmls.init()` now
+  installs the real pointer again once the isolate is counted, on native
+  platforms; the web has neither the pointer nor the count. ⚠ **Not fixed by
+  this: several flutter_rust_bridge libraries in one application.** An
+  isolate is counted only by the *first* such library it initializes, so when
+  the main isolate initialized a library second, a worker isolate that
+  initializes that library alone and exits switches its channel off for the
+  whole process. Initialize them in the same order in every isolate, workers
+  included; the fix belongs in flutter_rust_bridge.
 
 - **Calls into Rust no longer fail under dart2wasm** (`lib/src/rust/`,
   `pubspec.yaml`, `rust/Cargo.toml`) — `flutter_rust_bridge` 2.13's decoder
   cast every value from Rust with `as List<dynamic>`, which throws
   `Type 'JSValue' is not a subtype of type 'List<dynamic>'` under dart2wasm.
   2.14.0-beta.2 replaces the cast with `dcoDecodeList`
-  ([flutter_rust_bridge#3182][frb3182]). The crate moves to 2.4.0 so its
+  ([flutter_rust_bridge#3182][frb3182]). The crate moved to 2.4.0 so its
   binaries never share a release or a download cache with the 2.13 builds.
 
   ⚠ Native binaries and the WASM module are downloaded from
@@ -27,13 +181,36 @@
   saying how** (`hook/build.dart`, `README.md`) — the hook found the app by
   walking up to a `pubspec.yaml` with a `web/` directory that depends on
   `openmls` directly, which an app in a workspace does not. It warned, skipped
-  `web/pkg/`, and the build succeeded into a 404 at runtime. The new
-  `web_app_root` user-define names the app; when neither it nor the search
-  finds one, the build fails naming the define.
+  `web/pkg/`, and the build succeeded into a `RustLib.init()` that never
+  completes (see *Documentation*). The new `web_app_root` user-define names
+  the app; when neither it nor the search finds one, the build fails naming
+  the define.
 
   ⚠ An app that depends on `openmls` only transitively and filled `web/pkg/`
   by hand now fails its web build too; set `web_app_root` to the app's path
   relative to the pubspec that declares `hooks.user_defines`.
+
+#### Documentation
+
+- **A missing `web/pkg/` leaves `RustLib.init()` pending; it does not fail on
+  a 404** (`README.md`, *Known Limitations*) — flutter_rust_bridge 2.13.0
+  injects the module as a `<script>` and awaits its `load` event with no error
+  path or timeout, and under `flutter run` the dev server answers the missing
+  `pkg/openmls_frb.js` with the app's own page and a 200, so the call neither
+  returns nor throws.
+- **`SECURITY.md` no longer says the tag ruleset stops a `write`
+  collaborator** — it reserved tags to "Admins/Maintainers", but the
+  ruleset's bypass list also held role 4, which GitHub names `write`. The list
+  now holds Admin only (`.github/rulesets/protect-release-tags.json`), and the
+  text says that Admins bypass the ruleset's signature rule as well; the
+  release scripts sign their tags.
+- **`THIRD_PARTY_NOTICES.txt` gives the openmls crates the canonical MIT
+  text** — the file ships in every native archive and in the package. With
+  openmls taken from crates.io (see *For Contributors*), its seven openmls
+  crates carry the MIT text with `Copyright (c) OpenMLS Authors`, composed
+  from the crate metadata, because a published `.crate` has no LICENSE file;
+  until now it quoted the repository's LICENSE, which names the year 2020.
+  The licence terms are unchanged.
 
 ### For Contributors
 
@@ -43,7 +220,26 @@
   test-example-wasm`, `example/integration_test/dart2wasm_test.dart`,
   `.github/workflows/test-reusable.yml`) — the test asserts `kIsWasm`, because
   Flutter silently falls back to dart2js when Chrome cannot run the wasm
-  renderer.
+  renderer. It joins by external commit, which the default bindings export,
+  rather than by `Welcome`.
+- **The full API keeps its tests** (`test_full_api/`, `analysis_options.yaml`,
+  `.github/workflows/test-reusable.yml`) — the Dart tests written against the
+  whole API move from `test/` to `test_full_api/`, which `make analyze`
+  excludes because it compiles only against full-API bindings. CI's Linux
+  x86_64 leg regenerates the bindings with `full-api`, builds with
+  `full-api,all-ciphersuites` and runs `make test ARGS="test test_full_api"`,
+  then runs `test_full_api` again on a `full-api` build, where suites are
+  refused; `test/group_flow_test.dart` covers the default surface end to end.
+- **The other feature sets are tested in CI** — `make rust-test` runs with
+  `all-ciphersuites` (the libcrux routing tests that `.cargo/audit.toml` cites
+  live in `rust/src/hybrid_crypto.rs`, which the default build no longer
+  compiles) and with `full-api`; the browser tests run with `full-api` too,
+  for the IndexedDB keep-all regression; and the macOS leg runs
+  `sqlcipher_crypto_provider_matches_the_platform`. Both backends run the
+  same group lifecycle from `rust/src/test_support.rs`.
+- **SQLCipher fixture databases** (`test/fixtures/`) — one per crypto
+  provider, written with a fixed test key by
+  `test/fixtures/write_sqlcipher_fixture.dart`; regenerate one only on purpose.
 
 #### Changed
 
@@ -73,6 +269,101 @@
   instead of being expanded into one `--arg` argument. This lets the signed
   commit payload handle inventories whose base64 representation is larger than
   the per-argument limit.
+
+- **The App token is kept out of the update-checker checkouts**
+  (`.github/workflows/check-openmls-updates.yml`,
+  `.github/workflows/check-template-updates.yml`) — both jobs mint a
+  write-scoped GitHub App token and then run repository code and third-party
+  tooling (`make`, `pip install copier`) in the same job. The
+  `actions/checkout` step no longer receives that token; it uses the job's
+  default, read-scoped `GITHUB_TOKEN` (the jobs grant `contents: read`), and
+  `persist-credentials: false` keeps even that out of `.git/config`, so nothing
+  in the worktree can read a write-scoped credential. `GITHUB_TOKEN` is enough
+  to check the repository out whether it is public or private. The pull request
+  is still pushed by `peter-evans/create-pull-request` via its App-token input,
+  and the `gh` steps read the App token from `GH_TOKEN`. Mirrors
+  `refresh-notices.yml`.
+
+- **The update checkers can regenerate their own pull requests**
+  (`.github/rulesets/signing-commit.json`, `.github/rulesets/README.md`) —
+  `peter-evans/create-pull-request` refreshes an existing branch by
+  force-pushing it, and `Signing commit` forbids that on `~ALL` branches with
+  no bypass actors, so `force_update` could not regenerate an open update pull
+  request: measured on 2026-10-20 (run `39450303118`), the App's signed API
+  commit was created and the ref update refused with "Cannot force-push to
+  this branch". A scheduled run fails the same way when a version's branch
+  outlives its pull request. `refs/heads/update-openmls-*` and
+  `refs/heads/update-template-v*` are now excluded from that ruleset, as
+  `refs/heads/dependabot/**/*` already is: a push there may rewrite history
+  and need not be signed, and the App signs regardless. `main` keeps its
+  pull-request gate, its signatures and its no-bypass ban on force-pushes,
+  and the branches stay under `Delete branches`.
+
+- **copier template adopted: v4.15.2 -> v4.17.0** — by hand, superseding the
+  update bot's #55 (v4.16.1). `.copier-answers.yml` records the new revision
+  and the new question's answer, `upstream_source: git_tag`; switching the
+  source is a change of its own.
+
+  **pub.dev's upload limits are measured** (`make verify-pub-limits`) —
+  pub.dev refuses a README.md, CHANGELOG.md, LICENSE or example over 256 KiB,
+  or a pubspec.yaml over 128 KiB, at upload, after the tag, and the dry-run
+  checks none of them. CI runs it on the Linux x86_64 leg and warns from
+  200 KiB, `make publish-dry-run` runs it first, and `make release` measures
+  the finalized CHANGELOG before committing.
+
+  **iOS is type-checked on every push and pull request**
+  (`make rust-check-ios`, the `Type-check (iOS)` job) — the three iOS targets
+  were compiled only by a release tag, so an iOS-only compile error first
+  showed up there.
+
+  **`make release` refuses a stage-1 release whose native sources moved since
+  its tag** — `rust/` (except `rust/fuzz` and `rust/deny.toml`) and
+  `lib/src/rust/` are compared with the `openmls_frb-*` tag, so any commit
+  there after stage 1 needs a new crate.
+
+  **Every Ubuntu job names its image, `ubuntu-26.04`** — the Linux release
+  builds move from `ubuntu-latest` (x86_64) and `ubuntu-24.04-arm` (arm64) to
+  `ubuntu-26.04` and `ubuntu-26.04-arm`; a Linux library records the glibc
+  symbol versions of the image that built it.
+
+  **An upstream bump moves only what the new release requires** —
+  `make rust-update` is `cargo update --workspace`, and the rest of the graph
+  moves in Dependabot's weekly cargo pull request, which now takes transitive
+  crates too (`allow: dependency-type: all`).
+
+  **Only an Admin can create, move or delete a tag** — see *Documentation*
+  above; on GitHub the ruleset changes when
+  `make setup-repo-protections ARGS="--update"` applies it.
+
+  **The agent workflows** — OpenCode is pinned at 1.18.35 and makes no
+  session-title call unless `AGENT_OPENCODE_TITLE_MODEL` names a model; the AI
+  reviewer is told where each file's hunks start and who wrote each commit;
+  the build repair leaves drafts alone, re-runs a first failure once, leaves a
+  commit to a person after two runs that ended without a verdict, and can run
+  the wasm32 half of `make rust-doc`; the update bot's CHANGELOG entry is
+  written from the lockfile diff and the bound upstream files' patches.
+
+  **`make get` passes `ARGS` on**, so
+  `make get ARGS="--directory=example_cli"` resolves that package.
+
+  The App-token checkout hardening and the update checkers' branch exclusion,
+  both above, now come from the template.
+
+- **openmls comes from crates.io instead of a git tag** (`rust/Cargo.toml`,
+  `rust/Cargo.lock`, `rust/deny.toml`, `.github/dependabot.yml`,
+  `.copier-answers.yml` and the files the `upstream_source: crates_io` answer
+  renders) — the update check found upstream releases through GitHub's latest
+  release and accepted only an `openmls-vX.Y.Z` tag, so openmls 0.9.1,
+  published on 2026-10-07 under the tag `v0.9.1` and with no GitHub release,
+  was invisible to it. `openmls` is now pinned exactly (`"=X.Y.Z"`) on both of
+  its declarations, the four other openmls crates sit at the requirements that
+  release declares, and the check reads crates.io. The switch, made on 0.9.0
+  before the bump in *Security*, moved no code: all nine openmls packages in
+  the lockfile were published from the commit the `openmls-v0.9.0` tag names
+  (`3a3e35de`), and only their `source` and `checksum` lines moved.
+  `rust/deny.toml` no longer allows the openmls git repository, and Dependabot
+  ignores the four openmls crates that arrive only through the others, so they
+  move with the openmls release that requires them.
 
 ## [3.2.1] - 2026-09-29
 

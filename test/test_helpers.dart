@@ -3,6 +3,16 @@ import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:openmls/openmls.dart';
+import 'package:test/test.dart';
+
+/// Marks the running test skipped when the native library does not execute
+/// [suite]; only a build with the `all-ciphersuites` Cargo feature runs more
+/// than suite 0x0001. Return from the test when this answers true.
+bool skipUnlessSupported(MlsCiphersuite suite) {
+  if (supportedCiphersuites().contains(suite)) return false;
+  markTestSkipped('$suite needs a build with the all-ciphersuites feature');
+  return true;
+}
 
 /// Default ciphersuite used in tests.
 final ciphersuite = MlsCiphersuite.mls128DhkemX25519Aes128GcmSha256Ed25519;

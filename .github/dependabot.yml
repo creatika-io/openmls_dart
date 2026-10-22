@@ -129,20 +129,71 @@ updates:
         update-types:
           - "version-update:semver-major"
 
+      # Two more ways into the same migration. Every ffigen from 21.0.0 on
+      # requires `hooks ^2.0.0`, and coverage 1.16.0 requires `cli_util ^0.6.0`,
+      # which ffigen admits only from 22.1.0 on — so neither can be taken
+      # without hooks 2.
+      #
+      # ⚠ The two entries above do not stop either, and neither does the
+      # group's `update-types`: Dependabot checks both against the dependency it
+      # is updating, not against what that update drags along. On 2026-10-19
+      # (#58) it took coverage 1.16.0 as a minor in the `pub` group, could not
+      # resolve it by unlocking coverage alone, fell back to unlocking
+      # everything, and the pull request carried ffigen 23.0.0, hooks 2.2.0 and
+      # code_assets 2.1.0 along. ffigen alone takes the same full unlock (its
+      # job logs of 2026-10-05 and 2026-10-12) and is dropped there only by
+      # Dependabot's own "peer dependency can be updated" check, not by anything
+      # in this file.
+      #
+      # So the entry points are ignored instead: ffigen's majors, and the
+      # coverage releases that need the new cli_util. The `versions` entry is a
+      # requirement, which pub's parser accepts, not a wildcard (see above). A
+      # release reachable only through hooks 2 will arrive the same way: a
+      # minor-group pull request carrying majors is this, not a broken group.
+      # Lift all four entries together, with the move to Flutter >= 3.47.0.
+      - dependency-name: "ffigen"
+        update-types:
+          - "version-update:semver-major"
+      - dependency-name: "coverage"
+        versions:
+          - ">= 1.16.0"
+
   # The native crate's dependencies. These are compiled into the binary the
   # build hook downloads, so a vulnerable transitive crate reaches consumers as
   # shipped code rather than as a build-time inconvenience — `make rust-audit`
   # already fails on one, and this is how the fix arrives.
   #
-  # The upstream crates are ignored rather than left to chance. They are git
-  # dependencies pinned to a tag, and Dependabot's cargo updater does follow git
-  # refs — so without this it would open its own pull request for the same bump
+  # Transitive crates included (`allow` below): without it Dependabot updates
+  # only what rust/Cargo.toml names, and the transitive graph used to move as a
+  # side effect of every upstream bump, whose `cargo update` swept the whole
+  # lockfile. The bump now moves only what the new release requires
+  # (`make rust-update`), so this is where everything else moves — on its own
+  # CI run, rather than riding along with a dependency update and breaking a
+  # platform nobody was looking at: in a generated project, `libc` 0.2.190 on
+  # iOS did exactly that. Any `ignore` entry keeps its meaning for the crate it
+  # names, transitive occurrences of those versions included.
+  #
+  # The upstream crates are ignored rather than left to chance. They come from
+  # crates.io, and a registry crate is exactly what Dependabot's cargo updater
+  # bumps — so without this it would open its own pull request for the same bump
   # that check-openmls-updates.yml exists to make, with none of the
   # work that one does: no `make codegen`, no bindings tripwire, no CHANGELOG
   # entry, no version badge. Two pull requests for one upstream release, and the
-  # cheaper one merges first.
+  # cheaper one merges first. It would also move the other upstream crates off
+  # the requirements the primary crate's release declares for them, which
+  # `upstream_crate_versions` in .copier-answers.yml records.
+  #
+  # ⚠ The list names only the upstream crates rust/Cargo.toml declares. One that
+  # arrives only through them — a crate the upstream repository publishes and
+  # the primary depends on — is a plain registry crate in this mode, and `allow`
+  # above moves it in the `cargo` group with everything else, separately from
+  # the upstream release it belongs to, unless the project names it in an
+  # ignore entry of its own. With a git tag none of them could move on their
+  # own: one tag pinned the whole repository.
   - package-ecosystem: "cargo"
     directory: "/rust"
+    allow:
+      - dependency-type: "all"
     schedule:
       interval: "weekly"
       day: "monday"
@@ -173,15 +224,25 @@ updates:
       - dependency-name: "openmls_basic_credential"
       - dependency-name: "openmls_traits"
       - dependency-name: "openmls_libcrux_crypto"
+      # The crates openmls publishes that arrive only through the five above —
+      # the ⚠ case in the note before this block. They move with the openmls
+      # release that requires them, in check-openmls-updates.yml's pull request
+      # (`make rust-update`). Named one by one rather than by a wildcard, so a
+      # crate openmls starts publishing later is not held back without anyone
+      # having decided it.
+      - dependency-name: "openmls_memory_storage"
+      - dependency-name: "openmls_serialization_helpers"
+      - dependency-name: "openmls_sqlite_storage"
+      - dependency-name: "openmls_test"
 
       # rusqlite has a ceiling of 0.37, for two independent reasons.
       #
-      # It is pinned, not chosen: openmls 0.9.0 pulls optional
+      # It is pinned, not chosen: openmls 0.9.1 pulls optional
       # `openmls_sqlite_storage`, which requires `rusqlite = "0.37"` ->
       # `libsqlite3-sys ^0.35`. Cargo resolves optional dependencies into the
       # lockfile even when the feature is off, and `links = "sqlite3"` admits
       # exactly one package — so 0.38+ does not resolve at all while we are on
-      # openmls 0.9.0.
+      # openmls 0.9.1.
       #
       # And 0.40.x is independently unshippable: it bundles SQLCipher 4.14.0,
       # whose `sqlcipher_fprintf` (new in 4.11.0) allocates on Windows. With

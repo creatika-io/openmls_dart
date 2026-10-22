@@ -6,7 +6,7 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 [![Dart](https://img.shields.io/badge/dart-%3E%3D3.10.0-brightgreen.svg)](https://dart.dev)
 [![Flutter](https://img.shields.io/badge/flutter-%3E%3D3.38.0-blue.svg)](https://flutter.dev)
-[![openmls](https://img.shields.io/badge/openmls-v0.9.0-orange.svg)](https://github.com/openmls/openmls)
+[![openmls](https://img.shields.io/badge/openmls-v0.9.1-orange.svg)](https://github.com/openmls/openmls)
 
 Dart bindings for [OpenMLS](https://github.com/openmls/openmls), providing a Rust implementation of the Messaging Layer Security (MLS) protocol ([RFC 9420](https://www.rfc-editor.org/rfc/rfc9420.html)) for secure group messaging.
 
@@ -30,7 +30,11 @@ Dart bindings for [OpenMLS](https://github.com/openmls/openmls), providing a Rus
 
 ## Post-Quantum Support (Experimental)
 
-`supportedCiphersuites()` returns thirteen ciphersuites. Three are the
+This fork's default native build executes only RFC 9420's mandatory-to-implement
+suite 0x0001; everything below needs the native library built with the
+`all-ciphersuites` Cargo feature. `supportedCiphersuites()` says which build is loaded.
+
+With that feature, `supportedCiphersuites()` returns thirteen ciphersuites. Three are the
 IANA-registered MLS 1.0 suites from RFC 9420; **the other ten are experimental
 post-quantum suites on provisional code points.** All thirteen are exercised
 end-to-end by the test suite — a full group lifecycle each, not merely a key
@@ -111,6 +115,16 @@ so a key package built with it advertises the full list — use
 that one too.
 
 ## Implementation Status
+
+This fork's committed bindings export only what the creatika app calls: engine
+create/close, `createGroupWithBuilder`, `joinGroupExternalCommitV2`,
+`flexibleCommit`, `mergePendingCommit`, `processMessage`, `exportGroupInfo`,
+`exportSecret`, `groupEpoch`, `groupIsActive`, `groupMembers`, `deleteGroup`,
+`mlsMessageExtractEpoch`, `mlsMessageContentType`, signature key generation,
+`serializeSigner` and basic credentials. Everything below is still in the Rust
+crate behind the `full-api` Cargo feature: `make codegen ARGS="--rust-features
+full-api"`, then `make build ARGS="--features full-api"`; its Dart tests live in
+`test_full_api/` (`make test ARGS="test test_full_api"`).
 
 | Category | Status | Description |
 |----------|:------:|-------------|
@@ -193,7 +207,7 @@ void main() async {
 
   // Create a group
   final config = MlsGroupConfig.defaultConfig(ciphersuite: ciphersuite);
-  final group = await engine.createGroup(
+  final group = await engine.createGroupWithBuilder(
     config: config,
     signerBytes: signerBytes,
     credentialIdentity: utf8.encode('alice'),
@@ -227,8 +241,8 @@ final engine = await MlsEngine.create(
 );
 
 // All operations go through the engine
-final group = await engine.createGroup(...);
-await engine.addMembers(...);
+final group = await engine.createGroupWithBuilder(...);
+await engine.flexibleCommit(...);
 
 // Close the engine to release the DB connection and encryption key resources.
 // After close, all operations fail with "MlsEngine is closed".
@@ -284,8 +298,11 @@ directory on the engine revision, the entrypoint, the build mode and the output 
 alone, so a debug run for *another* platform (`flutter run -d macos`, say) leaves behind a
 `dart_build` stamp naming its own dependencies; the next `flutter run -d chrome` finds
 every one of them unchanged, logs `Skipping target: dart_build`, and never invokes the
-hook. With `web/pkg/` not already provisioned, `RustLib.init()` then fails on a 404 for
-`pkg/openmls_frb.js`.
+hook. With `web/pkg/` not already provisioned, `RustLib.init()` then never completes:
+flutter_rust_bridge loads `pkg/openmls_frb.js` through a `<script>` tag and waits for its
+`load` event with no error path or timeout, so a missing module — a 404, or, under
+`flutter run`, the app's own HTML page served in its place with a 200 — leaves the call
+pending with nothing reported to Dart.
 
 The hook cannot defend against this — the skip happens above `hooks_runner`, so nothing
 the hook declares as a dependency is ever read. Any one of these unblocks it, and
@@ -413,7 +430,7 @@ make check-targets
 make rust-update
 
 # Generate AI-powered changelog entry (needs AI_MODELS + a provider key)
-make update-changelog ARGS="--version v1.0.0"
+make update-changelog ARGS="--version 1.0.0"
 ```
 
 The CI automatically checks for new openmls releases daily and creates PRs with:

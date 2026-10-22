@@ -23,3 +23,6 @@ THIRD_PARTY_NOTICES.txt -text
 # git would still report the tree clean (it normalizes CRLF away on diff), so
 # the churn is silent, and the invariant would hold only on Unix.
 .fvmrc -text
+
+# Encrypted SQLCipher databases that sqlcipher_compat_test.dart opens.
+test/fixtures/*.db binary

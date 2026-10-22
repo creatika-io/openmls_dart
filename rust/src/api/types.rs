@@ -181,11 +181,13 @@ pub struct MlsCapabilities {
     pub versions: Vec<u16>,
     /// Supported ciphersuites, as raw MLS code points.
     ///
-    /// An **empty** list is not "advertise nothing" — it means "use OpenMLS's
-    /// defaults", which is every ciphersuite `supportedCiphersuites`
-    /// returns, ten of them experimental post-quantum suites. To advertise a
-    /// narrower set, list the code points explicitly (e.g. `[0x0001, 0x0002,
-    /// 0x0003]` for the IANA-registered MLS 1.0 suites only).
+    /// An **empty** list is not "advertise nothing" — it means every suite
+    /// `supportedCiphersuites()` returns: 0x0001 alone, or the RFC 9420 suites
+    /// 0x0001–0x0003 plus ten experimental post-quantum suites in a build with
+    /// them. To advertise a narrower set, list the code points explicitly
+    /// (e.g. `[0x0001]`, or `[0x0001, 0x0002, 0x0003]` for the IANA-registered
+    /// MLS 1.0 suites in an `all-ciphersuites` build). A suite the build does
+    /// not execute is refused.
     pub ciphersuites: Vec<u16>,
     /// Supported extension types.
     pub extensions: Vec<u16>,
@@ -279,93 +281,88 @@ pub struct FlexibleCommitOptions {
 // Conversion helpers
 // ═══════════════════════════════════════════════════════════════
 
-pub(crate) fn ciphersuite_to_native(cs: &MlsCiphersuite) -> Ciphersuite {
+// Mapped through the code point because OpenMLS defines the post-quantum
+// `Ciphersuite` variants only in builds with `all-ciphersuites`.
+fn ciphersuite_code_point(cs: &MlsCiphersuite) -> u16 {
     match cs {
-        MlsCiphersuite::Mls128DhkemX25519Aes128gcmSha256Ed25519 => {
-            Ciphersuite::MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519
-        }
-        MlsCiphersuite::Mls128DhkemX25519Chacha20poly1305Sha256Ed25519 => {
-            Ciphersuite::MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519
-        }
-        MlsCiphersuite::Mls128DhkemP256Aes128gcmSha256P256 => {
-            Ciphersuite::MLS_128_DHKEMP256_AES128GCM_SHA256_P256
-        }
-        MlsCiphersuite::Mls256XwingChacha20poly1305Sha256Ed25519 => {
-            Ciphersuite::MLS_256_XWING_CHACHA20POLY1305_SHA256_Ed25519
-        }
-        MlsCiphersuite::Mls192Mlkem1024Aes256gcmSha384P384 => {
-            Ciphersuite::MLS_192_MLKEM1024_AES256GCM_SHA384_P384
-        }
-        MlsCiphersuite::Mls128Mlkem768x25519Aes256gcmSha384Ed25519 => {
-            Ciphersuite::MLS_128_MLKEM768X25519_AES256GCM_SHA384_Ed25519
-        }
-        MlsCiphersuite::Mls128Mlkem768x25519Aes128gcmSha256Ed25519 => {
-            Ciphersuite::MLS_128_MLKEM768X25519_AES128GCM_SHA256_Ed25519
-        }
-        MlsCiphersuite::Mls128Mlkem768Aes256gcmSha384P256 => {
-            Ciphersuite::MLS_128_MLKEM768_AES256GCM_SHA384_P256
-        }
-        MlsCiphersuite::Mls192Mlkem768Aes256gcmSha384Mldsa65 => {
-            Ciphersuite::MLS_192_MLKEM768_AES256GCM_SHA384_MLDSA65
-        }
-        MlsCiphersuite::Mls128Mlkem768x25519Chacha20poly1305Sha384Mldsa44 => {
-            Ciphersuite::MLS_128_MLKEM768X25519_CHACHA20POLY1305_SHA384_MLDSA44
-        }
-        MlsCiphersuite::Mls256Mlkem1024Aes256gcmSha512Mldsa87 => {
-            Ciphersuite::MLS_256_MLKEM1024_AES256GCM_SHA512_MLDSA87
-        }
-        MlsCiphersuite::Mls256Mlkem1024Aes256gcmSha384Mldsa87 => {
-            Ciphersuite::MLS_256_MLKEM1024_AES256GCM_SHA384_MLDSA87
-        }
-        MlsCiphersuite::Mls128Mlkem768Aes256gcmSha384Ed25519 => {
-            Ciphersuite::MLS_128_MLKEM768_AES256GCM_SHA384_Ed25519
-        }
+        MlsCiphersuite::Mls128DhkemX25519Aes128gcmSha256Ed25519 => 0x0001,
+        MlsCiphersuite::Mls128DhkemP256Aes128gcmSha256P256 => 0x0002,
+        MlsCiphersuite::Mls128DhkemX25519Chacha20poly1305Sha256Ed25519 => 0x0003,
+        MlsCiphersuite::Mls192Mlkem1024Aes256gcmSha384P384 => 0x0042,
+        MlsCiphersuite::Mls256XwingChacha20poly1305Sha256Ed25519 => 0x004D,
+        MlsCiphersuite::Mls128Mlkem768x25519Aes256gcmSha384Ed25519 => 0x004E,
+        MlsCiphersuite::Mls128Mlkem768x25519Aes128gcmSha256Ed25519 => 0x004F,
+        MlsCiphersuite::Mls128Mlkem768Aes256gcmSha384P256 => 0x0050,
+        MlsCiphersuite::Mls192Mlkem768Aes256gcmSha384Mldsa65 => 0x0051,
+        MlsCiphersuite::Mls128Mlkem768x25519Chacha20poly1305Sha384Mldsa44 => 0x0052,
+        MlsCiphersuite::Mls256Mlkem1024Aes256gcmSha512Mldsa87 => 0x0906,
+        MlsCiphersuite::Mls256Mlkem1024Aes256gcmSha384Mldsa87 => 0x0907,
+        MlsCiphersuite::Mls128Mlkem768Aes256gcmSha384Ed25519 => 0xF042,
     }
 }
 
-pub(crate) fn native_to_ciphersuite(cs: Ciphersuite) -> Result<MlsCiphersuite, String> {
-    match cs {
-        Ciphersuite::MLS_128_DHKEMX25519_AES128GCM_SHA256_Ed25519 => {
-            Ok(MlsCiphersuite::Mls128DhkemX25519Aes128gcmSha256Ed25519)
-        }
-        Ciphersuite::MLS_128_DHKEMX25519_CHACHA20POLY1305_SHA256_Ed25519 => {
-            Ok(MlsCiphersuite::Mls128DhkemX25519Chacha20poly1305Sha256Ed25519)
-        }
-        Ciphersuite::MLS_128_DHKEMP256_AES128GCM_SHA256_P256 => {
-            Ok(MlsCiphersuite::Mls128DhkemP256Aes128gcmSha256P256)
-        }
-        Ciphersuite::MLS_256_XWING_CHACHA20POLY1305_SHA256_Ed25519 => {
-            Ok(MlsCiphersuite::Mls256XwingChacha20poly1305Sha256Ed25519)
-        }
-        Ciphersuite::MLS_192_MLKEM1024_AES256GCM_SHA384_P384 => {
-            Ok(MlsCiphersuite::Mls192Mlkem1024Aes256gcmSha384P384)
-        }
-        Ciphersuite::MLS_128_MLKEM768X25519_AES256GCM_SHA384_Ed25519 => {
-            Ok(MlsCiphersuite::Mls128Mlkem768x25519Aes256gcmSha384Ed25519)
-        }
-        Ciphersuite::MLS_128_MLKEM768X25519_AES128GCM_SHA256_Ed25519 => {
-            Ok(MlsCiphersuite::Mls128Mlkem768x25519Aes128gcmSha256Ed25519)
-        }
-        Ciphersuite::MLS_128_MLKEM768_AES256GCM_SHA384_P256 => {
-            Ok(MlsCiphersuite::Mls128Mlkem768Aes256gcmSha384P256)
-        }
-        Ciphersuite::MLS_192_MLKEM768_AES256GCM_SHA384_MLDSA65 => {
-            Ok(MlsCiphersuite::Mls192Mlkem768Aes256gcmSha384Mldsa65)
-        }
-        Ciphersuite::MLS_128_MLKEM768X25519_CHACHA20POLY1305_SHA384_MLDSA44 => {
-            Ok(MlsCiphersuite::Mls128Mlkem768x25519Chacha20poly1305Sha384Mldsa44)
-        }
-        Ciphersuite::MLS_256_MLKEM1024_AES256GCM_SHA512_MLDSA87 => {
-            Ok(MlsCiphersuite::Mls256Mlkem1024Aes256gcmSha512Mldsa87)
-        }
-        Ciphersuite::MLS_256_MLKEM1024_AES256GCM_SHA384_MLDSA87 => {
-            Ok(MlsCiphersuite::Mls256Mlkem1024Aes256gcmSha384Mldsa87)
-        }
-        Ciphersuite::MLS_128_MLKEM768_AES256GCM_SHA384_Ed25519 => {
-            Ok(MlsCiphersuite::Mls128Mlkem768Aes256gcmSha384Ed25519)
-        }
-        _ => Err(format!("Unsupported ciphersuite: {:?}", cs)),
+fn ciphersuite_from_code_point(code_point: u16) -> Option<MlsCiphersuite> {
+    match code_point {
+        0x0001 => Some(MlsCiphersuite::Mls128DhkemX25519Aes128gcmSha256Ed25519),
+        0x0002 => Some(MlsCiphersuite::Mls128DhkemP256Aes128gcmSha256P256),
+        0x0003 => Some(MlsCiphersuite::Mls128DhkemX25519Chacha20poly1305Sha256Ed25519),
+        0x0042 => Some(MlsCiphersuite::Mls192Mlkem1024Aes256gcmSha384P384),
+        0x004D => Some(MlsCiphersuite::Mls256XwingChacha20poly1305Sha256Ed25519),
+        0x004E => Some(MlsCiphersuite::Mls128Mlkem768x25519Aes256gcmSha384Ed25519),
+        0x004F => Some(MlsCiphersuite::Mls128Mlkem768x25519Aes128gcmSha256Ed25519),
+        0x0050 => Some(MlsCiphersuite::Mls128Mlkem768Aes256gcmSha384P256),
+        0x0051 => Some(MlsCiphersuite::Mls192Mlkem768Aes256gcmSha384Mldsa65),
+        0x0052 => Some(MlsCiphersuite::Mls128Mlkem768x25519Chacha20poly1305Sha384Mldsa44),
+        0x0906 => Some(MlsCiphersuite::Mls256Mlkem1024Aes256gcmSha512Mldsa87),
+        0x0907 => Some(MlsCiphersuite::Mls256Mlkem1024Aes256gcmSha384Mldsa87),
+        0xF042 => Some(MlsCiphersuite::Mls128Mlkem768Aes256gcmSha384Ed25519),
+        _ => None,
     }
+}
+
+pub(crate) fn ciphersuite_to_native(cs: &MlsCiphersuite) -> Result<Ciphersuite, String> {
+    let code_point = ciphersuite_code_point(cs);
+    let native =
+        Ciphersuite::try_from(code_point).map_err(|_| unsupported_ciphersuite(code_point))?;
+    require_executed_ciphersuite(native)?;
+    Ok(native)
+}
+
+pub(crate) fn require_executed_ciphersuite(cs: Ciphersuite) -> Result<(), String> {
+    if executed_ciphersuites().contains(&cs) {
+        Ok(())
+    } else {
+        Err(unsupported_ciphersuite(u16::from(cs)))
+    }
+}
+
+/// Refuses a signer whose scheme no ciphersuite of this build signs with.
+pub(crate) fn require_executed_signature_scheme(scheme: SignatureScheme) -> Result<(), String> {
+    if executed_ciphersuites()
+        .iter()
+        .any(|cs| cs.signature_algorithm() == scheme)
+    {
+        Ok(())
+    } else {
+        Err(format!(
+            "Signature scheme {:#06x} is not supported by this build",
+            scheme as u16
+        ))
+    }
+}
+
+fn unsupported_ciphersuite(code_point: u16) -> String {
+    format!("Ciphersuite {code_point:#06x} is not supported by this build")
+}
+
+fn executed_ciphersuites() -> Vec<Ciphersuite> {
+    use openmls_traits::crypto::OpenMlsCrypto;
+    crate::CryptoBackend::new().supported_ciphersuites()
+}
+
+pub(crate) fn native_to_ciphersuite(cs: Ciphersuite) -> Result<MlsCiphersuite, String> {
+    ciphersuite_from_code_point(u16::from(cs))
+        .ok_or_else(|| format!("Unsupported ciphersuite: {:?}", cs))
 }
 
 pub(crate) fn wire_format_to_native(wf: &MlsWireFormatPolicy) -> WireFormatPolicy {
@@ -375,20 +372,33 @@ pub(crate) fn wire_format_to_native(wf: &MlsWireFormatPolicy) -> WireFormatPolic
     }
 }
 
-pub(crate) fn capabilities_to_native(caps: &MlsCapabilities) -> Result<Capabilities, String> {
+/// The capabilities a new leaf node advertises. No `caps`, or an empty field,
+/// takes OpenMLS's default — except the ciphersuites, which default to the
+/// ones this build executes rather than OpenMLS's fixed 0x0001–0x0003 list.
+pub(crate) fn capabilities_to_native(
+    caps: Option<&MlsCapabilities>,
+) -> Result<Capabilities, String> {
+    let Some(caps) = caps else {
+        let ciphersuites = executed_ciphersuites();
+        return Ok(Capabilities::new(None, Some(&ciphersuites), None, None, None));
+    };
     let versions: Option<Vec<ProtocolVersion>> = if caps.versions.is_empty() {
         None
     } else {
         Some(caps.versions.iter().map(|&v| ProtocolVersion::from(v)).collect())
     };
-    let ciphersuites: Option<Vec<Ciphersuite>> = if caps.ciphersuites.is_empty() {
-        None
+    let ciphersuites: Vec<Ciphersuite> = if caps.ciphersuites.is_empty() {
+        executed_ciphersuites()
     } else {
-        let cs: Result<Vec<_>, _> = caps.ciphersuites
+        caps.ciphersuites
             .iter()
-            .map(|&c| Ciphersuite::try_from(c).map_err(|e| format!("Invalid ciphersuite {}: {}", c, e)))
-            .collect();
-        Some(cs?)
+            .map(|&c| {
+                let native = Ciphersuite::try_from(c)
+                    .map_err(|e| format!("Invalid ciphersuite {}: {}", c, e))?;
+                require_executed_ciphersuite(native)?;
+                Ok(native)
+            })
+            .collect::<Result<_, String>>()?
     };
     let extensions: Option<Vec<ExtensionType>> = if caps.extensions.is_empty() {
         None
@@ -408,7 +418,7 @@ pub(crate) fn capabilities_to_native(caps: &MlsCapabilities) -> Result<Capabilit
 
     Ok(Capabilities::new(
         versions.as_deref(),
-        ciphersuites.as_deref(),
+        Some(&ciphersuites),
         extensions.as_deref(),
         proposals.as_deref(),
         credentials.as_deref(),
@@ -423,30 +433,20 @@ pub(crate) fn extensions_from_mls(exts: &[MlsExtension]) -> Vec<Extension> {
 
 /// Returns every ciphersuite this build can execute.
 ///
-/// This is the same set OpenMLS advertises in a leaf node when the caller does
-/// not pin `MlsCapabilities.ciphersuites`, and every entry is covered by a
-/// full group-lifecycle test. Note that most of them are **experimental**
-/// post-quantum suites on provisional code points — see `MlsCiphersuite`.
-// The tests are `all_supported_ciphersuites_full_group_lifecycle`
-// (rust/src/hybrid_crypto.rs) and the loop over `MlsCiphersuite.values` in
-// test/group_lifecycle_test.dart. Kept out of the doc comment: FRB copies that
+/// A build with the `all-ciphersuites` Cargo feature executes every
+/// `MlsCiphersuite`, most of them **experimental** post-quantum suites on
+/// provisional code points; without it, only the RFC 9420 mandatory-to-implement
+/// suite `mls128DhkemX25519Aes128GcmSha256Ed25519`. Every entry is covered by a
+/// full group-lifecycle test.
+// The tests are the `*_full_group_lifecycle` tests of the two crypto backends
+// and the per-suite loop in test_full_api/group_lifecycle_test.dart. Kept out
+// of the doc comment: FRB copies that
 // into the published Dart API, where a pointer to a private Rust test module is
 // noise for consumers.
 #[flutter_rust_bridge::frb(sync)]
 pub fn supported_ciphersuites() -> Vec<MlsCiphersuite> {
-    vec![
-        MlsCiphersuite::Mls128DhkemX25519Aes128gcmSha256Ed25519,
-        MlsCiphersuite::Mls128DhkemX25519Chacha20poly1305Sha256Ed25519,
-        MlsCiphersuite::Mls128DhkemP256Aes128gcmSha256P256,
-        MlsCiphersuite::Mls256XwingChacha20poly1305Sha256Ed25519,
-        MlsCiphersuite::Mls192Mlkem1024Aes256gcmSha384P384,
-        MlsCiphersuite::Mls128Mlkem768x25519Aes256gcmSha384Ed25519,
-        MlsCiphersuite::Mls128Mlkem768x25519Aes128gcmSha256Ed25519,
-        MlsCiphersuite::Mls128Mlkem768Aes256gcmSha384P256,
-        MlsCiphersuite::Mls192Mlkem768Aes256gcmSha384Mldsa65,
-        MlsCiphersuite::Mls128Mlkem768x25519Chacha20poly1305Sha384Mldsa44,
-        MlsCiphersuite::Mls256Mlkem1024Aes256gcmSha512Mldsa87,
-        MlsCiphersuite::Mls256Mlkem1024Aes256gcmSha384Mldsa87,
-        MlsCiphersuite::Mls128Mlkem768Aes256gcmSha384Ed25519,
-    ]
+    executed_ciphersuites()
+        .into_iter()
+        .filter_map(|native| native_to_ciphersuite(native).ok())
+        .collect()
 }

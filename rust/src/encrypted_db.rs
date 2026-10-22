@@ -1249,6 +1249,20 @@ mod tests {
     }
 
     #[test]
+    fn sqlcipher_crypto_provider_matches_the_platform() {
+        let expected = if cfg!(target_vendor = "apple") { "commoncrypto" } else { "openssl" };
+        let temp = TempDb::new("cipher_provider");
+        let db = open_db(temp.as_str()).expect("open");
+        let provider: String = db
+            .conn
+            .lock()
+            .unwrap()
+            .query_row("PRAGMA cipher_provider;", [], |row| row.get(0))
+            .expect("cipher_provider");
+        assert_eq!(provider, expected);
+    }
+
+    #[test]
     fn raw_key_pragma_uses_sqlcipher_raw_key_form() {
         let pragma = raw_key_pragma(&[0xab; 32]);
         // Exactly "x'" + 64 hex digits + "'" (67 chars). Any other shape and
