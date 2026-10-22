@@ -14,6 +14,8 @@ libfuzzer-sys = "0.4"
 
 [dependencies.openmls_frb]
 path = ".."
+# The targets fuzz parsers the default bindings do not export.
+features = ["full-api"]
 
 # Keep overflow and debug-assertion checks on even for optimized fuzzing runs
 # so arithmetic bugs surface as crashes instead of silent wraparound.
