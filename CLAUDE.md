@@ -522,7 +522,8 @@ This project uses a **snapshot pattern** for MLS storage (vs Wire's 18+ entity t
 | `rust/src/snapshot_storage.rs` | SnapshotStorageProvider (HashMap-based StorageProvider impl) |
 | `rust/src/encrypted_db.rs` | EncryptedDb (SQLCipher native, IDB+AES-GCM WASM) |
 | `rust/src/api/engine.rs` | MlsEngine (load → operate → commit cycle) |
-| `rust/src/hybrid_crypto.rs` | HybridCrypto (RustCrypto for classical suites; X-Wing PQ KEM → libcrux, lazy init) |
+| `rust/src/mandatory_ciphersuite_crypto.rs` | Default crypto backend: RustCrypto restricted to suite 0x0001 |
+| `rust/src/hybrid_crypto.rs` | `all-ciphersuites` crypto backend (RustCrypto for classical suites; X-Wing PQ KEM → libcrux, lazy init) |
 
 ### Native vs WASM loading
 

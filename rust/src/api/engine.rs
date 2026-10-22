@@ -450,7 +450,7 @@ impl MlsEngine {
         signer_public_key: Vec<u8>,
         credential_bytes: Option<Vec<u8>>,
     ) -> Result<KeyPackageResult, String> {
-        let cs = ciphersuite_to_native(&ciphersuite);
+        let cs = ciphersuite_to_native(&ciphersuite)?;
         let signer = signer_from_bytes(signer_bytes)?;
         let credential_with_key = build_credential_with_key(
             &credential_identity, &signer_public_key, credential_bytes.as_deref(),
@@ -491,7 +491,7 @@ impl MlsEngine {
         options: KeyPackageOptions,
         credential_bytes: Option<Vec<u8>>,
     ) -> Result<KeyPackageResult, String> {
-        let cs = ciphersuite_to_native(&ciphersuite);
+        let cs = ciphersuite_to_native(&ciphersuite)?;
         let signer = signer_from_bytes(signer_bytes)?;
         let credential_with_key = build_credential_with_key(
             &credential_identity, &signer_public_key, credential_bytes.as_deref(),
@@ -555,7 +555,7 @@ impl MlsEngine {
         )?;
 
         let provider = self.load_global().await?;
-        let create_config = config.to_create_config();
+        let create_config = config.to_create_config()?;
 
         signer
             .store(provider.storage())
@@ -606,7 +606,7 @@ impl MlsEngine {
             .store(provider.storage())
             .map_err(|e| format!("Failed to store signer: {}", e))?;
 
-        let cs = super::types::ciphersuite_to_native(&config.ciphersuite);
+        let cs = ciphersuite_to_native(&config.ciphersuite)?;
         let wf = super::types::wire_format_to_native(&config.wire_format_policy);
 
         let mut builder = MlsGroup::builder()
@@ -2539,7 +2539,7 @@ pub struct LifetimeVerdict {
 pub fn key_package_lifetime(key_package_bytes: Vec<u8>) -> Result<KeyPackageLifetime, String> {
     let kp_in = KeyPackageIn::tls_deserialize_exact_bytes(&key_package_bytes)
         .map_err(|e| format!("Failed to deserialize key package: {}", e))?;
-    let crypto = crate::hybrid_crypto::HybridCrypto::new();
+    let crypto = crate::CryptoBackend::new();
     let kp = kp_in
         .validate(&crypto, ProtocolVersion::Mls10)
         .map_err(|e| format!("Failed to validate key package: {}", e))?;

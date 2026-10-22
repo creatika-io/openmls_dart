@@ -38,19 +38,28 @@ parking_lot = "0.12"
 # which is a one-line wrapper over `self.public_group.group_context()`; both
 # `public_group()` and `GroupContext`'s accessors became public in 0.9.0, so
 # `api/engine.rs` calls that chain directly.
-openmls = { version = "=0.9.1", features = ["draft-ietf-mls-pq-ciphersuites"] }
-openmls_rust_crypto = { version = "0.6.0", features = ["draft-ietf-mls-pq-ciphersuites"] }
-# Both features are named explicitly rather than inherited.
-# `draft-ietf-mls-pq-ciphersuites`: without it `SignatureKeyPair::new` has no
-# ML-DSA arms and the four MLDSA ciphersuites cannot build an identity.
+openmls = "=0.9.1"
+openmls_rust_crypto = "0.6.0"
 # `test-utils`: this is *this* crate's feature, not openmls's — it is what makes
 # `SignatureKeyPair::private()` reachable (`api/keys.rs`), and it implies no
 # backtrace.
-openmls_basic_credential = { version = "0.6.0", features = ["test-utils", "draft-ietf-mls-pq-ciphersuites"] }
-openmls_traits = { version = "0.6.0", features = ["draft-ietf-mls-pq-ciphersuites"] }
+openmls_basic_credential = { version = "0.6.0", features = ["test-utils"] }
+openmls_traits = "0.6.0"
 # libcrux-based provider: only used for the X-Wing hybrid post-quantum KEM
 # (HpkeKemType::XWingKemDraft6); everything else stays on openmls_rust_crypto.
-openmls_libcrux_crypto = { version = "0.4.0", features = ["draft-ietf-mls-pq-ciphersuites"] }
+openmls_libcrux_crypto = { version = "0.4.0", features = ["draft-ietf-mls-pq-ciphersuites"], optional = true }
+
+[features]
+# Without `all-ciphersuites` the build executes only RFC 9420's mandatory-to-implement suite 0x0001.
+default = []
+# Adds suites 0x0002, 0x0003 and the experimental post-quantum ones (X-Wing on libcrux).
+all-ciphersuites = [
+    "dep:openmls_libcrux_crypto",
+    "openmls/draft-ietf-mls-pq-ciphersuites",
+    "openmls_rust_crypto/draft-ietf-mls-pq-ciphersuites",
+    "openmls_basic_credential/draft-ietf-mls-pq-ciphersuites",
+    "openmls_traits/draft-ietf-mls-pq-ciphersuites",
+]
 
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]

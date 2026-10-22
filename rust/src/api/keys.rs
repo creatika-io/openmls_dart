@@ -26,7 +26,7 @@ impl MlsSignatureKeyPair {
     /// Generate a new signature key pair for the given ciphersuite's signature scheme.
     #[flutter_rust_bridge::frb(sync)]
     pub fn generate(ciphersuite: MlsCiphersuite) -> Result<MlsSignatureKeyPair, String> {
-        let cs = ciphersuite_to_native(&ciphersuite);
+        let cs = ciphersuite_to_native(&ciphersuite)?;
         let kp = SignatureKeyPair::new(cs.signature_algorithm())
             .map_err(|e| format!("Failed to generate signature key pair: {}", e))?;
         Ok(MlsSignatureKeyPair { inner: kp })
@@ -42,7 +42,7 @@ impl MlsSignatureKeyPair {
         private_key: Vec<u8>,
         public_key: Vec<u8>,
     ) -> Result<MlsSignatureKeyPair, String> {
-        let cs = ciphersuite_to_native(&ciphersuite);
+        let cs = ciphersuite_to_native(&ciphersuite)?;
         let kp = SignatureKeyPair::from_raw(cs.signature_algorithm(), private_key, public_key);
         Ok(MlsSignatureKeyPair { inner: kp })
     }
@@ -131,7 +131,7 @@ pub fn serialize_signer(
     private_key: Vec<u8>,
     public_key: Vec<u8>,
 ) -> Result<Vec<u8>, String> {
-    let cs = ciphersuite_to_native(&ciphersuite);
+    let cs = ciphersuite_to_native(&ciphersuite)?;
     let signer = SerializableSigner {
         private: private_key,
         public: public_key,

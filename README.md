@@ -30,7 +30,11 @@ Dart bindings for [OpenMLS](https://github.com/openmls/openmls), providing a Rus
 
 ## Post-Quantum Support (Experimental)
 
-`supportedCiphersuites()` returns thirteen ciphersuites. Three are the
+This fork's default native build executes only RFC 9420's mandatory-to-implement
+suite 0x0001; everything below needs the native library built with the
+`all-ciphersuites` Cargo feature. `supportedCiphersuites()` says which build is loaded.
+
+With that feature, `supportedCiphersuites()` returns thirteen ciphersuites. Three are the
 IANA-registered MLS 1.0 suites from RFC 9420; **the other ten are experimental
 post-quantum suites on provisional code points.** All thirteen are exercised
 end-to-end by the test suite — a full group lifecycle each, not merely a key

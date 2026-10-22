@@ -406,6 +406,13 @@ jobs:
         run: make rust-test
         shell: bash
 
+      # The libcrux routing tests cited by .cargo/audit.toml live in the
+      # `all-ciphersuites` backend, which the default build does not compile.
+      - name: Rust unit tests (all-ciphersuites)
+        if: matrix.name == 'Linux x86_64'
+        run: make rust-test ARGS="--features all-ciphersuites"
+        shell: bash
+
       # The Web target is compiled by nothing else in this workflow: `make
       # build` is host-only, so without this step a change that breaks the
       # wasm32 build reaches a release tag before anyone finds out.

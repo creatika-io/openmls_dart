@@ -6,14 +6,15 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `capabilities_to_native`, `ciphersuite_to_native`, `extensions_from_mls`, `native_to_ciphersuite`, `wire_format_to_native`
+// These functions are ignored because they are not marked as `pub`: `capabilities_to_native`, `ciphersuite_code_point`, `ciphersuite_from_code_point`, `ciphersuite_to_native`, `extensions_from_mls`, `native_to_ciphersuite`, `wire_format_to_native`
 
 /// Returns every ciphersuite this build can execute.
 ///
-/// This is the same set OpenMLS advertises in a leaf node when the caller does
-/// not pin `MlsCapabilities.ciphersuites`, and every entry is covered by a
-/// full group-lifecycle test. Note that most of them are **experimental**
-/// post-quantum suites on provisional code points — see `MlsCiphersuite`.
+/// A build with the `all-ciphersuites` Cargo feature executes every
+/// `MlsCiphersuite`, most of them **experimental** post-quantum suites on
+/// provisional code points; without it, only the RFC 9420 mandatory-to-implement
+/// suite `mls128DhkemX25519Aes128GcmSha256Ed25519`. Every entry is covered by a
+/// full group-lifecycle test.
 List<MlsCiphersuite> supportedCiphersuites() =>
     RustLib.instance.api.crateApiTypesSupportedCiphersuites();
 
@@ -136,8 +137,8 @@ class MlsCapabilities {
   /// Supported ciphersuites, as raw MLS code points.
   ///
   /// An **empty** list is not "advertise nothing" — it means "use OpenMLS's
-  /// defaults", which is every ciphersuite `supportedCiphersuites`
-  /// returns, ten of them experimental post-quantum suites. To advertise a
+  /// defaults": the RFC 9420 suites 0x0001–0x0003, plus ten experimental
+  /// post-quantum suites in a build with them. To advertise a
   /// narrower set, list the code points explicitly (e.g. `[0x0001, 0x0002,
   /// 0x0003]` for the IANA-registered MLS 1.0 suites only).
   final Uint16List ciphersuites;

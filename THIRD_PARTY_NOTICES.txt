@@ -20,7 +20,7 @@ into LICENCE TEXTS. Where a crate ships no licence file, the canonical text of
 the licence it declares is supplied instead, referenced into CANONICAL LICENCE
 TEXTS. Identical texts are pooled rather than repeated.
 
-Crates listed: 264
+Crates listed: 246
 Distinct licence texts: 159
 Canonical licence texts supplied: 5
 
@@ -454,11 +454,6 @@ hpke-rs-crypto 0.7.0
   Notice:  ships no licence file of its own; canonical MPL-2.0 text [C5]
   Source:  https://github.com/celabshq/libcrux
 
-hpke-rs-libcrux 0.7.0
-  License: MPL-2.0
-  Notice:  ships no licence file of its own; canonical MPL-2.0 text [C5]
-  Source:  https://github.com/celabshq/libcrux
-
 hpke-rs-rust-crypto 0.7.0
   License: MPL-2.0
   Notice:  ships no licence file of its own; canonical MPL-2.0 text [C5]
@@ -517,77 +512,7 @@ libc 0.2.189
   License: MIT OR Apache-2.0
   Texts:   LICENSE-APACHE [T10], LICENSE-MIT [T122]
 
-libcrux-aead 0.0.9
-  License: Apache-2.0
-  Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
-  Source:  https://github.com/cryspen/libcrux
-
-libcrux-aes 0.0.9
-  License: Apache-2.0
-  Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
-  Source:  https://github.com/cryspen/libcrux
-
-libcrux-chacha20poly1305 0.0.9
-  License: Apache-2.0
-  Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
-  Source:  https://github.com/cryspen/libcrux
-
-libcrux-curve25519 0.0.8
-  License: Apache-2.0
-  Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
-  Source:  https://github.com/cryspen/libcrux
-
-libcrux-ecdh 0.0.8
-  License: Apache-2.0
-  Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
-  Source:  https://github.com/cryspen/libcrux
-
-libcrux-ed25519 0.0.9
-  License: Apache-2.0
-  Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
-  Source:  https://github.com/cryspen/libcrux
-
-libcrux-hacl-rs 0.0.5
-  License: Apache-2.0
-  Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
-  Source:  https://github.com/cryspen/libcrux
-
-libcrux-hkdf 0.0.8
-  License: Apache-2.0
-  Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
-  Source:  https://github.com/cryspen/libcrux
-
-libcrux-hmac-drbg 0.0.1
-  License: Apache-2.0
-  Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
-  Source:  https://github.com/cryspen/libcrux
-
-libcrux-hmac 0.0.8
-  License: Apache-2.0
-  Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
-  Source:  https://github.com/cryspen/libcrux
-
 libcrux-intrinsics 0.0.8
-  License: Apache-2.0
-  Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
-  Source:  https://github.com/cryspen/libcrux
-
-libcrux-kem 0.0.9
-  License: Apache-2.0
-  Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
-  Source:  https://github.com/cryspen/libcrux
-
-libcrux-macros 0.0.3
-  License: Apache-2.0
-  Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
-  Source:  https://github.com/cryspen/libcrux
-
-libcrux-ml-kem 0.0.10
-  License: Apache-2.0
-  Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
-  Source:  https://github.com/cryspen/libcrux
-
-libcrux-p256 0.0.8
   License: Apache-2.0
   Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
   Source:  https://github.com/cryspen/libcrux
@@ -597,17 +522,7 @@ libcrux-platform 0.0.3
   Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
   Source:  https://github.com/cryspen/libcrux
 
-libcrux-poly1305 0.0.6
-  License: Apache-2.0
-  Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
-  Source:  https://github.com/cryspen/libcrux
-
 libcrux-secrets 0.0.6
-  License: Apache-2.0
-  Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
-  Source:  https://github.com/cryspen/libcrux
-
-libcrux-sha2 0.0.8
   License: Apache-2.0
   Notice:  ships no licence file of its own; canonical Apache-2.0 text [C1]
   Source:  https://github.com/cryspen/libcrux
@@ -707,11 +622,6 @@ openmls_basic_credential 0.6.0
   License: MIT
   Notice:  ships no licence file of its own; canonical MIT terms [C2]
   Source:  https://github.com/openmls/openmls/tree/main/basic_credential
-
-openmls_libcrux_crypto 0.4.0
-  License: MIT
-  Notice:  ships no licence file of its own; canonical MIT terms [C2]
-  Source:  https://github.com/openmls/openmls/tree/main/openmls_libcrux_crypto
 
 openmls_memory_storage 0.6.0
   License: MIT
@@ -11210,7 +11120,7 @@ each one declares is supplied here, so the inventory delivers the licence and no
 merely its name.
 
 ------------------------------------------------------------------------------
-[C1] supplied for 28 crate(s) — Apache-2.0
+[C1] supplied for 12 crate(s) — Apache-2.0
 ------------------------------------------------------------------------------
 
 Crates:
@@ -11219,25 +11129,9 @@ Crates:
   hax-lib-macros-types@0.3.7
   hax-lib-macros@0.3.7
   hax-lib@0.3.7
-  libcrux-aead@0.0.9
-  libcrux-aes@0.0.9
-  libcrux-chacha20poly1305@0.0.9
-  libcrux-curve25519@0.0.8
-  libcrux-ecdh@0.0.8
-  libcrux-ed25519@0.0.9
-  libcrux-hacl-rs@0.0.5
-  libcrux-hkdf@0.0.8
-  libcrux-hmac-drbg@0.0.1
-  libcrux-hmac@0.0.8
   libcrux-intrinsics@0.0.8
-  libcrux-kem@0.0.9
-  libcrux-macros@0.0.3
-  libcrux-ml-kem@0.0.10
-  libcrux-p256@0.0.8
   libcrux-platform@0.0.3
-  libcrux-poly1305@0.0.6
   libcrux-secrets@0.0.6
-  libcrux-sha2@0.0.8
   libcrux-sha3@0.0.10
   libcrux-traits@0.0.8
   r-efi@5.3.0
@@ -11446,13 +11340,12 @@ See the License for the specific language governing permissions and
 limitations under the License.
 
 ------------------------------------------------------------------------------
-[C2] supplied for 7 crate(s) — MIT, copyright line composed from crate metadata
+[C2] supplied for 6 crate(s) — MIT, copyright line composed from crate metadata
 ------------------------------------------------------------------------------
 
 Crates:
   openmls@0.9.1
   openmls_basic_credential@0.6.0
-  openmls_libcrux_crypto@0.4.0
   openmls_memory_storage@0.6.0
   openmls_rust_crypto@0.6.0
   openmls_serialization_helpers@0.1.0
@@ -11540,12 +11433,11 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ------------------------------------------------------------------------------
-[C5] supplied for 4 crate(s) — MPL-2.0
+[C5] supplied for 3 crate(s) — MPL-2.0
 ------------------------------------------------------------------------------
 
 Crates:
   hpke-rs-crypto@0.7.0
-  hpke-rs-libcrux@0.7.0
   hpke-rs-rust-crypto@0.7.0
   hpke-rs@0.7.0
 

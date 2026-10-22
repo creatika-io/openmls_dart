@@ -46,10 +46,10 @@ impl MlsGroupConfig {
         }
     }
 
-    pub(crate) fn to_create_config(&self) -> MlsGroupCreateConfig {
-        let cs = ciphersuite_to_native(&self.ciphersuite);
+    pub(crate) fn to_create_config(&self) -> Result<MlsGroupCreateConfig, String> {
+        let cs = ciphersuite_to_native(&self.ciphersuite)?;
         let wf = wire_format_to_native(&self.wire_format_policy);
-        MlsGroupCreateConfig::builder()
+        Ok(MlsGroupCreateConfig::builder()
             .ciphersuite(cs)
             .wire_format_policy(wf)
             .use_ratchet_tree_extension(self.use_ratchet_tree_extension)
@@ -60,7 +60,7 @@ impl MlsGroupConfig {
                 self.sender_ratchet_max_out_of_order,
                 self.sender_ratchet_max_forward_distance,
             ))
-            .build()
+            .build())
     }
 
     pub(crate) fn to_join_config(&self) -> MlsGroupJoinConfig {
