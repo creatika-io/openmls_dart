@@ -65,8 +65,14 @@ all-ciphersuites = [
 # `make codegen ARGS="--rust-features full-api"`.
 full-api = []
 
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+[target.'cfg(all(not(target_arch = "wasm32"), not(target_vendor = "apple")))'.dependencies]
 rusqlite = { version = "0.37", features = ["bundled-sqlcipher-vendored-openssl"] }
+
+# SQLCipher on Apple's CommonCrypto instead of a bundled OpenSSL. libsqlite3-sys
+# picks CommonCrypto only while OPENSSL_DIR and OPENSSL_LIB_DIR are unset, which
+# `sqlcipher_crypto_provider_matches_the_platform` in encrypted_db.rs checks.
+[target.'cfg(target_vendor = "apple")'.dependencies]
+rusqlite = { version = "0.37", features = ["bundled-sqlcipher"] }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 # OpenMLS requires `js` feature for WASM: enables fluvio_wasm_timer for time access
