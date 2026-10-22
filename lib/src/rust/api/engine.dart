@@ -9,18 +9,8 @@ import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'types.dart';
 
 // These functions are ignored because they are not marked as `pub`: `acquire_locks`, `apply_past_epoch_deletion`, `apply_past_epoch_policy`, `build_credential_with_key`, `commit`, `db`, `load_for_group`, `load_global`, `load_group`, `max_epochs_to_native`, `native_to_past_epoch_policy`, `unix_seconds_to_system_time`, `with_cap`
-// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `OpLocks`, `OpSession`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `AddMembersResult`, `CreateMessageResult`, `GroupConfigurationResult`, `JoinGroupResult`, `KeyPackageLifetime`, `KeyPackageResult`, `LeaveGroupResult`, `LifetimeVerdict`, `OpLocks`, `OpSession`, `PastEpochDeletionPolicyResult`, `ProcessedMessageInspectResult`, `ProposalResult`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `crypto`, `rand`, `storage`
-
-/// Extract the group ID from an MLS protocol message.
-///
-/// Useful for routing incoming messages to the right group before calling
-/// `processMessage`. Returns an error if the message is not a protocol
-/// message (i.e. it's a Welcome, GroupInfo, or KeyPackage).
-Uint8List mlsMessageExtractGroupId({required List<int> messageBytes}) => RustLib
-    .instance
-    .api
-    .crateApiEngineMlsMessageExtractGroupId(messageBytes: messageBytes);
 
 /// Extract the epoch from an MLS protocol message.
 ///
@@ -39,89 +29,13 @@ String mlsMessageContentType({required List<int> messageBytes}) => RustLib
     .api
     .crateApiEngineMlsMessageContentType(messageBytes: messageBytes);
 
-/// Reads the validity window out of a key package.
-///
-/// Pair this with `checkLifetimeAt` to judge a key package by a clock other
-/// than the device's — a timestamp from a server, say — before offering it to
-/// `addMembers`.
-///
-/// ⚠ **The device's own clock still gates this call.** Getting at the window
-/// means validating the key package, and OpenMLS's validation checks
-/// signatures, protocol version, extensions *and* the lifetime, that last one
-/// against `SystemTime::now()` on this device. There is no way to ask it to
-/// skip that from outside the crate. So a key package this device believes is
-/// expired, or not yet valid, fails here and never yields its bounds: the pair
-/// of functions can apply an authority stricter than the local clock, not
-/// rescue a package the local clock has already rejected.
-KeyPackageLifetime keyPackageLifetime({required List<int> keyPackageBytes}) =>
-    RustLib.instance.api.crateApiEngineKeyPackageLifetime(
-      keyPackageBytes: keyPackageBytes,
-    );
-
-/// Checks a validity window against a supplied instant instead of this
-/// device's clock.
-///
-/// Takes the two bounds rather than key package bytes, so that this half of
-/// the check has no dependency on the local clock at all: `keyPackageLifetime`
-/// is the only way to read bounds *out of* a key package and it does consult
-/// the local clock, but a caller that already holds bounds — from its own
-/// directory, from an earlier reading, from a server that publishes them — can
-/// apply this on its own.
-///
-/// The comparison is OpenMLS's (`Lifetime::validate_with_time`), not a
-/// re-implementation, so the boundaries match what a peer will decide about
-/// the same package: `notAfter` is exclusive — an instant equal to it counts
-/// as expired — while `notBefore` is inclusive.
-///
-/// Returns an error only when `nowUnixSeconds` names no instant a calendar
-/// could mean — anything past 9999-12-31T23:59:59Z. An instant outside the
-/// window is a verdict, not an error, and below that cap every platform this
-/// package ships for answers a given argument the same way.
-///
-/// That cap also catches the likeliest way to call this wrongly. Dart has no
-/// `secondsSinceEpoch`, so a caller reaching for `DateTime` meets
-/// `millisecondsSinceEpoch` first, and a present-day millisecond count is
-/// roughly a thousand times too large — comfortably past the cap, so it fails
-/// loudly here instead of returning a confident verdict about a date tens of
-/// thousands of years out.
-LifetimeVerdict checkLifetimeAt({
-  required BigInt notBefore,
-  required BigInt notAfter,
-  required BigInt nowUnixSeconds,
-}) => RustLib.instance.api.crateApiEngineCheckLifetimeAt(
-  notBefore: notBefore,
-  notAfter: notAfter,
-  nowUnixSeconds: nowUnixSeconds,
-);
-
 // Rust type: RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>
 abstract class MlsEngine implements RustOpaqueInterface {
-  Future<AddMembersResult> addMembers({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<Uint8List> keyPackagesBytes,
-  });
-
-  Future<AddMembersResult> addMembersWithoutUpdate({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<Uint8List> keyPackagesBytes,
-  });
-
-  Future<void> clearPendingCommit({required List<int> groupIdBytes});
-
-  Future<void> clearPendingProposals({required List<int> groupIdBytes});
-
   /// Close the engine, wiping the encryption key from memory and closing the
   /// database connection. After calling this, all operations will fail with
   /// "MlsEngine is closed". Idempotent — calling close on an already-closed
   /// engine is a no-op.
   Future<void> close();
-
-  Future<CommitResult> commitToPendingProposals({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-  });
 
   /// Create a new MlsEngine backed by an encrypted database.
   ///
@@ -183,15 +97,6 @@ abstract class MlsEngine implements RustOpaqueInterface {
     encryptionKey: encryptionKey,
   );
 
-  Future<CreateGroupResult> createGroup({
-    required MlsGroupConfig config,
-    required List<int> signerBytes,
-    required List<int> credentialIdentity,
-    required List<int> signerPublicKey,
-    Uint8List? groupId,
-    Uint8List? credentialBytes,
-  });
-
   Future<CreateGroupResult> createGroupWithBuilder({
     required MlsGroupConfig config,
     required List<int> signerBytes,
@@ -205,172 +110,15 @@ abstract class MlsEngine implements RustOpaqueInterface {
     Uint8List? credentialBytes,
   });
 
-  /// Builds a key package with OpenMLS's defaults for everything except the
-  /// ciphersuite and the credential.
-  ///
-  /// Those defaults include the advertised capabilities, and the ciphersuite
-  /// list inside them is every suite `supportedCiphersuites` returns — ten of
-  /// them experimental post-quantum suites on provisional code points. A peer
-  /// reading this key package may therefore pick one of those for a group.
-  ///
-  /// To advertise a narrower set, or to change the lifetime, mark the package
-  /// last-resort, or attach extensions, use `createKeyPackageWithOptions`
-  /// instead: `KeyPackageOptions.capabilities` is where the ciphersuite list
-  /// goes.
-  Future<KeyPackageResult> createKeyPackage({
-    required MlsCiphersuite ciphersuite,
-    required List<int> signerBytes,
-    required List<int> credentialIdentity,
-    required List<int> signerPublicKey,
-    Uint8List? credentialBytes,
-  });
-
-  /// Builds a key package, overriding the defaults `createKeyPackage` leaves
-  /// alone.
-  ///
-  /// Every field of `KeyPackageOptions` is optional and an unset one keeps
-  /// OpenMLS's default. `capabilities` is the one with a wire consequence:
-  /// setting `MlsCapabilities.ciphersuites` to an explicit list of raw code
-  /// points is the only way to stop a key package advertising every suite
-  /// this provider supports, experimental ones included.
-  Future<KeyPackageResult> createKeyPackageWithOptions({
-    required MlsCiphersuite ciphersuite,
-    required List<int> signerBytes,
-    required List<int> credentialIdentity,
-    required List<int> signerPublicKey,
-    required KeyPackageOptions options,
-    Uint8List? credentialBytes,
-  });
-
-  Future<CreateMessageResult> createMessage({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> message,
-    Uint8List? aad,
-  });
-
-  /// Delete the message secrets of every past epoch, keeping the policy as
-  /// it is.
-  ///
-  /// The group's current epoch is untouched: messages of the current epoch
-  /// keep decrypting. Everything older stops, irreversibly.
-  ///
-  /// ⚠ It clears what has accumulated; it does not stop accumulation. Under
-  /// `setPastEpochDeletionPolicyKeepAll` the next commit starts recording
-  /// past epochs again, so this is a sweep to be repeated rather than a
-  /// switch. To stop it, set a `maxEpochs` policy.
-  Future<void> deleteAllPastEpochSecrets({required List<int> groupIdBytes});
-
   Future<void> deleteGroup({required List<int> groupIdBytes});
-
-  Future<void> deleteKeyPackage({required List<int> keyPackageRefBytes});
-
-  /// Delete the message secrets of past epochs recorded before
-  /// `unixSeconds`, counted from the Unix epoch, keeping the policy as it is.
-  ///
-  /// `maxPastEpochs` additionally caps what survives at that many of the
-  /// newest past epochs; omit it to apply no cap. Undated entries are
-  /// skipped here too — see `deletePastEpochSecretsOlderThan`.
-  ///
-  /// ⚠ Seconds, not milliseconds. Dart offers `millisecondsSinceEpoch`
-  /// first, and a present-day millisecond count is about a thousand times
-  /// too large: that lands past the year 9999 and is refused here, rather
-  /// than quietly deleting every past epoch the group has.
-  Future<void> deletePastEpochSecretsBefore({
-    required List<int> groupIdBytes,
-    required BigInt unixSeconds,
-    int? maxPastEpochs,
-  });
-
-  /// Delete the message secrets of past epochs recorded more than `seconds`
-  /// ago, keeping the policy as it is.
-  ///
-  /// Age is measured from when the secrets were stored, by this device's
-  /// clock, not from anything in the protocol. `maxPastEpochs` additionally
-  /// caps what survives at that many of the newest past epochs; omit it to
-  /// apply no cap.
-  ///
-  /// ⚠ **Entries that carry no timestamp are skipped in silence** — the
-  /// store cannot tell how old an undated one is. Such entries exist only
-  /// where an application ran a version of this package built on OpenMLS
-  /// 0.8.1 or earlier *and* had `maxPastEpochs` above zero, since the
-  /// default records no past epochs at all; in a group that outlived that
-  /// upgrade they sit alongside dated ones and a retention window built only
-  /// out of this method keeps them forever.
-  /// `deletePastEpochSecretsWithoutTimestamps` is the step that clears them.
-  Future<void> deletePastEpochSecretsOlderThan({
-    required List<int> groupIdBytes,
-    required BigInt seconds,
-    int? maxPastEpochs,
-  });
-
-  /// Delete the message secrets of past epochs that carry no timestamp,
-  /// keeping the policy as it is.
-  ///
-  /// This is a migration step, not an exotic option. Secrets recorded by a
-  /// version of this package built on OpenMLS 0.8.1 or earlier have no
-  /// timestamp, so neither `deletePastEpochSecretsOlderThan` nor
-  /// `deletePastEpochSecretsBefore` will ever remove them; a deployment that
-  /// keeps past epochs and has upgraded across that boundary should run this
-  /// once. Where `maxPastEpochs` was left at its default of zero, no past
-  /// epochs were recorded at all and there is nothing here to clear.
-  ///
-  /// `maxPastEpochs` additionally caps what survives at that many of the
-  /// newest past epochs; omit it to apply no cap.
-  Future<void> deletePastEpochSecretsWithoutTimestamps({
-    required List<int> groupIdBytes,
-    int? maxPastEpochs,
-  });
-
-  Future<MlsGroupContextInfo> exportGroupContext({
-    required List<int> groupIdBytes,
-  });
 
   Future<Uint8List> exportGroupInfo({
     required List<int> groupIdBytes,
     required List<int> signerBytes,
   });
 
-  Future<Uint8List> exportRatchetTree({required List<int> groupIdBytes});
-
   Future<Uint8List> exportSecret({
     required List<int> groupIdBytes,
-    required String label,
-    required List<int> context,
-    required int keyLength,
-  });
-
-  /// Derives a secret from the epoch a Welcome invites this client into,
-  /// **without joining the group**.
-  ///
-  /// This is `exportSecret` one step earlier: same derivation, same
-  /// `label`/`context`/`keyLength` meaning, but reachable while the
-  /// invitation is still only an invitation. It is what lets a client agree
-  /// a key with the inviter — or prove to a third party that it can read the
-  /// epoch — before it decides whether to accept.
-  ///
-  /// Like `inspectWelcome`, this writes nothing, and that is load-bearing
-  /// rather than incidental. Processing a Welcome consumes the key package
-  /// it was addressed to: OpenMLS deletes it from storage unless it is
-  /// marked last-resort. Here that delete lands in this call's snapshot and
-  /// is discarded with it, because neither this function nor `inspectWelcome`
-  /// commits — so a later `joinGroupFromWelcome` on the same Welcome still
-  /// finds its key package. Committing from either would silently burn the
-  /// invitation.
-  ///
-  /// The secret comes from the unverified group info in the Welcome. The
-  /// confirmation tag is only checked when the Welcome is staged into a
-  /// group, which happens in `joinGroupFromWelcome` and not here.
-  ///
-  /// It sees exactly the storage the real join sees:
-  /// `joinGroupFromWelcome` loads the same global scope, and pre-shared keys
-  /// live in it (they are stored ungrouped, like key packages and signature
-  /// keys). So a Welcome that carries PSKs resolves them here or fails here
-  /// for the same reason it would there — this function is never the narrower
-  /// of the two.
-  Future<Uint8List> exportWelcomeSecret({
-    required MlsGroupConfig config,
-    required List<int> welcomeBytes,
     required String label,
     required List<int> context,
     required int keyLength,
@@ -382,70 +130,11 @@ abstract class MlsEngine implements RustOpaqueInterface {
     required FlexibleCommitOptions options,
   });
 
-  Future<Uint8List?> getPastResumptionPsk({
-    required List<int> groupIdBytes,
-    required BigInt epoch,
-  });
-
-  Future<MlsCiphersuite> groupCiphersuite({required List<int> groupIdBytes});
-
-  Future<GroupConfigurationResult> groupConfiguration({
-    required List<int> groupIdBytes,
-  });
-
-  Future<Uint8List> groupConfirmationTag({required List<int> groupIdBytes});
-
-  Future<Uint8List> groupCredential({required List<int> groupIdBytes});
-
   Future<BigInt> groupEpoch({required List<int> groupIdBytes});
-
-  Future<Uint8List> groupEpochAuthenticator({required List<int> groupIdBytes});
-
-  Future<Uint8List> groupExtensions({required List<int> groupIdBytes});
-
-  Future<bool> groupHasPendingProposals({required List<int> groupIdBytes});
-
-  Future<Uint8List> groupId({required List<int> groupIdBytes});
 
   Future<bool> groupIsActive({required List<int> groupIdBytes});
 
-  Future<MlsMemberInfo?> groupMemberAt({
-    required List<int> groupIdBytes,
-    required int leafIndex,
-  });
-
-  Future<int?> groupMemberLeafIndex({
-    required List<int> groupIdBytes,
-    required List<int> credentialBytes,
-  });
-
   Future<List<MlsMemberInfo>> groupMembers({required List<int> groupIdBytes});
-
-  Future<int> groupOwnIndex({required List<int> groupIdBytes});
-
-  Future<MlsLeafNodeInfo> groupOwnLeafNode({required List<int> groupIdBytes});
-
-  Future<List<MlsPendingProposalInfo>> groupPendingProposals({
-    required List<int> groupIdBytes,
-  });
-
-  Future<WelcomeInspectResult> inspectWelcome({
-    required MlsGroupConfig config,
-    required List<int> welcomeBytes,
-  });
-
-  /// Check whether this engine has been closed.
-  bool isClosed();
-
-  Future<ExternalJoinResult> joinGroupExternalCommit({
-    required MlsGroupConfig config,
-    required List<int> groupInfoBytes,
-    Uint8List? ratchetTreeBytes,
-    required List<int> signerBytes,
-    required List<int> credentialIdentity,
-    required List<int> signerPublicKey,
-    Uint8List? credentialBytes,
-  });
 
   Future<ExternalJoinResult> joinGroupExternalCommitV2({
     required MlsGroupConfig config,
@@ -459,263 +148,12 @@ abstract class MlsEngine implements RustOpaqueInterface {
     Uint8List? credentialBytes,
   });
 
-  Future<JoinGroupResult> joinGroupFromWelcome({
-    required MlsGroupConfig config,
-    required List<int> welcomeBytes,
-    Uint8List? ratchetTreeBytes,
-    required List<int> signerBytes,
-  });
-
-  Future<JoinGroupResult> joinGroupFromWelcomeWithOptions({
-    required MlsGroupConfig config,
-    required List<int> welcomeBytes,
-    Uint8List? ratchetTreeBytes,
-    required List<int> signerBytes,
-    required bool skipLifetimeValidation,
-  });
-
-  Future<LeaveGroupResult> leaveGroup({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-  });
-
-  Future<LeaveGroupResult> leaveGroupViaSelfRemove({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-  });
-
   Future<void> mergePendingCommit({required List<int> groupIdBytes});
-
-  /// Read how many past epochs' message secrets this group keeps.
-  ///
-  /// A group that was never told otherwise reports the `maxPastEpochs` its
-  /// `MlsGroupConfig` carried when it was created or joined — the two are
-  /// the same setting.
-  Future<PastEpochDeletionPolicyResult> pastEpochDeletionPolicy({
-    required List<int> groupIdBytes,
-  });
 
   Future<ProcessedMessageResult> processMessage({
     required List<int> groupIdBytes,
     required List<int> messageBytes,
   });
-
-  Future<ProcessedMessageInspectResult> processMessageWithInspect({
-    required List<int> groupIdBytes,
-    required List<int> messageBytes,
-  });
-
-  Future<ProposalResult> proposeAdd({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> keyPackageBytes,
-  });
-
-  Future<ProposalResult> proposeCustomProposal({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required int proposalType,
-    required List<int> payload,
-  });
-
-  Future<ProposalResult> proposeExternalPsk({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> pskId,
-    required List<int> pskNonce,
-  });
-
-  Future<ProposalResult> proposeGroupContextExtensions({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<MlsExtension> extensions,
-  });
-
-  Future<ProposalResult> proposeRemove({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required int memberIndex,
-  });
-
-  Future<ProposalResult> proposeRemoveMemberByCredential({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> credentialBytes,
-  });
-
-  Future<ProposalResult> proposeSelfUpdate({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    MlsCapabilities? leafNodeCapabilities,
-    List<MlsExtension>? leafNodeExtensions,
-  });
-
-  /// Proposes a self-update that also rotates this member's signature key.
-  ///
-  /// The proposal form of `selfUpdateWithNewSigner`: the same key rotation,
-  /// queued as a proposal instead of committed, so it can be carried by
-  /// somebody else's commit.
-  ///
-  /// Two signers are needed because the message and its payload are
-  /// authenticated against different keys. The envelope is signed with
-  /// `oldSignerBytes`, since this member's leaf in the group tree still
-  /// carries the old signature key at the time the proposal is sent; the new
-  /// leaf inside the proposal is self-signed by `newSignerBytes` so that it
-  /// verifies against the `signatureKey` it announces. Both must therefore be
-  /// real key pairs with private keys.
-  ///
-  /// Upstream requires that a credential set in the leaf-node parameters
-  /// equal the new signer's credential. This wrapper cannot violate that: it
-  /// builds leaf-node parameters from `leafNodeCapabilities` and
-  /// `leafNodeExtensions` only and never sets a credential there, so the
-  /// credential built from `newCredentialIdentity` /
-  /// `newSignerPublicKey` / `newCredentialBytes` is always the one that gets
-  /// folded in.
-  ///
-  /// The new signer is stored before the proposal is created, matching
-  /// `selfUpdateWithNewSigner`, so the key is available to sign with once the
-  /// proposal is committed. Fails if a commit is already pending.
-  ///
-  /// Availability rests on this crate not enabling openmls's
-  /// `virtual-clients-draft` feature. Upstream gates this function on
-  /// `not(virtual-clients-draft)`, its own `test-utils`, or `test` — and that
-  /// `test-utils` was deliberately dropped from the shipped binary in 3.0.0,
-  /// so `not(virtual-clients-draft)` is the only arm holding it open here.
-  Future<ProposalResult> proposeSelfUpdateWithNewSigner({
-    required List<int> groupIdBytes,
-    required List<int> oldSignerBytes,
-    required List<int> newSignerBytes,
-    required List<int> newCredentialIdentity,
-    required List<int> newSignerPublicKey,
-    Uint8List? newCredentialBytes,
-    MlsCapabilities? leafNodeCapabilities,
-    List<MlsExtension>? leafNodeExtensions,
-  });
-
-  Future<CommitResult> removeMembers({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> memberIndices,
-  });
-
-  Future<void> removePendingProposal({
-    required List<int> groupIdBytes,
-    required List<int> proposalRefBytes,
-  });
-
-  /// Return the database schema version.
-  ///
-  /// After a successful `create()`, this is always `LATEST_SCHEMA_VERSION`.
-  /// Useful for diagnostics and debugging migration issues.
-  int schemaVersion();
-
-  Future<CommitResult> selfUpdate({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-  });
-
-  Future<CommitResult> selfUpdateWithNewSigner({
-    required List<int> groupIdBytes,
-    required List<int> oldSignerBytes,
-    required List<int> newSignerBytes,
-    required List<int> newCredentialIdentity,
-    required List<int> newSignerPublicKey,
-    Uint8List? newCredentialBytes,
-  });
-
-  /// Replace the group's runtime configuration.
-  ///
-  /// Every field of `MlsGroupConfig` is written, including the ones this
-  /// call was not made for — the struct carries no "leave as is".
-  ///
-  /// ⚠ **This resets the past epoch deletion policy.** `maxPastEpochs` is
-  /// the same setting as `setPastEpochDeletionPolicyMaxEpochs`, so passing a
-  /// config here writes that number as the policy — silently undoing a
-  /// `setPastEpochDeletionPolicyKeepAll` made earlier, along with the past
-  /// epoch secrets the lower number no longer admits. When both are used,
-  /// set the policy after the configuration, not before.
-  Future<void> setConfiguration({
-    required List<int> groupIdBytes,
-    required MlsGroupConfig config,
-  });
-
-  /// Keep every past epoch's message secrets, deleting none automatically.
-  ///
-  /// ⚠ **Deletion becomes the application's job.** Nothing in this package
-  /// removes past epoch secrets while this is set, so the group's stored
-  /// state grows with every commit for as long as the group lives, and every
-  /// epoch it ever had stays decryptable by anyone who obtains that store.
-  /// Pair it with one of the `deletePastEpochSecrets…` methods on a schedule
-  /// of your own — a retention window with
-  /// `deletePastEpochSecretsOlderThan`, say — or this is a leak rather than
-  /// a feature.
-  ///
-  /// It does not bring back what an earlier policy already discarded, and
-  /// like the one above it is reset by `setConfiguration`.
-  Future<void> setPastEpochDeletionPolicyKeepAll({
-    required List<int> groupIdBytes,
-  });
-
-  /// Keep the message secrets of at most `maxEpochs` past epochs, deleting
-  /// the oldest as newer ones arrive.
-  ///
-  /// Takes effect at once: a number below what the group already holds
-  /// deletes the surplus inside this call rather than at the next commit.
-  ///
-  /// ⚠ Above 0 this keeps material that decrypts past traffic — see
-  /// `PastEpochDeletionPolicyResult` for the trade-off. Zero, the default
-  /// for a new group, keeps none.
-  ///
-  /// ⚠ **`setConfiguration` resets this**, because `MlsGroupConfig` carries
-  /// the same setting as `maxPastEpochs`. When both are used, set the policy
-  /// after the configuration, not before.
-  ///
-  /// Errors when `maxEpochs` is 4294967295. That one value is refused rather
-  /// than stored because it is what OpenMLS writes to mean keep-all where
-  /// `usize` is 32 bits — the Web and 32-bit Android — so accepting it would
-  /// make two settings one stored value there and two everywhere else. Use
-  /// `setPastEpochDeletionPolicyKeepAll` if that is what you mean.
-  Future<void> setPastEpochDeletionPolicyMaxEpochs({
-    required List<int> groupIdBytes,
-    required int maxEpochs,
-  });
-
-  Future<AddMembersResult> swapMembers({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<int> removeIndices,
-    required List<Uint8List> addKeyPackagesBytes,
-  });
-
-  Future<CommitResult> updateGroupContextExtensions({
-    required List<int> groupIdBytes,
-    required List<int> signerBytes,
-    required List<MlsExtension> extensions,
-  });
-}
-
-class AddMembersResult {
-  final Uint8List commit;
-  final Uint8List welcome;
-  final Uint8List? groupInfo;
-
-  const AddMembersResult({
-    required this.commit,
-    required this.welcome,
-    this.groupInfo,
-  });
-
-  @override
-  int get hashCode => commit.hashCode ^ welcome.hashCode ^ groupInfo.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is AddMembersResult &&
-          runtimeType == other.runtimeType &&
-          commit == other.commit &&
-          welcome == other.welcome &&
-          groupInfo == other.groupInfo;
 }
 
 class CommitResult {
@@ -754,22 +192,6 @@ class CreateGroupResult {
           groupId == other.groupId;
 }
 
-class CreateMessageResult {
-  final Uint8List ciphertext;
-
-  const CreateMessageResult({required this.ciphertext});
-
-  @override
-  int get hashCode => ciphertext.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is CreateMessageResult &&
-          runtimeType == other.runtimeType &&
-          ciphertext == other.ciphertext;
-}
-
 class ExternalJoinResult {
   final Uint8List groupId;
   final Uint8List commit;
@@ -792,218 +214,6 @@ class ExternalJoinResult {
           groupId == other.groupId &&
           commit == other.commit &&
           groupInfo == other.groupInfo;
-}
-
-class GroupConfigurationResult {
-  final MlsCiphersuite ciphersuite;
-  final MlsWireFormatPolicy wireFormatPolicy;
-  final int paddingSize;
-  final int senderRatchetMaxOutOfOrder;
-  final int senderRatchetMaxForwardDistance;
-
-  const GroupConfigurationResult({
-    required this.ciphersuite,
-    required this.wireFormatPolicy,
-    required this.paddingSize,
-    required this.senderRatchetMaxOutOfOrder,
-    required this.senderRatchetMaxForwardDistance,
-  });
-
-  @override
-  int get hashCode =>
-      ciphersuite.hashCode ^
-      wireFormatPolicy.hashCode ^
-      paddingSize.hashCode ^
-      senderRatchetMaxOutOfOrder.hashCode ^
-      senderRatchetMaxForwardDistance.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is GroupConfigurationResult &&
-          runtimeType == other.runtimeType &&
-          ciphersuite == other.ciphersuite &&
-          wireFormatPolicy == other.wireFormatPolicy &&
-          paddingSize == other.paddingSize &&
-          senderRatchetMaxOutOfOrder == other.senderRatchetMaxOutOfOrder &&
-          senderRatchetMaxForwardDistance ==
-              other.senderRatchetMaxForwardDistance;
-}
-
-class JoinGroupResult {
-  final Uint8List groupId;
-
-  const JoinGroupResult({required this.groupId});
-
-  @override
-  int get hashCode => groupId.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is JoinGroupResult &&
-          runtimeType == other.runtimeType &&
-          groupId == other.groupId;
-}
-
-/// The window during which a key package may be used, as seconds since the
-/// Unix epoch.
-class KeyPackageLifetime {
-  /// Start of the window. A client must not use the key package before this
-  /// instant; an instant equal to it is already inside the window.
-  final BigInt notBefore;
-
-  /// End of the window. A client must not use the key package at or after
-  /// this instant.
-  final BigInt notAfter;
-
-  const KeyPackageLifetime({required this.notBefore, required this.notAfter});
-
-  @override
-  int get hashCode => notBefore.hashCode ^ notAfter.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is KeyPackageLifetime &&
-          runtimeType == other.runtimeType &&
-          notBefore == other.notBefore &&
-          notAfter == other.notAfter;
-}
-
-class KeyPackageResult {
-  final Uint8List keyPackageBytes;
-
-  const KeyPackageResult({required this.keyPackageBytes});
-
-  @override
-  int get hashCode => keyPackageBytes.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is KeyPackageResult &&
-          runtimeType == other.runtimeType &&
-          keyPackageBytes == other.keyPackageBytes;
-}
-
-class LeaveGroupResult {
-  final Uint8List message;
-
-  const LeaveGroupResult({required this.message});
-
-  @override
-  int get hashCode => message.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is LeaveGroupResult &&
-          runtimeType == other.runtimeType &&
-          message == other.message;
-}
-
-/// Whether a validity window admits some instant, and OpenMLS's reason when it
-/// does not.
-class LifetimeVerdict {
-  /// True when the instant falls inside the window.
-  final bool valid;
-
-  /// Why not, when `valid` is false. Null when it is true.
-  final String? reason;
-
-  const LifetimeVerdict({required this.valid, this.reason});
-
-  @override
-  int get hashCode => valid.hashCode ^ reason.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is LifetimeVerdict &&
-          runtimeType == other.runtimeType &&
-          valid == other.valid &&
-          reason == other.reason;
-}
-
-/// How many past epochs' message secrets a group keeps, as
-/// `pastEpochDeletionPolicy` reports it.
-///
-/// An application message is encrypted under the epoch its sender was in. Once
-/// a commit advances the group, a message that was already in flight can only
-/// be read from the secrets of the epoch it was sent in — so a group that
-/// keeps none of them discards such a message. Keeping a few is what lets a
-/// delivery service reorder or delay messages across a commit.
-///
-/// ⚠ **Keeping any is a forward-secrecy trade-off, not a tuning knob.** The
-/// secrets of a past epoch decrypt every message of that epoch, including ones
-/// an attacker recorded earlier, for as long as they remain stored. OpenMLS
-/// asks for the number to be as low as the delivery service allows; the
-/// default keeps none.
-class PastEpochDeletionPolicyResult {
-  /// True when the group keeps every past epoch's secrets — the state
-  /// `setPastEpochDeletionPolicyKeepAll` puts it in. `maxEpochs` says
-  /// nothing then.
-  final bool keepAll;
-
-  /// How many past epochs' secrets are kept, when `keepAll` is false. Zero
-  /// — the default for a new group — keeps none.
-  final int maxEpochs;
-
-  const PastEpochDeletionPolicyResult({
-    required this.keepAll,
-    required this.maxEpochs,
-  });
-
-  @override
-  int get hashCode => keepAll.hashCode ^ maxEpochs.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is PastEpochDeletionPolicyResult &&
-          runtimeType == other.runtimeType &&
-          keepAll == other.keepAll &&
-          maxEpochs == other.maxEpochs;
-}
-
-class ProcessedMessageInspectResult {
-  final ProcessedMessageType messageType;
-  final int? senderIndex;
-  final BigInt epoch;
-  final Uint8List? applicationMessage;
-  final StagedCommitInfo? stagedCommitInfo;
-  final MlsProposalType? proposalType;
-
-  const ProcessedMessageInspectResult({
-    required this.messageType,
-    this.senderIndex,
-    required this.epoch,
-    this.applicationMessage,
-    this.stagedCommitInfo,
-    this.proposalType,
-  });
-
-  @override
-  int get hashCode =>
-      messageType.hashCode ^
-      senderIndex.hashCode ^
-      epoch.hashCode ^
-      applicationMessage.hashCode ^
-      stagedCommitInfo.hashCode ^
-      proposalType.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ProcessedMessageInspectResult &&
-          runtimeType == other.runtimeType &&
-          messageType == other.messageType &&
-          senderIndex == other.senderIndex &&
-          epoch == other.epoch &&
-          applicationMessage == other.applicationMessage &&
-          stagedCommitInfo == other.stagedCommitInfo &&
-          proposalType == other.proposalType;
 }
 
 class ProcessedMessageResult {
@@ -1047,20 +257,4 @@ class ProcessedMessageResult {
           hasStagedCommit == other.hasStagedCommit &&
           hasProposal == other.hasProposal &&
           proposalType == other.proposalType;
-}
-
-class ProposalResult {
-  final Uint8List proposalMessage;
-
-  const ProposalResult({required this.proposalMessage});
-
-  @override
-  int get hashCode => proposalMessage.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is ProposalResult &&
-          runtimeType == other.runtimeType &&
-          proposalMessage == other.proposalMessage;
 }

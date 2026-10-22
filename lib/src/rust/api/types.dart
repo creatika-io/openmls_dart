@@ -7,6 +7,7 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `capabilities_to_native`, `ciphersuite_code_point`, `ciphersuite_from_code_point`, `ciphersuite_to_native`, `extensions_from_mls`, `native_to_ciphersuite`, `wire_format_to_native`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `KeyPackageOptions`, `MlsGroupContextInfo`, `MlsLeafNodeInfo`, `MlsPendingProposalInfo`, `StagedCommitInfo`, `WelcomeInspectResult`
 
 /// Returns every ciphersuite this build can execute.
 ///
@@ -79,51 +80,6 @@ class FlexibleCommitOptions {
           aad == other.aad &&
           createGroupInfo == other.createGroupInfo &&
           useRatchetTreeExtension == other.useRatchetTreeExtension;
-}
-
-/// Options for creating a key package with the builder API.
-class KeyPackageOptions {
-  /// Lifetime in seconds. None = default (84 days).
-  final BigInt? lifetimeSeconds;
-
-  /// Mark as last-resort key package.
-  final bool lastResort;
-
-  /// Custom capabilities. None = defaults.
-  final MlsCapabilities? capabilities;
-
-  /// Extensions on the leaf node.
-  final List<MlsExtension>? leafNodeExtensions;
-
-  /// Extensions on the key package itself.
-  final List<MlsExtension>? keyPackageExtensions;
-
-  const KeyPackageOptions({
-    this.lifetimeSeconds,
-    required this.lastResort,
-    this.capabilities,
-    this.leafNodeExtensions,
-    this.keyPackageExtensions,
-  });
-
-  @override
-  int get hashCode =>
-      lifetimeSeconds.hashCode ^
-      lastResort.hashCode ^
-      capabilities.hashCode ^
-      leafNodeExtensions.hashCode ^
-      keyPackageExtensions.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is KeyPackageOptions &&
-          runtimeType == other.runtimeType &&
-          lifetimeSeconds == other.lifetimeSeconds &&
-          lastResort == other.lastResort &&
-          capabilities == other.capabilities &&
-          leafNodeExtensions == other.leafNodeExtensions &&
-          keyPackageExtensions == other.keyPackageExtensions;
 }
 
 /// Capabilities advertised by a leaf node.
@@ -329,83 +285,6 @@ class MlsExtension {
           data == other.data;
 }
 
-/// Full group context information.
-class MlsGroupContextInfo {
-  final Uint8List groupId;
-  final BigInt epoch;
-  final MlsCiphersuite ciphersuite;
-  final Uint8List treeHash;
-  final Uint8List confirmedTranscriptHash;
-  final Uint8List extensions;
-
-  const MlsGroupContextInfo({
-    required this.groupId,
-    required this.epoch,
-    required this.ciphersuite,
-    required this.treeHash,
-    required this.confirmedTranscriptHash,
-    required this.extensions,
-  });
-
-  @override
-  int get hashCode =>
-      groupId.hashCode ^
-      epoch.hashCode ^
-      ciphersuite.hashCode ^
-      treeHash.hashCode ^
-      confirmedTranscriptHash.hashCode ^
-      extensions.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MlsGroupContextInfo &&
-          runtimeType == other.runtimeType &&
-          groupId == other.groupId &&
-          epoch == other.epoch &&
-          ciphersuite == other.ciphersuite &&
-          treeHash == other.treeHash &&
-          confirmedTranscriptHash == other.confirmedTranscriptHash &&
-          extensions == other.extensions;
-}
-
-/// Full information about the own leaf node.
-class MlsLeafNodeInfo {
-  /// TLS-serialized Credential. Deserialize with `MlsCredential.deserialize()`.
-  final Uint8List credential;
-  final Uint8List signatureKey;
-  final Uint8List encryptionKey;
-  final MlsCapabilities capabilities;
-  final List<MlsExtension> extensions;
-
-  const MlsLeafNodeInfo({
-    required this.credential,
-    required this.signatureKey,
-    required this.encryptionKey,
-    required this.capabilities,
-    required this.extensions,
-  });
-
-  @override
-  int get hashCode =>
-      credential.hashCode ^
-      signatureKey.hashCode ^
-      encryptionKey.hashCode ^
-      capabilities.hashCode ^
-      extensions.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MlsLeafNodeInfo &&
-          runtimeType == other.runtimeType &&
-          credential == other.credential &&
-          signatureKey == other.signatureKey &&
-          encryptionKey == other.encryptionKey &&
-          capabilities == other.capabilities &&
-          extensions == other.extensions;
-}
-
 /// Information about a group member.
 class MlsMemberInfo {
   final int index;
@@ -434,28 +313,6 @@ class MlsMemberInfo {
           signatureKey == other.signatureKey;
 }
 
-/// Information about a pending proposal in the group.
-class MlsPendingProposalInfo {
-  /// The type of proposal.
-  final MlsProposalType proposalType;
-
-  /// Sender's leaf index (if sender is a group member).
-  final int? senderIndex;
-
-  const MlsPendingProposalInfo({required this.proposalType, this.senderIndex});
-
-  @override
-  int get hashCode => proposalType.hashCode ^ senderIndex.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is MlsPendingProposalInfo &&
-          runtimeType == other.runtimeType &&
-          proposalType == other.proposalType &&
-          senderIndex == other.senderIndex;
-}
-
 /// MLS proposal types.
 enum MlsProposalType {
   add,
@@ -473,87 +330,3 @@ enum MlsWireFormatPolicy { plaintext, ciphertext }
 
 /// Type of a processed incoming message.
 enum ProcessedMessageType { application, proposal, stagedCommit }
-
-/// Information about a staged commit before merging.
-class StagedCommitInfo {
-  /// TLS-serialized Credentials of members being added.
-  final List<Uint8List> addCredentials;
-
-  /// Leaf indices of members being removed.
-  final Uint32List removeIndices;
-
-  /// Whether a self-update is included.
-  final bool hasUpdate;
-
-  /// Whether the local member was removed.
-  final bool selfRemoved;
-
-  /// Number of PSK proposals.
-  final int pskCount;
-
-  const StagedCommitInfo({
-    required this.addCredentials,
-    required this.removeIndices,
-    required this.hasUpdate,
-    required this.selfRemoved,
-    required this.pskCount,
-  });
-
-  @override
-  int get hashCode =>
-      addCredentials.hashCode ^
-      removeIndices.hashCode ^
-      hasUpdate.hashCode ^
-      selfRemoved.hashCode ^
-      pskCount.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is StagedCommitInfo &&
-          runtimeType == other.runtimeType &&
-          addCredentials == other.addCredentials &&
-          removeIndices == other.removeIndices &&
-          hasUpdate == other.hasUpdate &&
-          selfRemoved == other.selfRemoved &&
-          pskCount == other.pskCount;
-}
-
-/// Information extracted from a Welcome message before joining.
-class WelcomeInspectResult {
-  /// The group ID the Welcome is for.
-  final Uint8List groupId;
-
-  /// The ciphersuite used by the group.
-  final MlsCiphersuite ciphersuite;
-
-  /// Number of PSKs required to join.
-  final int pskCount;
-
-  /// The group epoch at time of Welcome.
-  final BigInt epoch;
-
-  const WelcomeInspectResult({
-    required this.groupId,
-    required this.ciphersuite,
-    required this.pskCount,
-    required this.epoch,
-  });
-
-  @override
-  int get hashCode =>
-      groupId.hashCode ^
-      ciphersuite.hashCode ^
-      pskCount.hashCode ^
-      epoch.hashCode;
-
-  @override
-  bool operator ==(Object other) =>
-      identical(this, other) ||
-      other is WelcomeInspectResult &&
-          runtimeType == other.runtimeType &&
-          groupId == other.groupId &&
-          ciphersuite == other.ciphersuite &&
-          pskCount == other.pskCount &&
-          epoch == other.epoch;
-}

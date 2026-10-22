@@ -5,7 +5,7 @@ import 'dart:typed_data';
 import 'package:openmls/openmls.dart';
 import 'package:test/test.dart';
 
-import 'test_helpers.dart';
+import '../test/test_helpers.dart';
 
 void main() {
   late MlsEngine alice;

@@ -60,7 +60,10 @@ all-ciphersuites = [
     "openmls_basic_credential/draft-ietf-mls-pq-ciphersuites",
     "openmls_traits/draft-ietf-mls-pq-ciphersuites",
 ]
-
+# Exports the whole API, not only what the creatika app calls. FRB reads the API
+# through `cargo expand`, so the Dart bindings follow the features codegen saw:
+# `make codegen ARGS="--rust-features full-api"`.
+full-api = []
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 rusqlite = { version = "0.37", features = ["bundled-sqlcipher-vendored-openssl"] }

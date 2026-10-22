@@ -593,6 +593,17 @@ jobs:
         run: make verify-feature-graph
         shell: bash
 
+      # The committed bindings export only what the creatika app calls. This
+      # regenerates the whole API (rewriting lib/src/rust/ in this checkout,
+      # hence last) and runs the tests written against it.
+      - name: Full API tests
+        if: matrix.name == 'Linux x86_64'
+        run: |
+          make codegen ARGS="--rust-features full-api"
+          make build ARGS="--features full-api,all-ciphersuites"
+          make test ARGS="test test_full_api"
+        shell: bash
+
   # ============================================
   # Update coverage badge (after ALL tests pass)
   # ============================================

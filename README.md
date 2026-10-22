@@ -116,6 +116,16 @@ that one too.
 
 ## Implementation Status
 
+This fork's committed bindings export only what the creatika app calls: engine
+create/close, `createGroupWithBuilder`, `joinGroupExternalCommitV2`,
+`flexibleCommit`, `mergePendingCommit`, `processMessage`, `exportGroupInfo`,
+`exportSecret`, `groupEpoch`, `groupIsActive`, `groupMembers`, `deleteGroup`,
+`mlsMessageExtractEpoch`, `mlsMessageContentType`, signature key generation,
+`serializeSigner` and basic credentials. Everything below is still in the Rust
+crate behind the `full-api` Cargo feature: `make codegen ARGS="--rust-features
+full-api"`, then `make build ARGS="--features full-api"`; its Dart tests live in
+`test_full_api/` (`make test ARGS="test test_full_api"`).
+
 | Category | Status | Description |
 |----------|:------:|-------------|
 | Group Lifecycle | Done | Create, join (Welcome, external commit), leave, inspect |

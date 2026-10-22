@@ -47,49 +47,56 @@ void main() {
     expect(kIsWasm, isTrue);
   });
 
-  testWidgets('a welcomed member decrypts an application message', (
+  testWidgets('an external joiner and the creator agree on the epoch secret', (
     tester,
   ) async {
     await Openmls.init();
     final alice = await Member.create('alice');
     final bob = await Member.create('bob');
-    final config = MlsGroupConfig.defaultConfig(ciphersuite: ciphersuite);
-
-    final bobKeyPackage = await bob.engine.createKeyPackage(
+    final defaults = MlsGroupConfig.defaultConfig(ciphersuite: ciphersuite);
+    final config = MlsGroupConfig(
       ciphersuite: ciphersuite,
-      signerBytes: bob.signerBytes,
-      credentialIdentity: bob.identity,
-      signerPublicKey: bob.publicKey,
+      wireFormatPolicy: MlsWireFormatPolicy.plaintext,
+      useRatchetTreeExtension: true,
+      maxPastEpochs: defaults.maxPastEpochs,
+      paddingSize: defaults.paddingSize,
+      senderRatchetMaxOutOfOrder: defaults.senderRatchetMaxOutOfOrder,
+      senderRatchetMaxForwardDistance: defaults.senderRatchetMaxForwardDistance,
+      numberOfResumptionPsks: defaults.numberOfResumptionPsks,
     );
-    final group = await alice.engine.createGroup(
+
+    final group = await alice.engine.createGroupWithBuilder(
       config: config,
       signerBytes: alice.signerBytes,
       credentialIdentity: alice.identity,
       signerPublicKey: alice.publicKey,
     );
-    final added = await alice.engine.addMembers(
+    final groupInfo = await alice.engine.exportGroupInfo(
       groupIdBytes: group.groupId,
       signerBytes: alice.signerBytes,
-      keyPackagesBytes: [bobKeyPackage.keyPackageBytes],
     );
-    await alice.engine.mergePendingCommit(groupIdBytes: group.groupId);
-    final joined = await bob.engine.joinGroupFromWelcome(
+    final joined = await bob.engine.joinGroupExternalCommitV2(
       config: config,
-      welcomeBytes: added.welcome,
+      groupInfoBytes: groupInfo,
       signerBytes: bob.signerBytes,
+      credentialIdentity: bob.identity,
+      signerPublicKey: bob.publicKey,
+      skipLifetimeValidation: false,
     );
-
-    final sent = await alice.engine.createMessage(
+    await alice.engine.processMessage(
       groupIdBytes: group.groupId,
-      signerBytes: alice.signerBytes,
-      message: utf8.encode('hello bob'),
-    );
-    final received = await bob.engine.processMessage(
-      groupIdBytes: joined.groupId,
-      messageBytes: sent.ciphertext,
+      messageBytes: joined.commit,
     );
 
-    expect(utf8.decode(received.applicationMessage!), 'hello bob');
+    Future<Uint8List> epochSecret(Member member) => member.engine.exportSecret(
+      groupIdBytes: group.groupId,
+      label: 'dart2wasm test',
+      context: group.groupId,
+      keyLength: 32,
+    );
+    final aliceSecret = await epochSecret(alice);
+    expect(aliceSecret, hasLength(32));
+    expect(await epochSecret(bob), equals(aliceSecret));
     await alice.engine.close();
     await bob.engine.close();
   });

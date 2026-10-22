@@ -21,7 +21,7 @@ void main() {
 
   group('error handling', () {
     test('process malformed message throws', () async {
-      final groupResult = await alice.createGroup(
+      final groupResult = await alice.createGroupWithBuilder(
         config: defaultConfig(),
         signerBytes: aliceId.signerBytes,
         credentialIdentity: aliceId.credentialIdentity,
@@ -42,15 +42,6 @@ void main() {
 
       expect(
         () => alice.groupIsActive(groupIdBytes: fakeGroupId),
-        throwsA(isA<Object>()),
-      );
-    });
-
-    test('extract group ID from invalid bytes throws', () {
-      expect(
-        () => mlsMessageExtractGroupId(
-          messageBytes: Uint8List.fromList([0xFF, 0xFF]),
-        ),
         throwsA(isA<Object>()),
       );
     });
@@ -332,10 +323,6 @@ void main() {
         5,
       ]);
 
-      expect(
-        () => mlsMessageExtractGroupId(messageBytes: crash),
-        throwsA(isA<Object>()),
-      );
       expect(
         () => mlsMessageExtractEpoch(messageBytes: crash),
         throwsA(isA<Object>()),

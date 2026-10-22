@@ -42,7 +42,7 @@ flutter_rust_bridge::frb_generated_boilerplate!(
     default_rust_auto_opaque = RustAutoOpaqueNom,
 );
 pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_VERSION: &str = "2.14.0-beta.2";
-pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -734665338;
+pub(crate) const FLUTTER_RUST_BRIDGE_CODEGEN_CONTENT_HASH: i32 = -1374080895;
 
 // Section: executor
 
@@ -63,77 +63,6 @@ fn wire__crate__api__credential__MlsCredential_basic_impl(
             let api_identity = identity.cst_decode();
             transform_result_dco::<_, _, String>((move || {
                 let output_ok = crate::api::credential::MlsCredential::basic(api_identity)?;
-                std::result::Result::Ok(output_ok)
-            })())
-        },
-    )
-}
-fn wire__crate__api__credential__MlsCredential_certificates_impl(
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsCredential>>,
-    >,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsCredential_certificates",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            transform_result_dco::<_, _, String>((move || {
-                let mut api_that_guard = None;
-                let decode_indices_ =
-                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
-                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                            &api_that, 0, false,
-                        ),
-                    ]);
-                for i in decode_indices_ {
-                    match i {
-                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
-                        _ => unreachable!(),
-                    }
-                }
-                let api_that_guard = api_that_guard.unwrap();
-                let output_ok =
-                    crate::api::credential::MlsCredential::certificates(&*api_that_guard)?;
-                std::result::Result::Ok(output_ok)
-            })())
-        },
-    )
-}
-fn wire__crate__api__credential__MlsCredential_credential_type_impl(
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsCredential>>,
-    >,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsCredential_credential_type",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            transform_result_dco::<_, _, ()>((move || {
-                let mut api_that_guard = None;
-                let decode_indices_ =
-                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
-                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                            &api_that, 0, false,
-                        ),
-                    ]);
-                for i in decode_indices_ {
-                    match i {
-                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
-                        _ => unreachable!(),
-                    }
-                }
-                let api_that_guard = api_that_guard.unwrap();
-                let output_ok = Ok::<_, ()>(
-                    crate::api::credential::MlsCredential::credential_type(&*api_that_guard),
-                )?;
                 std::result::Result::Ok(output_ok)
             })())
         },
@@ -225,268 +154,6 @@ fn wire__crate__api__credential__MlsCredential_serialize_impl(
         },
     )
 }
-fn wire__crate__api__credential__MlsCredential_serialized_content_impl(
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsCredential>>,
-    >,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsCredential_serialized_content",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            transform_result_dco::<_, _, ()>((move || {
-                let mut api_that_guard = None;
-                let decode_indices_ =
-                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
-                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                            &api_that, 0, false,
-                        ),
-                    ]);
-                for i in decode_indices_ {
-                    match i {
-                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
-                        _ => unreachable!(),
-                    }
-                }
-                let api_that_guard = api_that_guard.unwrap();
-                let output_ok = Ok::<_, ()>(
-                    crate::api::credential::MlsCredential::serialized_content(&*api_that_guard),
-                )?;
-                std::result::Result::Ok(output_ok)
-            })())
-        },
-    )
-}
-fn wire__crate__api__credential__MlsCredential_x509_impl(
-    certificate_chain: impl CstDecode<Vec<Vec<u8>>>,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsCredential_x509",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let api_certificate_chain = certificate_chain.cst_decode();
-            transform_result_dco::<_, _, String>((move || {
-                let output_ok = crate::api::credential::MlsCredential::x509(api_certificate_chain)?;
-                std::result::Result::Ok(output_ok)
-            })())
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_add_members_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    key_packages_bytes: impl CstDecode<Vec<Vec<u8>>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_add_members",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_key_packages_bytes = key_packages_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::add_members(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_signer_bytes,
-                            api_key_packages_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_add_members_without_update_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    key_packages_bytes: impl CstDecode<Vec<Vec<u8>>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_add_members_without_update",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_key_packages_bytes = key_packages_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::add_members_without_update(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_signer_bytes,
-                            api_key_packages_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_clear_pending_commit_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_clear_pending_commit",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::clear_pending_commit(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_clear_pending_proposals_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_clear_pending_proposals",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::clear_pending_proposals(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
 fn wire__crate__api__engine__MlsEngine_close_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     that: impl CstDecode<
@@ -531,58 +198,6 @@ fn wire__crate__api__engine__MlsEngine_close_impl(
         },
     )
 }
-fn wire__crate__api__engine__MlsEngine_commit_to_pending_proposals_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_commit_to_pending_proposals",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::commit_to_pending_proposals(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_signer_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
 fn wire__crate__api__engine__MlsEngine_create_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     db_path: impl CstDecode<String>,
@@ -603,70 +218,6 @@ fn wire__crate__api__engine__MlsEngine_create_impl(
                         let output_ok =
                             crate::api::engine::MlsEngine::create(api_db_path, api_encryption_key)
                                 .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_create_group_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    config: impl CstDecode<crate::api::config::MlsGroupConfig>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    credential_identity: impl CstDecode<Vec<u8>>,
-    signer_public_key: impl CstDecode<Vec<u8>>,
-    group_id: impl CstDecode<Option<Vec<u8>>>,
-    credential_bytes: impl CstDecode<Option<Vec<u8>>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_create_group",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_config = config.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_credential_identity = credential_identity.cst_decode();
-            let api_signer_public_key = signer_public_key.cst_decode();
-            let api_group_id = group_id.cst_decode();
-            let api_credential_bytes = credential_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::create_group(
-                            &*api_that_guard,
-                            api_config,
-                            api_signer_bytes,
-                            api_credential_identity,
-                            api_signer_public_key,
-                            api_group_id,
-                            api_credential_bytes,
-                        )
-                        .await?;
                         std::result::Result::Ok(output_ok)
                     })()
                     .await,
@@ -751,240 +302,6 @@ fn wire__crate__api__engine__MlsEngine_create_group_with_builder_impl(
         },
     )
 }
-fn wire__crate__api__engine__MlsEngine_create_key_package_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    ciphersuite: impl CstDecode<crate::api::types::MlsCiphersuite>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    credential_identity: impl CstDecode<Vec<u8>>,
-    signer_public_key: impl CstDecode<Vec<u8>>,
-    credential_bytes: impl CstDecode<Option<Vec<u8>>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_create_key_package",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_ciphersuite = ciphersuite.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_credential_identity = credential_identity.cst_decode();
-            let api_signer_public_key = signer_public_key.cst_decode();
-            let api_credential_bytes = credential_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::create_key_package(
-                            &*api_that_guard,
-                            api_ciphersuite,
-                            api_signer_bytes,
-                            api_credential_identity,
-                            api_signer_public_key,
-                            api_credential_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_create_key_package_with_options_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    ciphersuite: impl CstDecode<crate::api::types::MlsCiphersuite>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    credential_identity: impl CstDecode<Vec<u8>>,
-    signer_public_key: impl CstDecode<Vec<u8>>,
-    options: impl CstDecode<crate::api::types::KeyPackageOptions>,
-    credential_bytes: impl CstDecode<Option<Vec<u8>>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_create_key_package_with_options",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_ciphersuite = ciphersuite.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_credential_identity = credential_identity.cst_decode();
-            let api_signer_public_key = signer_public_key.cst_decode();
-            let api_options = options.cst_decode();
-            let api_credential_bytes = credential_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok =
-                            crate::api::engine::MlsEngine::create_key_package_with_options(
-                                &*api_that_guard,
-                                api_ciphersuite,
-                                api_signer_bytes,
-                                api_credential_identity,
-                                api_signer_public_key,
-                                api_options,
-                                api_credential_bytes,
-                            )
-                            .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_create_message_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    message: impl CstDecode<Vec<u8>>,
-    aad: impl CstDecode<Option<Vec<u8>>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_create_message",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_message = message.cst_decode();
-            let api_aad = aad.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::create_message(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_signer_bytes,
-                            api_message,
-                            api_aad,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_delete_all_past_epoch_secrets_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_delete_all_past_epoch_secrets",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok =
-                            crate::api::engine::MlsEngine::delete_all_past_epoch_secrets(
-                                &*api_that_guard,
-                                api_group_id_bytes,
-                            )
-                            .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
 fn wire__crate__api__engine__MlsEngine_delete_group_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     that: impl CstDecode<
@@ -1022,239 +339,6 @@ fn wire__crate__api__engine__MlsEngine_delete_group_impl(
                         }
                         let api_that_guard = api_that_guard.unwrap();
                         let output_ok = crate::api::engine::MlsEngine::delete_group(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_delete_key_package_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    key_package_ref_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_delete_key_package",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_key_package_ref_bytes = key_package_ref_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::delete_key_package(
-                            &*api_that_guard,
-                            api_key_package_ref_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_before_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    unix_seconds: impl CstDecode<u64>,
-    max_past_epochs: impl CstDecode<Option<u32>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_delete_past_epoch_secrets_before",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_unix_seconds = unix_seconds.cst_decode();
-            let api_max_past_epochs = max_past_epochs.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok =
-                            crate::api::engine::MlsEngine::delete_past_epoch_secrets_before(
-                                &*api_that_guard,
-                                api_group_id_bytes,
-                                api_unix_seconds,
-                                api_max_past_epochs,
-                            )
-                            .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_older_than_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    seconds: impl CstDecode<u64>,
-    max_past_epochs: impl CstDecode<Option<u32>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_delete_past_epoch_secrets_older_than",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_seconds = seconds.cst_decode();
-            let api_max_past_epochs = max_past_epochs.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok =
-                            crate::api::engine::MlsEngine::delete_past_epoch_secrets_older_than(
-                                &*api_that_guard,
-                                api_group_id_bytes,
-                                api_seconds,
-                                api_max_past_epochs,
-                            )
-                            .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_without_timestamps_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    max_past_epochs: impl CstDecode<Option<u32>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec,_,_,_>(flutter_rust_bridge::for_generated::TaskInfo{ debug_name: "MlsEngine_delete_past_epoch_secrets_without_timestamps", port: Some(port_), mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal }, move || {let api_that = that.cst_decode();let api_group_id_bytes = group_id_bytes.cst_decode();let api_max_past_epochs = max_past_epochs.cst_decode(); move |context| async move {
-                    transform_result_dco::<_, _, String>((move || async move {
-                        let mut api_that_guard = None;
-let decode_indices_ = flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(&api_that, 0, false)]);
-        for i in decode_indices_ {
-            match i {
-                0 => api_that_guard = Some(api_that.lockable_decode_async_ref().await),
-                _ => unreachable!(),
-            }
-        }
-        let api_that_guard = api_that_guard.unwrap();
- let output_ok = crate::api::engine::MlsEngine::delete_past_epoch_secrets_without_timestamps(&*api_that_guard, api_group_id_bytes, api_max_past_epochs).await?;   std::result::Result::Ok(output_ok)
-                    })().await)
-                } })
-}
-fn wire__crate__api__engine__MlsEngine_export_group_context_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_export_group_context",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::export_group_context(
                             &*api_that_guard,
                             api_group_id_bytes,
                         )
@@ -1309,55 +393,6 @@ fn wire__crate__api__engine__MlsEngine_export_group_info_impl(
                             &*api_that_guard,
                             api_group_id_bytes,
                             api_signer_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_export_ratchet_tree_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_export_ratchet_tree",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::export_ratchet_tree(
-                            &*api_that_guard,
-                            api_group_id_bytes,
                         )
                         .await?;
                         std::result::Result::Ok(output_ok)
@@ -1426,67 +461,6 @@ fn wire__crate__api__engine__MlsEngine_export_secret_impl(
         },
     )
 }
-fn wire__crate__api__engine__MlsEngine_export_welcome_secret_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    config: impl CstDecode<crate::api::config::MlsGroupConfig>,
-    welcome_bytes: impl CstDecode<Vec<u8>>,
-    label: impl CstDecode<String>,
-    context: impl CstDecode<Vec<u8>>,
-    key_length: impl CstDecode<u32>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_export_welcome_secret",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_config = config.cst_decode();
-            let api_welcome_bytes = welcome_bytes.cst_decode();
-            let api_label = label.cst_decode();
-            let api_context = context.cst_decode();
-            let api_key_length = key_length.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::export_welcome_secret(
-                            &*api_that_guard,
-                            api_config,
-                            api_welcome_bytes,
-                            api_label,
-                            api_context,
-                            api_key_length,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
 fn wire__crate__api__engine__MlsEngine_flexible_commit_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     that: impl CstDecode<
@@ -1542,254 +516,6 @@ fn wire__crate__api__engine__MlsEngine_flexible_commit_impl(
         },
     )
 }
-fn wire__crate__api__engine__MlsEngine_get_past_resumption_psk_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    epoch: impl CstDecode<u64>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_get_past_resumption_psk",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_epoch = epoch.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::get_past_resumption_psk(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_epoch,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_group_ciphersuite_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_group_ciphersuite",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::group_ciphersuite(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_group_configuration_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_group_configuration",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::group_configuration(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_group_confirmation_tag_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_group_confirmation_tag",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::group_confirmation_tag(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_group_credential_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_group_credential",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::group_credential(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
 fn wire__crate__api__engine__MlsEngine_group_epoch_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     that: impl CstDecode<
@@ -1827,202 +553,6 @@ fn wire__crate__api__engine__MlsEngine_group_epoch_impl(
                         }
                         let api_that_guard = api_that_guard.unwrap();
                         let output_ok = crate::api::engine::MlsEngine::group_epoch(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_group_epoch_authenticator_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_group_epoch_authenticator",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::group_epoch_authenticator(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_group_extensions_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_group_extensions",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::group_extensions(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_group_has_pending_proposals_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_group_has_pending_proposals",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::group_has_pending_proposals(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_group_id_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_group_id",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::group_id(
                             &*api_that_guard,
                             api_group_id_bytes,
                         )
@@ -2084,110 +614,6 @@ fn wire__crate__api__engine__MlsEngine_group_is_active_impl(
         },
     )
 }
-fn wire__crate__api__engine__MlsEngine_group_member_at_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    leaf_index: impl CstDecode<u32>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_group_member_at",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_leaf_index = leaf_index.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::group_member_at(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_leaf_index,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_group_member_leaf_index_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    credential_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_group_member_leaf_index",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_credential_bytes = credential_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::group_member_leaf_index(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_credential_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
 fn wire__crate__api__engine__MlsEngine_group_members_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     that: impl CstDecode<
@@ -2227,307 +653,6 @@ fn wire__crate__api__engine__MlsEngine_group_members_impl(
                         let output_ok = crate::api::engine::MlsEngine::group_members(
                             &*api_that_guard,
                             api_group_id_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_group_own_index_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_group_own_index",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::group_own_index(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_group_own_leaf_node_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_group_own_leaf_node",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::group_own_leaf_node(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_group_pending_proposals_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_group_pending_proposals",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::group_pending_proposals(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_inspect_welcome_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    config: impl CstDecode<crate::api::config::MlsGroupConfig>,
-    welcome_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_inspect_welcome",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_config = config.cst_decode();
-            let api_welcome_bytes = welcome_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::inspect_welcome(
-                            &*api_that_guard,
-                            api_config,
-                            api_welcome_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_is_closed_impl(
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_is_closed",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            transform_result_dco::<_, _, ()>((move || {
-                let mut api_that_guard = None;
-                let decode_indices_ =
-                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
-                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                            &api_that, 0, false,
-                        ),
-                    ]);
-                for i in decode_indices_ {
-                    match i {
-                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
-                        _ => unreachable!(),
-                    }
-                }
-                let api_that_guard = api_that_guard.unwrap();
-                let output_ok =
-                    Ok::<_, ()>(crate::api::engine::MlsEngine::is_closed(&*api_that_guard))?;
-                std::result::Result::Ok(output_ok)
-            })())
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_join_group_external_commit_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    config: impl CstDecode<crate::api::config::MlsGroupConfig>,
-    group_info_bytes: impl CstDecode<Vec<u8>>,
-    ratchet_tree_bytes: impl CstDecode<Option<Vec<u8>>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    credential_identity: impl CstDecode<Vec<u8>>,
-    signer_public_key: impl CstDecode<Vec<u8>>,
-    credential_bytes: impl CstDecode<Option<Vec<u8>>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_join_group_external_commit",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_config = config.cst_decode();
-            let api_group_info_bytes = group_info_bytes.cst_decode();
-            let api_ratchet_tree_bytes = ratchet_tree_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_credential_identity = credential_identity.cst_decode();
-            let api_signer_public_key = signer_public_key.cst_decode();
-            let api_credential_bytes = credential_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::join_group_external_commit(
-                            &*api_that_guard,
-                            api_config,
-                            api_group_info_bytes,
-                            api_ratchet_tree_bytes,
-                            api_signer_bytes,
-                            api_credential_identity,
-                            api_signer_public_key,
-                            api_credential_bytes,
                         )
                         .await?;
                         std::result::Result::Ok(output_ok)
@@ -2612,230 +737,6 @@ fn wire__crate__api__engine__MlsEngine_join_group_external_commit_v2_impl(
         },
     )
 }
-fn wire__crate__api__engine__MlsEngine_join_group_from_welcome_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    config: impl CstDecode<crate::api::config::MlsGroupConfig>,
-    welcome_bytes: impl CstDecode<Vec<u8>>,
-    ratchet_tree_bytes: impl CstDecode<Option<Vec<u8>>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_join_group_from_welcome",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_config = config.cst_decode();
-            let api_welcome_bytes = welcome_bytes.cst_decode();
-            let api_ratchet_tree_bytes = ratchet_tree_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::join_group_from_welcome(
-                            &*api_that_guard,
-                            api_config,
-                            api_welcome_bytes,
-                            api_ratchet_tree_bytes,
-                            api_signer_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_join_group_from_welcome_with_options_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    config: impl CstDecode<crate::api::config::MlsGroupConfig>,
-    welcome_bytes: impl CstDecode<Vec<u8>>,
-    ratchet_tree_bytes: impl CstDecode<Option<Vec<u8>>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    skip_lifetime_validation: impl CstDecode<bool>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_join_group_from_welcome_with_options",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_config = config.cst_decode();
-            let api_welcome_bytes = welcome_bytes.cst_decode();
-            let api_ratchet_tree_bytes = ratchet_tree_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_skip_lifetime_validation = skip_lifetime_validation.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok =
-                            crate::api::engine::MlsEngine::join_group_from_welcome_with_options(
-                                &*api_that_guard,
-                                api_config,
-                                api_welcome_bytes,
-                                api_ratchet_tree_bytes,
-                                api_signer_bytes,
-                                api_skip_lifetime_validation,
-                            )
-                            .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_leave_group_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_leave_group",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::leave_group(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_signer_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_leave_group_via_self_remove_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_leave_group_via_self_remove",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::leave_group_via_self_remove(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_signer_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
 fn wire__crate__api__engine__MlsEngine_merge_pending_commit_impl(
     port_: flutter_rust_bridge::for_generated::MessagePort,
     that: impl CstDecode<
@@ -2873,55 +774,6 @@ fn wire__crate__api__engine__MlsEngine_merge_pending_commit_impl(
                         }
                         let api_that_guard = api_that_guard.unwrap();
                         let output_ok = crate::api::engine::MlsEngine::merge_pending_commit(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_past_epoch_deletion_policy_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_past_epoch_deletion_policy",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::past_epoch_deletion_policy(
                             &*api_that_guard,
                             api_group_id_bytes,
                         )
@@ -2983,1069 +835,6 @@ fn wire__crate__api__engine__MlsEngine_process_message_impl(
                     .await,
                 )
             }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_process_message_with_inspect_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    message_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_process_message_with_inspect",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_message_bytes = message_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok =
-                            crate::api::engine::MlsEngine::process_message_with_inspect(
-                                &*api_that_guard,
-                                api_group_id_bytes,
-                                api_message_bytes,
-                            )
-                            .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_propose_add_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    key_package_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_propose_add",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_key_package_bytes = key_package_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::propose_add(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_signer_bytes,
-                            api_key_package_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_propose_custom_proposal_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    proposal_type: impl CstDecode<u16>,
-    payload: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_propose_custom_proposal",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_proposal_type = proposal_type.cst_decode();
-            let api_payload = payload.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::propose_custom_proposal(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_signer_bytes,
-                            api_proposal_type,
-                            api_payload,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_propose_external_psk_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    psk_id: impl CstDecode<Vec<u8>>,
-    psk_nonce: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_propose_external_psk",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_psk_id = psk_id.cst_decode();
-            let api_psk_nonce = psk_nonce.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::propose_external_psk(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_signer_bytes,
-                            api_psk_id,
-                            api_psk_nonce,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_propose_group_context_extensions_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    extensions: impl CstDecode<Vec<crate::api::types::MlsExtension>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_propose_group_context_extensions",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_extensions = extensions.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok =
-                            crate::api::engine::MlsEngine::propose_group_context_extensions(
-                                &*api_that_guard,
-                                api_group_id_bytes,
-                                api_signer_bytes,
-                                api_extensions,
-                            )
-                            .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_propose_remove_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    member_index: impl CstDecode<u32>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_propose_remove",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_member_index = member_index.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::propose_remove(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_signer_bytes,
-                            api_member_index,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_propose_remove_member_by_credential_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    credential_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_propose_remove_member_by_credential",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_credential_bytes = credential_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok =
-                            crate::api::engine::MlsEngine::propose_remove_member_by_credential(
-                                &*api_that_guard,
-                                api_group_id_bytes,
-                                api_signer_bytes,
-                                api_credential_bytes,
-                            )
-                            .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_propose_self_update_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    leaf_node_capabilities: impl CstDecode<Option<crate::api::types::MlsCapabilities>>,
-    leaf_node_extensions: impl CstDecode<Option<Vec<crate::api::types::MlsExtension>>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_propose_self_update",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_leaf_node_capabilities = leaf_node_capabilities.cst_decode();
-            let api_leaf_node_extensions = leaf_node_extensions.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::propose_self_update(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_signer_bytes,
-                            api_leaf_node_capabilities,
-                            api_leaf_node_extensions,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_propose_self_update_with_new_signer_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    old_signer_bytes: impl CstDecode<Vec<u8>>,
-    new_signer_bytes: impl CstDecode<Vec<u8>>,
-    new_credential_identity: impl CstDecode<Vec<u8>>,
-    new_signer_public_key: impl CstDecode<Vec<u8>>,
-    new_credential_bytes: impl CstDecode<Option<Vec<u8>>>,
-    leaf_node_capabilities: impl CstDecode<Option<crate::api::types::MlsCapabilities>>,
-    leaf_node_extensions: impl CstDecode<Option<Vec<crate::api::types::MlsExtension>>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_propose_self_update_with_new_signer",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_old_signer_bytes = old_signer_bytes.cst_decode();
-            let api_new_signer_bytes = new_signer_bytes.cst_decode();
-            let api_new_credential_identity = new_credential_identity.cst_decode();
-            let api_new_signer_public_key = new_signer_public_key.cst_decode();
-            let api_new_credential_bytes = new_credential_bytes.cst_decode();
-            let api_leaf_node_capabilities = leaf_node_capabilities.cst_decode();
-            let api_leaf_node_extensions = leaf_node_extensions.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok =
-                            crate::api::engine::MlsEngine::propose_self_update_with_new_signer(
-                                &*api_that_guard,
-                                api_group_id_bytes,
-                                api_old_signer_bytes,
-                                api_new_signer_bytes,
-                                api_new_credential_identity,
-                                api_new_signer_public_key,
-                                api_new_credential_bytes,
-                                api_leaf_node_capabilities,
-                                api_leaf_node_extensions,
-                            )
-                            .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_remove_members_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    member_indices: impl CstDecode<Vec<u32>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_remove_members",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_member_indices = member_indices.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::remove_members(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_signer_bytes,
-                            api_member_indices,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_remove_pending_proposal_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    proposal_ref_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_remove_pending_proposal",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_proposal_ref_bytes = proposal_ref_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::remove_pending_proposal(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_proposal_ref_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_schema_version_impl(
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_schema_version",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            transform_result_dco::<_, _, ()>((move || {
-                let mut api_that_guard = None;
-                let decode_indices_ =
-                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
-                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                            &api_that, 0, false,
-                        ),
-                    ]);
-                for i in decode_indices_ {
-                    match i {
-                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
-                        _ => unreachable!(),
-                    }
-                }
-                let api_that_guard = api_that_guard.unwrap();
-                let output_ok = Ok::<_, ()>(crate::api::engine::MlsEngine::schema_version(
-                    &*api_that_guard,
-                ))?;
-                std::result::Result::Ok(output_ok)
-            })())
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_self_update_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_self_update",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::self_update(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_signer_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_self_update_with_new_signer_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    old_signer_bytes: impl CstDecode<Vec<u8>>,
-    new_signer_bytes: impl CstDecode<Vec<u8>>,
-    new_credential_identity: impl CstDecode<Vec<u8>>,
-    new_signer_public_key: impl CstDecode<Vec<u8>>,
-    new_credential_bytes: impl CstDecode<Option<Vec<u8>>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_self_update_with_new_signer",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_old_signer_bytes = old_signer_bytes.cst_decode();
-            let api_new_signer_bytes = new_signer_bytes.cst_decode();
-            let api_new_credential_identity = new_credential_identity.cst_decode();
-            let api_new_signer_public_key = new_signer_public_key.cst_decode();
-            let api_new_credential_bytes = new_credential_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::self_update_with_new_signer(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_old_signer_bytes,
-                            api_new_signer_bytes,
-                            api_new_credential_identity,
-                            api_new_signer_public_key,
-                            api_new_credential_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_set_configuration_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    config: impl CstDecode<crate::api::config::MlsGroupConfig>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_set_configuration",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_config = config.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::set_configuration(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_config,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_keep_all_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_set_past_epoch_deletion_policy_keep_all",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok =
-                            crate::api::engine::MlsEngine::set_past_epoch_deletion_policy_keep_all(
-                                &*api_that_guard,
-                                api_group_id_bytes,
-                            )
-                            .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_max_epochs_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    max_epochs: impl CstDecode<u32>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec,_,_,_>(flutter_rust_bridge::for_generated::TaskInfo{ debug_name: "MlsEngine_set_past_epoch_deletion_policy_max_epochs", port: Some(port_), mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal }, move || {let api_that = that.cst_decode();let api_group_id_bytes = group_id_bytes.cst_decode();let api_max_epochs = max_epochs.cst_decode(); move |context| async move {
-                    transform_result_dco::<_, _, String>((move || async move {
-                        let mut api_that_guard = None;
-let decode_indices_ = flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(&api_that, 0, false)]);
-        for i in decode_indices_ {
-            match i {
-                0 => api_that_guard = Some(api_that.lockable_decode_async_ref().await),
-                _ => unreachable!(),
-            }
-        }
-        let api_that_guard = api_that_guard.unwrap();
- let output_ok = crate::api::engine::MlsEngine::set_past_epoch_deletion_policy_max_epochs(&*api_that_guard, api_group_id_bytes, api_max_epochs).await?;   std::result::Result::Ok(output_ok)
-                    })().await)
-                } })
-}
-fn wire__crate__api__engine__MlsEngine_swap_members_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    remove_indices: impl CstDecode<Vec<u32>>,
-    add_key_packages_bytes: impl CstDecode<Vec<Vec<u8>>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_swap_members",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_remove_indices = remove_indices.cst_decode();
-            let api_add_key_packages_bytes = add_key_packages_bytes.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok = crate::api::engine::MlsEngine::swap_members(
-                            &*api_that_guard,
-                            api_group_id_bytes,
-                            api_signer_bytes,
-                            api_remove_indices,
-                            api_add_key_packages_bytes,
-                        )
-                        .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__engine__MlsEngine_update_group_context_extensions_impl(
-    port_: flutter_rust_bridge::for_generated::MessagePort,
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsEngine>>,
-    >,
-    group_id_bytes: impl CstDecode<Vec<u8>>,
-    signer_bytes: impl CstDecode<Vec<u8>>,
-    extensions: impl CstDecode<Vec<crate::api::types::MlsExtension>>,
-) {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsEngine_update_group_context_extensions",
-            port: Some(port_),
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Normal,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            let api_group_id_bytes = group_id_bytes.cst_decode();
-            let api_signer_bytes = signer_bytes.cst_decode();
-            let api_extensions = extensions.cst_decode();
-            move |context| async move {
-                transform_result_dco::<_, _, String>(
-                    (move || async move {
-                        let mut api_that_guard = None;
-                        let decode_indices_ =
-                            flutter_rust_bridge::for_generated::lockable_compute_decode_order(
-                                vec![flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                                    &api_that, 0, false,
-                                )],
-                            );
-                        for i in decode_indices_ {
-                            match i {
-                                0 => {
-                                    api_that_guard =
-                                        Some(api_that.lockable_decode_async_ref().await)
-                                }
-                                _ => unreachable!(),
-                            }
-                        }
-                        let api_that_guard = api_that_guard.unwrap();
-                        let output_ok =
-                            crate::api::engine::MlsEngine::update_group_context_extensions(
-                                &*api_that_guard,
-                                api_group_id_bytes,
-                                api_signer_bytes,
-                                api_extensions,
-                            )
-                            .await?;
-                        std::result::Result::Ok(output_ok)
-                    })()
-                    .await,
-                )
-            }
-        },
-    )
-}
-fn wire__crate__api__keys__MlsSignatureKeyPair_deserialize_public_impl(
-    bytes: impl CstDecode<Vec<u8>>,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsSignatureKeyPair_deserialize_public",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let api_bytes = bytes.cst_decode();
-            transform_result_dco::<_, _, String>((move || {
-                let output_ok =
-                    crate::api::keys::MlsSignatureKeyPair::deserialize_public(api_bytes)?;
-                std::result::Result::Ok(output_ok)
-            })())
-        },
-    )
-}
-fn wire__crate__api__keys__MlsSignatureKeyPair_from_raw_impl(
-    ciphersuite: impl CstDecode<crate::api::types::MlsCiphersuite>,
-    private_key: impl CstDecode<Vec<u8>>,
-    public_key: impl CstDecode<Vec<u8>>,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsSignatureKeyPair_from_raw",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let api_ciphersuite = ciphersuite.cst_decode();
-            let api_private_key = private_key.cst_decode();
-            let api_public_key = public_key.cst_decode();
-            transform_result_dco::<_, _, String>((move || {
-                let output_ok = crate::api::keys::MlsSignatureKeyPair::from_raw(
-                    api_ciphersuite,
-                    api_private_key,
-                    api_public_key,
-                )?;
-                std::result::Result::Ok(output_ok)
-            })())
         },
     )
 }
@@ -4139,102 +928,6 @@ fn wire__crate__api__keys__MlsSignatureKeyPair_public_key_impl(
         },
     )
 }
-fn wire__crate__api__keys__MlsSignatureKeyPair_serialize_impl(
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsSignatureKeyPair>>,
-    >,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsSignatureKeyPair_serialize",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            transform_result_dco::<_, _, String>((move || {
-                let mut api_that_guard = None;
-                let decode_indices_ =
-                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
-                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                            &api_that, 0, false,
-                        ),
-                    ]);
-                for i in decode_indices_ {
-                    match i {
-                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
-                        _ => unreachable!(),
-                    }
-                }
-                let api_that_guard = api_that_guard.unwrap();
-                let output_ok = crate::api::keys::MlsSignatureKeyPair::serialize(&*api_that_guard)?;
-                std::result::Result::Ok(output_ok)
-            })())
-        },
-    )
-}
-fn wire__crate__api__keys__MlsSignatureKeyPair_signature_scheme_impl(
-    that: impl CstDecode<
-        RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsSignatureKeyPair>>,
-    >,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "MlsSignatureKeyPair_signature_scheme",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let api_that = that.cst_decode();
-            transform_result_dco::<_, _, ()>((move || {
-                let mut api_that_guard = None;
-                let decode_indices_ =
-                    flutter_rust_bridge::for_generated::lockable_compute_decode_order(vec![
-                        flutter_rust_bridge::for_generated::LockableOrderInfo::new(
-                            &api_that, 0, false,
-                        ),
-                    ]);
-                for i in decode_indices_ {
-                    match i {
-                        0 => api_that_guard = Some(api_that.lockable_decode_sync_ref()),
-                        _ => unreachable!(),
-                    }
-                }
-                let api_that_guard = api_that_guard.unwrap();
-                let output_ok = Ok::<_, ()>(
-                    crate::api::keys::MlsSignatureKeyPair::signature_scheme(&*api_that_guard),
-                )?;
-                std::result::Result::Ok(output_ok)
-            })())
-        },
-    )
-}
-fn wire__crate__api__engine__check_lifetime_at_impl(
-    not_before: impl CstDecode<u64>,
-    not_after: impl CstDecode<u64>,
-    now_unix_seconds: impl CstDecode<u64>,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "check_lifetime_at",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let api_not_before = not_before.cst_decode();
-            let api_not_after = not_after.cst_decode();
-            let api_now_unix_seconds = now_unix_seconds.cst_decode();
-            transform_result_dco::<_, _, String>((move || {
-                let output_ok = crate::api::engine::check_lifetime_at(
-                    api_not_before,
-                    api_not_after,
-                    api_now_unix_seconds,
-                )?;
-                std::result::Result::Ok(output_ok)
-            })())
-        },
-    )
-}
 fn wire__crate__api__init__init_openmls_impl(
     _library_path: impl CstDecode<String>,
 ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
@@ -4264,24 +957,6 @@ fn wire__crate__api__init__is_openmls_initialized_impl(
         move || {
             transform_result_dco::<_, _, ()>((move || {
                 let output_ok = Ok::<_, ()>(crate::api::init::is_openmls_initialized())?;
-                std::result::Result::Ok(output_ok)
-            })())
-        },
-    )
-}
-fn wire__crate__api__engine__key_package_lifetime_impl(
-    key_package_bytes: impl CstDecode<Vec<u8>>,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "key_package_lifetime",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let api_key_package_bytes = key_package_bytes.cst_decode();
-            transform_result_dco::<_, _, String>((move || {
-                let output_ok = crate::api::engine::key_package_lifetime(api_key_package_bytes)?;
                 std::result::Result::Ok(output_ok)
             })())
         },
@@ -4338,25 +1013,6 @@ fn wire__crate__api__engine__mls_message_extract_epoch_impl(
             let api_message_bytes = message_bytes.cst_decode();
             transform_result_dco::<_, _, String>((move || {
                 let output_ok = crate::api::engine::mls_message_extract_epoch(api_message_bytes)?;
-                std::result::Result::Ok(output_ok)
-            })())
-        },
-    )
-}
-fn wire__crate__api__engine__mls_message_extract_group_id_impl(
-    message_bytes: impl CstDecode<Vec<u8>>,
-) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-    FLUTTER_RUST_BRIDGE_HANDLER.wrap_sync::<flutter_rust_bridge::for_generated::DcoCodec, _>(
-        flutter_rust_bridge::for_generated::TaskInfo {
-            debug_name: "mls_message_extract_group_id",
-            port: None,
-            mode: flutter_rust_bridge::for_generated::FfiCallMode::Sync,
-        },
-        move || {
-            let api_message_bytes = message_bytes.cst_decode();
-            transform_result_dco::<_, _, String>((move || {
-                let output_ok =
-                    crate::api::engine::mls_message_extract_group_id(api_message_bytes)?;
                 std::result::Result::Ok(output_ok)
             })())
         },
@@ -4577,20 +1233,6 @@ impl SseDecode for String {
     }
 }
 
-impl SseDecode for crate::api::engine::AddMembersResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_commit = <Vec<u8>>::sse_decode(deserializer);
-        let mut var_welcome = <Vec<u8>>::sse_decode(deserializer);
-        let mut var_groupInfo = <Option<Vec<u8>>>::sse_decode(deserializer);
-        return crate::api::engine::AddMembersResult {
-            commit: var_commit,
-            welcome: var_welcome,
-            group_info: var_groupInfo,
-        };
-    }
-}
-
 impl SseDecode for bool {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -4618,16 +1260,6 @@ impl SseDecode for crate::api::engine::CreateGroupResult {
         let mut var_groupId = <Vec<u8>>::sse_decode(deserializer);
         return crate::api::engine::CreateGroupResult {
             group_id: var_groupId,
-        };
-    }
-}
-
-impl SseDecode for crate::api::engine::CreateMessageResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_ciphertext = <Vec<u8>>::sse_decode(deserializer);
-        return crate::api::engine::CreateMessageResult {
-            ciphertext: var_ciphertext,
         };
     }
 }
@@ -4671,104 +1303,10 @@ impl SseDecode for crate::api::types::FlexibleCommitOptions {
     }
 }
 
-impl SseDecode for crate::api::engine::GroupConfigurationResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_ciphersuite = <crate::api::types::MlsCiphersuite>::sse_decode(deserializer);
-        let mut var_wireFormatPolicy =
-            <crate::api::types::MlsWireFormatPolicy>::sse_decode(deserializer);
-        let mut var_paddingSize = <u32>::sse_decode(deserializer);
-        let mut var_senderRatchetMaxOutOfOrder = <u32>::sse_decode(deserializer);
-        let mut var_senderRatchetMaxForwardDistance = <u32>::sse_decode(deserializer);
-        return crate::api::engine::GroupConfigurationResult {
-            ciphersuite: var_ciphersuite,
-            wire_format_policy: var_wireFormatPolicy,
-            padding_size: var_paddingSize,
-            sender_ratchet_max_out_of_order: var_senderRatchetMaxOutOfOrder,
-            sender_ratchet_max_forward_distance: var_senderRatchetMaxForwardDistance,
-        };
-    }
-}
-
 impl SseDecode for i32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         deserializer.cursor.read_i32::<NativeEndian>().unwrap()
-    }
-}
-
-impl SseDecode for crate::api::engine::JoinGroupResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_groupId = <Vec<u8>>::sse_decode(deserializer);
-        return crate::api::engine::JoinGroupResult {
-            group_id: var_groupId,
-        };
-    }
-}
-
-impl SseDecode for crate::api::engine::KeyPackageLifetime {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_notBefore = <u64>::sse_decode(deserializer);
-        let mut var_notAfter = <u64>::sse_decode(deserializer);
-        return crate::api::engine::KeyPackageLifetime {
-            not_before: var_notBefore,
-            not_after: var_notAfter,
-        };
-    }
-}
-
-impl SseDecode for crate::api::types::KeyPackageOptions {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_lifetimeSeconds = <Option<u64>>::sse_decode(deserializer);
-        let mut var_lastResort = <bool>::sse_decode(deserializer);
-        let mut var_capabilities =
-            <Option<crate::api::types::MlsCapabilities>>::sse_decode(deserializer);
-        let mut var_leafNodeExtensions =
-            <Option<Vec<crate::api::types::MlsExtension>>>::sse_decode(deserializer);
-        let mut var_keyPackageExtensions =
-            <Option<Vec<crate::api::types::MlsExtension>>>::sse_decode(deserializer);
-        return crate::api::types::KeyPackageOptions {
-            lifetime_seconds: var_lifetimeSeconds,
-            last_resort: var_lastResort,
-            capabilities: var_capabilities,
-            leaf_node_extensions: var_leafNodeExtensions,
-            key_package_extensions: var_keyPackageExtensions,
-        };
-    }
-}
-
-impl SseDecode for crate::api::engine::KeyPackageResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_keyPackageBytes = <Vec<u8>>::sse_decode(deserializer);
-        return crate::api::engine::KeyPackageResult {
-            key_package_bytes: var_keyPackageBytes,
-        };
-    }
-}
-
-impl SseDecode for crate::api::engine::LeaveGroupResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_message = <Vec<u8>>::sse_decode(deserializer);
-        return crate::api::engine::LeaveGroupResult {
-            message: var_message,
-        };
-    }
-}
-
-impl SseDecode for crate::api::engine::LifetimeVerdict {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_valid = <bool>::sse_decode(deserializer);
-        let mut var_reason = <Option<String>>::sse_decode(deserializer);
-        return crate::api::engine::LifetimeVerdict {
-            valid: var_valid,
-            reason: var_reason,
-        };
     }
 }
 
@@ -4817,20 +1355,6 @@ impl SseDecode for Vec<crate::api::types::MlsMemberInfo> {
         let mut ans_ = Vec::with_capacity(len_ as usize);
         for idx_ in 0..len_ {
             ans_.push(<crate::api::types::MlsMemberInfo>::sse_decode(deserializer));
-        }
-        return ans_;
-    }
-}
-
-impl SseDecode for Vec<crate::api::types::MlsPendingProposalInfo> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut len_ = <i32>::sse_decode(deserializer);
-        let mut ans_ = Vec::with_capacity(len_ as usize);
-        for idx_ in 0..len_ {
-            ans_.push(<crate::api::types::MlsPendingProposalInfo>::sse_decode(
-                deserializer,
-            ));
         }
         return ans_;
     }
@@ -4952,44 +1476,6 @@ impl SseDecode for crate::api::config::MlsGroupConfig {
     }
 }
 
-impl SseDecode for crate::api::types::MlsGroupContextInfo {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_groupId = <Vec<u8>>::sse_decode(deserializer);
-        let mut var_epoch = <u64>::sse_decode(deserializer);
-        let mut var_ciphersuite = <crate::api::types::MlsCiphersuite>::sse_decode(deserializer);
-        let mut var_treeHash = <Vec<u8>>::sse_decode(deserializer);
-        let mut var_confirmedTranscriptHash = <Vec<u8>>::sse_decode(deserializer);
-        let mut var_extensions = <Vec<u8>>::sse_decode(deserializer);
-        return crate::api::types::MlsGroupContextInfo {
-            group_id: var_groupId,
-            epoch: var_epoch,
-            ciphersuite: var_ciphersuite,
-            tree_hash: var_treeHash,
-            confirmed_transcript_hash: var_confirmedTranscriptHash,
-            extensions: var_extensions,
-        };
-    }
-}
-
-impl SseDecode for crate::api::types::MlsLeafNodeInfo {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_credential = <Vec<u8>>::sse_decode(deserializer);
-        let mut var_signatureKey = <Vec<u8>>::sse_decode(deserializer);
-        let mut var_encryptionKey = <Vec<u8>>::sse_decode(deserializer);
-        let mut var_capabilities = <crate::api::types::MlsCapabilities>::sse_decode(deserializer);
-        let mut var_extensions = <Vec<crate::api::types::MlsExtension>>::sse_decode(deserializer);
-        return crate::api::types::MlsLeafNodeInfo {
-            credential: var_credential,
-            signature_key: var_signatureKey,
-            encryption_key: var_encryptionKey,
-            capabilities: var_capabilities,
-            extensions: var_extensions,
-        };
-    }
-}
-
 impl SseDecode for crate::api::types::MlsMemberInfo {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -5000,18 +1486,6 @@ impl SseDecode for crate::api::types::MlsMemberInfo {
             index: var_index,
             credential: var_credential,
             signature_key: var_signatureKey,
-        };
-    }
-}
-
-impl SseDecode for crate::api::types::MlsPendingProposalInfo {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_proposalType = <crate::api::types::MlsProposalType>::sse_decode(deserializer);
-        let mut var_senderIndex = <Option<u32>>::sse_decode(deserializer);
-        return crate::api::types::MlsPendingProposalInfo {
-            proposal_type: var_proposalType,
-            sender_index: var_senderIndex,
         };
     }
 }
@@ -5046,17 +1520,6 @@ impl SseDecode for crate::api::types::MlsWireFormatPolicy {
     }
 }
 
-impl SseDecode for Option<String> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        if (<bool>::sse_decode(deserializer)) {
-            return Some(<String>::sse_decode(deserializer));
-        } else {
-            return None;
-        }
-    }
-}
-
 impl SseDecode for Option<crate::api::types::MlsCapabilities> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -5070,35 +1533,11 @@ impl SseDecode for Option<crate::api::types::MlsCapabilities> {
     }
 }
 
-impl SseDecode for Option<crate::api::types::MlsMemberInfo> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        if (<bool>::sse_decode(deserializer)) {
-            return Some(<crate::api::types::MlsMemberInfo>::sse_decode(deserializer));
-        } else {
-            return None;
-        }
-    }
-}
-
 impl SseDecode for Option<crate::api::types::MlsProposalType> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         if (<bool>::sse_decode(deserializer)) {
             return Some(<crate::api::types::MlsProposalType>::sse_decode(
-                deserializer,
-            ));
-        } else {
-            return None;
-        }
-    }
-}
-
-impl SseDecode for Option<crate::api::types::StagedCommitInfo> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        if (<bool>::sse_decode(deserializer)) {
-            return Some(<crate::api::types::StagedCommitInfo>::sse_decode(
                 deserializer,
             ));
         } else {
@@ -5153,41 +1592,6 @@ impl SseDecode for Option<Vec<u8>> {
     }
 }
 
-impl SseDecode for crate::api::engine::PastEpochDeletionPolicyResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_keepAll = <bool>::sse_decode(deserializer);
-        let mut var_maxEpochs = <u32>::sse_decode(deserializer);
-        return crate::api::engine::PastEpochDeletionPolicyResult {
-            keep_all: var_keepAll,
-            max_epochs: var_maxEpochs,
-        };
-    }
-}
-
-impl SseDecode for crate::api::engine::ProcessedMessageInspectResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_messageType =
-            <crate::api::types::ProcessedMessageType>::sse_decode(deserializer);
-        let mut var_senderIndex = <Option<u32>>::sse_decode(deserializer);
-        let mut var_epoch = <u64>::sse_decode(deserializer);
-        let mut var_applicationMessage = <Option<Vec<u8>>>::sse_decode(deserializer);
-        let mut var_stagedCommitInfo =
-            <Option<crate::api::types::StagedCommitInfo>>::sse_decode(deserializer);
-        let mut var_proposalType =
-            <Option<crate::api::types::MlsProposalType>>::sse_decode(deserializer);
-        return crate::api::engine::ProcessedMessageInspectResult {
-            message_type: var_messageType,
-            sender_index: var_senderIndex,
-            epoch: var_epoch,
-            application_message: var_applicationMessage,
-            staged_commit_info: var_stagedCommitInfo,
-            proposal_type: var_proposalType,
-        };
-    }
-}
-
 impl SseDecode for crate::api::engine::ProcessedMessageResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
@@ -5221,34 +1625,6 @@ impl SseDecode for crate::api::types::ProcessedMessageType {
             1 => crate::api::types::ProcessedMessageType::Proposal,
             2 => crate::api::types::ProcessedMessageType::StagedCommit,
             _ => unreachable!("Invalid variant for ProcessedMessageType: {}", inner),
-        };
-    }
-}
-
-impl SseDecode for crate::api::engine::ProposalResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_proposalMessage = <Vec<u8>>::sse_decode(deserializer);
-        return crate::api::engine::ProposalResult {
-            proposal_message: var_proposalMessage,
-        };
-    }
-}
-
-impl SseDecode for crate::api::types::StagedCommitInfo {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_addCredentials = <Vec<Vec<u8>>>::sse_decode(deserializer);
-        let mut var_removeIndices = <Vec<u32>>::sse_decode(deserializer);
-        let mut var_hasUpdate = <bool>::sse_decode(deserializer);
-        let mut var_selfRemoved = <bool>::sse_decode(deserializer);
-        let mut var_pskCount = <u32>::sse_decode(deserializer);
-        return crate::api::types::StagedCommitInfo {
-            add_credentials: var_addCredentials,
-            remove_indices: var_removeIndices,
-            has_update: var_hasUpdate,
-            self_removed: var_selfRemoved,
-            psk_count: var_pskCount,
         };
     }
 }
@@ -5290,22 +1666,6 @@ impl SseDecode for usize {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
         deserializer.cursor.read_u64::<NativeEndian>().unwrap() as _
-    }
-}
-
-impl SseDecode for crate::api::types::WelcomeInspectResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
-        let mut var_groupId = <Vec<u8>>::sse_decode(deserializer);
-        let mut var_ciphersuite = <crate::api::types::MlsCiphersuite>::sse_decode(deserializer);
-        let mut var_pskCount = <u32>::sse_decode(deserializer);
-        let mut var_epoch = <u64>::sse_decode(deserializer);
-        return crate::api::types::WelcomeInspectResult {
-            group_id: var_groupId,
-            ciphersuite: var_ciphersuite,
-            psk_count: var_pskCount,
-            epoch: var_epoch,
-        };
     }
 }
 
@@ -5385,28 +1745,6 @@ impl flutter_rust_bridge::IntoIntoDart<FrbWrapper<MlsSignatureKeyPair>> for MlsS
 }
 
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::engine::AddMembersResult {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [
-            self.commit.into_into_dart().into_dart(),
-            self.welcome.into_into_dart().into_dart(),
-            self.group_info.into_into_dart().into_dart(),
-        ]
-        .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::engine::AddMembersResult
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::engine::AddMembersResult>
-    for crate::api::engine::AddMembersResult
-{
-    fn into_into_dart(self) -> crate::api::engine::AddMembersResult {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::engine::CommitResult {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -5442,23 +1780,6 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::engine::CreateGroupResult>
     for crate::api::engine::CreateGroupResult
 {
     fn into_into_dart(self) -> crate::api::engine::CreateGroupResult {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::engine::CreateMessageResult {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [self.ciphertext.into_into_dart().into_dart()].into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::engine::CreateMessageResult
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::engine::CreateMessageResult>
-    for crate::api::engine::CreateMessageResult
-{
-    fn into_into_dart(self) -> crate::api::engine::CreateMessageResult {
         self
     }
 }
@@ -5508,151 +1829,6 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::types::FlexibleCommitOptions>
     for crate::api::types::FlexibleCommitOptions
 {
     fn into_into_dart(self) -> crate::api::types::FlexibleCommitOptions {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::engine::GroupConfigurationResult {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [
-            self.ciphersuite.into_into_dart().into_dart(),
-            self.wire_format_policy.into_into_dart().into_dart(),
-            self.padding_size.into_into_dart().into_dart(),
-            self.sender_ratchet_max_out_of_order
-                .into_into_dart()
-                .into_dart(),
-            self.sender_ratchet_max_forward_distance
-                .into_into_dart()
-                .into_dart(),
-        ]
-        .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::engine::GroupConfigurationResult
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::engine::GroupConfigurationResult>
-    for crate::api::engine::GroupConfigurationResult
-{
-    fn into_into_dart(self) -> crate::api::engine::GroupConfigurationResult {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::engine::JoinGroupResult {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [self.group_id.into_into_dart().into_dart()].into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::engine::JoinGroupResult
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::engine::JoinGroupResult>
-    for crate::api::engine::JoinGroupResult
-{
-    fn into_into_dart(self) -> crate::api::engine::JoinGroupResult {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::engine::KeyPackageLifetime {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [
-            self.not_before.into_into_dart().into_dart(),
-            self.not_after.into_into_dart().into_dart(),
-        ]
-        .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::engine::KeyPackageLifetime
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::engine::KeyPackageLifetime>
-    for crate::api::engine::KeyPackageLifetime
-{
-    fn into_into_dart(self) -> crate::api::engine::KeyPackageLifetime {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::types::KeyPackageOptions {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [
-            self.lifetime_seconds.into_into_dart().into_dart(),
-            self.last_resort.into_into_dart().into_dart(),
-            self.capabilities.into_into_dart().into_dart(),
-            self.leaf_node_extensions.into_into_dart().into_dart(),
-            self.key_package_extensions.into_into_dart().into_dart(),
-        ]
-        .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::types::KeyPackageOptions
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::types::KeyPackageOptions>
-    for crate::api::types::KeyPackageOptions
-{
-    fn into_into_dart(self) -> crate::api::types::KeyPackageOptions {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::engine::KeyPackageResult {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [self.key_package_bytes.into_into_dart().into_dart()].into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::engine::KeyPackageResult
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::engine::KeyPackageResult>
-    for crate::api::engine::KeyPackageResult
-{
-    fn into_into_dart(self) -> crate::api::engine::KeyPackageResult {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::engine::LeaveGroupResult {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [self.message.into_into_dart().into_dart()].into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::engine::LeaveGroupResult
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::engine::LeaveGroupResult>
-    for crate::api::engine::LeaveGroupResult
-{
-    fn into_into_dart(self) -> crate::api::engine::LeaveGroupResult {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::engine::LifetimeVerdict {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [
-            self.valid.into_into_dart().into_dart(),
-            self.reason.into_into_dart().into_dart(),
-        ]
-        .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::engine::LifetimeVerdict
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::engine::LifetimeVerdict>
-    for crate::api::engine::LifetimeVerdict
-{
-    fn into_into_dart(self) -> crate::api::engine::LifetimeVerdict {
         self
     }
 }
@@ -5765,55 +1941,6 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::config::MlsGroupConfig>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::types::MlsGroupContextInfo {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [
-            self.group_id.into_into_dart().into_dart(),
-            self.epoch.into_into_dart().into_dart(),
-            self.ciphersuite.into_into_dart().into_dart(),
-            self.tree_hash.into_into_dart().into_dart(),
-            self.confirmed_transcript_hash.into_into_dart().into_dart(),
-            self.extensions.into_into_dart().into_dart(),
-        ]
-        .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::types::MlsGroupContextInfo
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::types::MlsGroupContextInfo>
-    for crate::api::types::MlsGroupContextInfo
-{
-    fn into_into_dart(self) -> crate::api::types::MlsGroupContextInfo {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::types::MlsLeafNodeInfo {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [
-            self.credential.into_into_dart().into_dart(),
-            self.signature_key.into_into_dart().into_dart(),
-            self.encryption_key.into_into_dart().into_dart(),
-            self.capabilities.into_into_dart().into_dart(),
-            self.extensions.into_into_dart().into_dart(),
-        ]
-        .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::types::MlsLeafNodeInfo
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::types::MlsLeafNodeInfo>
-    for crate::api::types::MlsLeafNodeInfo
-{
-    fn into_into_dart(self) -> crate::api::types::MlsLeafNodeInfo {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::types::MlsMemberInfo {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -5832,27 +1959,6 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::types::MlsMemberInfo>
     for crate::api::types::MlsMemberInfo
 {
     fn into_into_dart(self) -> crate::api::types::MlsMemberInfo {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::types::MlsPendingProposalInfo {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [
-            self.proposal_type.into_into_dart().into_dart(),
-            self.sender_index.into_into_dart().into_dart(),
-        ]
-        .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::types::MlsPendingProposalInfo
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::types::MlsPendingProposalInfo>
-    for crate::api::types::MlsPendingProposalInfo
-{
-    fn into_into_dart(self) -> crate::api::types::MlsPendingProposalInfo {
         self
     }
 }
@@ -5905,52 +2011,6 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::types::MlsWireFormatPolicy>
     }
 }
 // Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::engine::PastEpochDeletionPolicyResult {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [
-            self.keep_all.into_into_dart().into_dart(),
-            self.max_epochs.into_into_dart().into_dart(),
-        ]
-        .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::engine::PastEpochDeletionPolicyResult
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::engine::PastEpochDeletionPolicyResult>
-    for crate::api::engine::PastEpochDeletionPolicyResult
-{
-    fn into_into_dart(self) -> crate::api::engine::PastEpochDeletionPolicyResult {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::engine::ProcessedMessageInspectResult {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [
-            self.message_type.into_into_dart().into_dart(),
-            self.sender_index.into_into_dart().into_dart(),
-            self.epoch.into_into_dart().into_dart(),
-            self.application_message.into_into_dart().into_dart(),
-            self.staged_commit_info.into_into_dart().into_dart(),
-            self.proposal_type.into_into_dart().into_dart(),
-        ]
-        .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::engine::ProcessedMessageInspectResult
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::engine::ProcessedMessageInspectResult>
-    for crate::api::engine::ProcessedMessageInspectResult
-{
-    fn into_into_dart(self) -> crate::api::engine::ProcessedMessageInspectResult {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
 impl flutter_rust_bridge::IntoDart for crate::api::engine::ProcessedMessageResult {
     fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
         [
@@ -5995,70 +2055,6 @@ impl flutter_rust_bridge::IntoIntoDart<crate::api::types::ProcessedMessageType>
     for crate::api::types::ProcessedMessageType
 {
     fn into_into_dart(self) -> crate::api::types::ProcessedMessageType {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::engine::ProposalResult {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [self.proposal_message.into_into_dart().into_dart()].into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::engine::ProposalResult
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::engine::ProposalResult>
-    for crate::api::engine::ProposalResult
-{
-    fn into_into_dart(self) -> crate::api::engine::ProposalResult {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::types::StagedCommitInfo {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [
-            self.add_credentials.into_into_dart().into_dart(),
-            self.remove_indices.into_into_dart().into_dart(),
-            self.has_update.into_into_dart().into_dart(),
-            self.self_removed.into_into_dart().into_dart(),
-            self.psk_count.into_into_dart().into_dart(),
-        ]
-        .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::types::StagedCommitInfo
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::types::StagedCommitInfo>
-    for crate::api::types::StagedCommitInfo
-{
-    fn into_into_dart(self) -> crate::api::types::StagedCommitInfo {
-        self
-    }
-}
-// Codec=Dco (DartCObject based), see doc to use other codecs
-impl flutter_rust_bridge::IntoDart for crate::api::types::WelcomeInspectResult {
-    fn into_dart(self) -> flutter_rust_bridge::for_generated::DartAbi {
-        [
-            self.group_id.into_into_dart().into_dart(),
-            self.ciphersuite.into_into_dart().into_dart(),
-            self.psk_count.into_into_dart().into_dart(),
-            self.epoch.into_into_dart().into_dart(),
-        ]
-        .into_dart()
-    }
-}
-impl flutter_rust_bridge::for_generated::IntoDartExceptPrimitive
-    for crate::api::types::WelcomeInspectResult
-{
-}
-impl flutter_rust_bridge::IntoIntoDart<crate::api::types::WelcomeInspectResult>
-    for crate::api::types::WelcomeInspectResult
-{
-    fn into_into_dart(self) -> crate::api::types::WelcomeInspectResult {
         self
     }
 }
@@ -6124,15 +2120,6 @@ impl SseEncode for String {
     }
 }
 
-impl SseEncode for crate::api::engine::AddMembersResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <Vec<u8>>::sse_encode(self.commit, serializer);
-        <Vec<u8>>::sse_encode(self.welcome, serializer);
-        <Option<Vec<u8>>>::sse_encode(self.group_info, serializer);
-    }
-}
-
 impl SseEncode for bool {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -6153,13 +2140,6 @@ impl SseEncode for crate::api::engine::CreateGroupResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <Vec<u8>>::sse_encode(self.group_id, serializer);
-    }
-}
-
-impl SseEncode for crate::api::engine::CreateMessageResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <Vec<u8>>::sse_encode(self.ciphertext, serializer);
     }
 }
 
@@ -6189,75 +2169,10 @@ impl SseEncode for crate::api::types::FlexibleCommitOptions {
     }
 }
 
-impl SseEncode for crate::api::engine::GroupConfigurationResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <crate::api::types::MlsCiphersuite>::sse_encode(self.ciphersuite, serializer);
-        <crate::api::types::MlsWireFormatPolicy>::sse_encode(self.wire_format_policy, serializer);
-        <u32>::sse_encode(self.padding_size, serializer);
-        <u32>::sse_encode(self.sender_ratchet_max_out_of_order, serializer);
-        <u32>::sse_encode(self.sender_ratchet_max_forward_distance, serializer);
-    }
-}
-
 impl SseEncode for i32 {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         serializer.cursor.write_i32::<NativeEndian>(self).unwrap();
-    }
-}
-
-impl SseEncode for crate::api::engine::JoinGroupResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <Vec<u8>>::sse_encode(self.group_id, serializer);
-    }
-}
-
-impl SseEncode for crate::api::engine::KeyPackageLifetime {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <u64>::sse_encode(self.not_before, serializer);
-        <u64>::sse_encode(self.not_after, serializer);
-    }
-}
-
-impl SseEncode for crate::api::types::KeyPackageOptions {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <Option<u64>>::sse_encode(self.lifetime_seconds, serializer);
-        <bool>::sse_encode(self.last_resort, serializer);
-        <Option<crate::api::types::MlsCapabilities>>::sse_encode(self.capabilities, serializer);
-        <Option<Vec<crate::api::types::MlsExtension>>>::sse_encode(
-            self.leaf_node_extensions,
-            serializer,
-        );
-        <Option<Vec<crate::api::types::MlsExtension>>>::sse_encode(
-            self.key_package_extensions,
-            serializer,
-        );
-    }
-}
-
-impl SseEncode for crate::api::engine::KeyPackageResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <Vec<u8>>::sse_encode(self.key_package_bytes, serializer);
-    }
-}
-
-impl SseEncode for crate::api::engine::LeaveGroupResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <Vec<u8>>::sse_encode(self.message, serializer);
-    }
-}
-
-impl SseEncode for crate::api::engine::LifetimeVerdict {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <bool>::sse_encode(self.valid, serializer);
-        <Option<String>>::sse_encode(self.reason, serializer);
     }
 }
 
@@ -6297,16 +2212,6 @@ impl SseEncode for Vec<crate::api::types::MlsMemberInfo> {
         <i32>::sse_encode(self.len() as _, serializer);
         for item in self {
             <crate::api::types::MlsMemberInfo>::sse_encode(item, serializer);
-        }
-    }
-}
-
-impl SseEncode for Vec<crate::api::types::MlsPendingProposalInfo> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <i32>::sse_encode(self.len() as _, serializer);
-        for item in self {
-            <crate::api::types::MlsPendingProposalInfo>::sse_encode(item, serializer);
         }
     }
 }
@@ -6394,43 +2299,12 @@ impl SseEncode for crate::api::config::MlsGroupConfig {
     }
 }
 
-impl SseEncode for crate::api::types::MlsGroupContextInfo {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <Vec<u8>>::sse_encode(self.group_id, serializer);
-        <u64>::sse_encode(self.epoch, serializer);
-        <crate::api::types::MlsCiphersuite>::sse_encode(self.ciphersuite, serializer);
-        <Vec<u8>>::sse_encode(self.tree_hash, serializer);
-        <Vec<u8>>::sse_encode(self.confirmed_transcript_hash, serializer);
-        <Vec<u8>>::sse_encode(self.extensions, serializer);
-    }
-}
-
-impl SseEncode for crate::api::types::MlsLeafNodeInfo {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <Vec<u8>>::sse_encode(self.credential, serializer);
-        <Vec<u8>>::sse_encode(self.signature_key, serializer);
-        <Vec<u8>>::sse_encode(self.encryption_key, serializer);
-        <crate::api::types::MlsCapabilities>::sse_encode(self.capabilities, serializer);
-        <Vec<crate::api::types::MlsExtension>>::sse_encode(self.extensions, serializer);
-    }
-}
-
 impl SseEncode for crate::api::types::MlsMemberInfo {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <u32>::sse_encode(self.index, serializer);
         <Vec<u8>>::sse_encode(self.credential, serializer);
         <Vec<u8>>::sse_encode(self.signature_key, serializer);
-    }
-}
-
-impl SseEncode for crate::api::types::MlsPendingProposalInfo {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <crate::api::types::MlsProposalType>::sse_encode(self.proposal_type, serializer);
-        <Option<u32>>::sse_encode(self.sender_index, serializer);
     }
 }
 
@@ -6472,16 +2346,6 @@ impl SseEncode for crate::api::types::MlsWireFormatPolicy {
     }
 }
 
-impl SseEncode for Option<String> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <bool>::sse_encode(self.is_some(), serializer);
-        if let Some(value) = self {
-            <String>::sse_encode(value, serializer);
-        }
-    }
-}
-
 impl SseEncode for Option<crate::api::types::MlsCapabilities> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -6492,32 +2356,12 @@ impl SseEncode for Option<crate::api::types::MlsCapabilities> {
     }
 }
 
-impl SseEncode for Option<crate::api::types::MlsMemberInfo> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <bool>::sse_encode(self.is_some(), serializer);
-        if let Some(value) = self {
-            <crate::api::types::MlsMemberInfo>::sse_encode(value, serializer);
-        }
-    }
-}
-
 impl SseEncode for Option<crate::api::types::MlsProposalType> {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
         <bool>::sse_encode(self.is_some(), serializer);
         if let Some(value) = self {
             <crate::api::types::MlsProposalType>::sse_encode(value, serializer);
-        }
-    }
-}
-
-impl SseEncode for Option<crate::api::types::StagedCommitInfo> {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <bool>::sse_encode(self.is_some(), serializer);
-        if let Some(value) = self {
-            <crate::api::types::StagedCommitInfo>::sse_encode(value, serializer);
         }
     }
 }
@@ -6562,29 +2406,6 @@ impl SseEncode for Option<Vec<u8>> {
     }
 }
 
-impl SseEncode for crate::api::engine::PastEpochDeletionPolicyResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <bool>::sse_encode(self.keep_all, serializer);
-        <u32>::sse_encode(self.max_epochs, serializer);
-    }
-}
-
-impl SseEncode for crate::api::engine::ProcessedMessageInspectResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <crate::api::types::ProcessedMessageType>::sse_encode(self.message_type, serializer);
-        <Option<u32>>::sse_encode(self.sender_index, serializer);
-        <u64>::sse_encode(self.epoch, serializer);
-        <Option<Vec<u8>>>::sse_encode(self.application_message, serializer);
-        <Option<crate::api::types::StagedCommitInfo>>::sse_encode(
-            self.staged_commit_info,
-            serializer,
-        );
-        <Option<crate::api::types::MlsProposalType>>::sse_encode(self.proposal_type, serializer);
-    }
-}
-
 impl SseEncode for crate::api::engine::ProcessedMessageResult {
     // Codec=Sse (Serialization based), see doc to use other codecs
     fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
@@ -6612,24 +2433,6 @@ impl SseEncode for crate::api::types::ProcessedMessageType {
             },
             serializer,
         );
-    }
-}
-
-impl SseEncode for crate::api::engine::ProposalResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <Vec<u8>>::sse_encode(self.proposal_message, serializer);
-    }
-}
-
-impl SseEncode for crate::api::types::StagedCommitInfo {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <Vec<Vec<u8>>>::sse_encode(self.add_credentials, serializer);
-        <Vec<u32>>::sse_encode(self.remove_indices, serializer);
-        <bool>::sse_encode(self.has_update, serializer);
-        <bool>::sse_encode(self.self_removed, serializer);
-        <u32>::sse_encode(self.psk_count, serializer);
     }
 }
 
@@ -6673,16 +2476,6 @@ impl SseEncode for usize {
             .cursor
             .write_u64::<NativeEndian>(self as _)
             .unwrap();
-    }
-}
-
-impl SseEncode for crate::api::types::WelcomeInspectResult {
-    // Codec=Sse (Serialization based), see doc to use other codecs
-    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
-        <Vec<u8>>::sse_encode(self.group_id, serializer);
-        <crate::api::types::MlsCiphersuite>::sse_encode(self.ciphersuite, serializer);
-        <u32>::sse_encode(self.psk_count, serializer);
-        <u64>::sse_encode(self.epoch, serializer);
     }
 }
 
@@ -6791,28 +2584,11 @@ mod io {
             String::from_utf8(vec).unwrap()
         }
     }
-    impl CstDecode<crate::api::engine::AddMembersResult> for wire_cst_add_members_result {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::AddMembersResult {
-            crate::api::engine::AddMembersResult {
-                commit: self.commit.cst_decode(),
-                welcome: self.welcome.cst_decode(),
-                group_info: self.group_info.cst_decode(),
-            }
-        }
-    }
     impl CstDecode<crate::api::types::FlexibleCommitOptions> for *mut wire_cst_flexible_commit_options {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> crate::api::types::FlexibleCommitOptions {
             let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
             CstDecode::<crate::api::types::FlexibleCommitOptions>::cst_decode(*wrap).into()
-        }
-    }
-    impl CstDecode<crate::api::types::KeyPackageOptions> for *mut wire_cst_key_package_options {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::types::KeyPackageOptions {
-            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
-            CstDecode::<crate::api::types::KeyPackageOptions>::cst_decode(*wrap).into()
         }
     }
     impl CstDecode<crate::api::types::MlsCapabilities> for *mut wire_cst_mls_capabilities {
@@ -6829,25 +2605,11 @@ mod io {
             CstDecode::<crate::api::config::MlsGroupConfig>::cst_decode(*wrap).into()
         }
     }
-    impl CstDecode<crate::api::types::MlsMemberInfo> for *mut wire_cst_mls_member_info {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::types::MlsMemberInfo {
-            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
-            CstDecode::<crate::api::types::MlsMemberInfo>::cst_decode(*wrap).into()
-        }
-    }
     impl CstDecode<crate::api::types::MlsProposalType> for *mut i32 {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> crate::api::types::MlsProposalType {
             let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
             CstDecode::<crate::api::types::MlsProposalType>::cst_decode(*wrap).into()
-        }
-    }
-    impl CstDecode<crate::api::types::StagedCommitInfo> for *mut wire_cst_staged_commit_info {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::types::StagedCommitInfo {
-            let wrap = unsafe { flutter_rust_bridge::for_generated::box_from_leak_ptr(self) };
-            CstDecode::<crate::api::types::StagedCommitInfo>::cst_decode(*wrap).into()
         }
     }
     impl CstDecode<u32> for *mut u32 {
@@ -6880,14 +2642,6 @@ mod io {
             }
         }
     }
-    impl CstDecode<crate::api::engine::CreateMessageResult> for wire_cst_create_message_result {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::CreateMessageResult {
-            crate::api::engine::CreateMessageResult {
-                ciphertext: self.ciphertext.cst_decode(),
-            }
-        }
-    }
     impl CstDecode<crate::api::engine::ExternalJoinResult> for wire_cst_external_join_result {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> crate::api::engine::ExternalJoinResult {
@@ -6910,76 +2664,6 @@ mod io {
                 aad: self.aad.cst_decode(),
                 create_group_info: self.create_group_info.cst_decode(),
                 use_ratchet_tree_extension: self.use_ratchet_tree_extension.cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::engine::GroupConfigurationResult>
-        for wire_cst_group_configuration_result
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::GroupConfigurationResult {
-            crate::api::engine::GroupConfigurationResult {
-                ciphersuite: self.ciphersuite.cst_decode(),
-                wire_format_policy: self.wire_format_policy.cst_decode(),
-                padding_size: self.padding_size.cst_decode(),
-                sender_ratchet_max_out_of_order: self.sender_ratchet_max_out_of_order.cst_decode(),
-                sender_ratchet_max_forward_distance: self
-                    .sender_ratchet_max_forward_distance
-                    .cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::engine::JoinGroupResult> for wire_cst_join_group_result {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::JoinGroupResult {
-            crate::api::engine::JoinGroupResult {
-                group_id: self.group_id.cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::engine::KeyPackageLifetime> for wire_cst_key_package_lifetime {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::KeyPackageLifetime {
-            crate::api::engine::KeyPackageLifetime {
-                not_before: self.not_before.cst_decode(),
-                not_after: self.not_after.cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::types::KeyPackageOptions> for wire_cst_key_package_options {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::types::KeyPackageOptions {
-            crate::api::types::KeyPackageOptions {
-                lifetime_seconds: self.lifetime_seconds.cst_decode(),
-                last_resort: self.last_resort.cst_decode(),
-                capabilities: self.capabilities.cst_decode(),
-                leaf_node_extensions: self.leaf_node_extensions.cst_decode(),
-                key_package_extensions: self.key_package_extensions.cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::engine::KeyPackageResult> for wire_cst_key_package_result {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::KeyPackageResult {
-            crate::api::engine::KeyPackageResult {
-                key_package_bytes: self.key_package_bytes.cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::engine::LeaveGroupResult> for wire_cst_leave_group_result {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::LeaveGroupResult {
-            crate::api::engine::LeaveGroupResult {
-                message: self.message.cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::engine::LifetimeVerdict> for wire_cst_lifetime_verdict {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::LifetimeVerdict {
-            crate::api::engine::LifetimeVerdict {
-                valid: self.valid.cst_decode(),
-                reason: self.reason.cst_decode(),
             }
         }
     }
@@ -7023,30 +2707,9 @@ mod io {
             vec.into_iter().map(CstDecode::cst_decode).collect()
         }
     }
-    impl CstDecode<Vec<crate::api::types::MlsPendingProposalInfo>>
-        for *mut wire_cst_list_mls_pending_proposal_info
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> Vec<crate::api::types::MlsPendingProposalInfo> {
-            let vec = unsafe {
-                let wrap = flutter_rust_bridge::for_generated::box_from_leak_ptr(self);
-                flutter_rust_bridge::for_generated::vec_from_leak_ptr(wrap.ptr, wrap.len)
-            };
-            vec.into_iter().map(CstDecode::cst_decode).collect()
-        }
-    }
     impl CstDecode<Vec<u16>> for *mut wire_cst_list_prim_u_16_strict {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> Vec<u16> {
-            unsafe {
-                let wrap = flutter_rust_bridge::for_generated::box_from_leak_ptr(self);
-                flutter_rust_bridge::for_generated::vec_from_leak_ptr(wrap.ptr, wrap.len)
-            }
-        }
-    }
-    impl CstDecode<Vec<u32>> for *mut wire_cst_list_prim_u_32_loose {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> Vec<u32> {
             unsafe {
                 let wrap = flutter_rust_bridge::for_generated::box_from_leak_ptr(self);
                 flutter_rust_bridge::for_generated::vec_from_leak_ptr(wrap.ptr, wrap.len)
@@ -7118,31 +2781,6 @@ mod io {
             }
         }
     }
-    impl CstDecode<crate::api::types::MlsGroupContextInfo> for wire_cst_mls_group_context_info {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::types::MlsGroupContextInfo {
-            crate::api::types::MlsGroupContextInfo {
-                group_id: self.group_id.cst_decode(),
-                epoch: self.epoch.cst_decode(),
-                ciphersuite: self.ciphersuite.cst_decode(),
-                tree_hash: self.tree_hash.cst_decode(),
-                confirmed_transcript_hash: self.confirmed_transcript_hash.cst_decode(),
-                extensions: self.extensions.cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::types::MlsLeafNodeInfo> for wire_cst_mls_leaf_node_info {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::types::MlsLeafNodeInfo {
-            crate::api::types::MlsLeafNodeInfo {
-                credential: self.credential.cst_decode(),
-                signature_key: self.signature_key.cst_decode(),
-                encryption_key: self.encryption_key.cst_decode(),
-                capabilities: self.capabilities.cst_decode(),
-                extensions: self.extensions.cst_decode(),
-            }
-        }
-    }
     impl CstDecode<crate::api::types::MlsMemberInfo> for wire_cst_mls_member_info {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> crate::api::types::MlsMemberInfo {
@@ -7150,41 +2788,6 @@ mod io {
                 index: self.index.cst_decode(),
                 credential: self.credential.cst_decode(),
                 signature_key: self.signature_key.cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::types::MlsPendingProposalInfo> for wire_cst_mls_pending_proposal_info {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::types::MlsPendingProposalInfo {
-            crate::api::types::MlsPendingProposalInfo {
-                proposal_type: self.proposal_type.cst_decode(),
-                sender_index: self.sender_index.cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::engine::PastEpochDeletionPolicyResult>
-        for wire_cst_past_epoch_deletion_policy_result
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::PastEpochDeletionPolicyResult {
-            crate::api::engine::PastEpochDeletionPolicyResult {
-                keep_all: self.keep_all.cst_decode(),
-                max_epochs: self.max_epochs.cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::engine::ProcessedMessageInspectResult>
-        for wire_cst_processed_message_inspect_result
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::ProcessedMessageInspectResult {
-            crate::api::engine::ProcessedMessageInspectResult {
-                message_type: self.message_type.cst_decode(),
-                sender_index: self.sender_index.cst_decode(),
-                epoch: self.epoch.cst_decode(),
-                application_message: self.application_message.cst_decode(),
-                staged_commit_info: self.staged_commit_info.cst_decode(),
-                proposal_type: self.proposal_type.cst_decode(),
             }
         }
     }
@@ -7200,51 +2803,6 @@ mod io {
                 has_proposal: self.has_proposal.cst_decode(),
                 proposal_type: self.proposal_type.cst_decode(),
             }
-        }
-    }
-    impl CstDecode<crate::api::engine::ProposalResult> for wire_cst_proposal_result {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::ProposalResult {
-            crate::api::engine::ProposalResult {
-                proposal_message: self.proposal_message.cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::types::StagedCommitInfo> for wire_cst_staged_commit_info {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::types::StagedCommitInfo {
-            crate::api::types::StagedCommitInfo {
-                add_credentials: self.add_credentials.cst_decode(),
-                remove_indices: self.remove_indices.cst_decode(),
-                has_update: self.has_update.cst_decode(),
-                self_removed: self.self_removed.cst_decode(),
-                psk_count: self.psk_count.cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::types::WelcomeInspectResult> for wire_cst_welcome_inspect_result {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::types::WelcomeInspectResult {
-            crate::api::types::WelcomeInspectResult {
-                group_id: self.group_id.cst_decode(),
-                ciphersuite: self.ciphersuite.cst_decode(),
-                psk_count: self.psk_count.cst_decode(),
-                epoch: self.epoch.cst_decode(),
-            }
-        }
-    }
-    impl NewWithNullPtr for wire_cst_add_members_result {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                commit: core::ptr::null_mut(),
-                welcome: core::ptr::null_mut(),
-                group_info: core::ptr::null_mut(),
-            }
-        }
-    }
-    impl Default for wire_cst_add_members_result {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
         }
     }
     impl NewWithNullPtr for wire_cst_commit_result {
@@ -7269,18 +2827,6 @@ mod io {
         }
     }
     impl Default for wire_cst_create_group_result {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
-        }
-    }
-    impl NewWithNullPtr for wire_cst_create_message_result {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                ciphertext: core::ptr::null_mut(),
-            }
-        }
-    }
-    impl Default for wire_cst_create_message_result {
         fn default() -> Self {
             Self::new_with_null_ptr()
         }
@@ -7314,100 +2860,6 @@ mod io {
         }
     }
     impl Default for wire_cst_flexible_commit_options {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
-        }
-    }
-    impl NewWithNullPtr for wire_cst_group_configuration_result {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                ciphersuite: Default::default(),
-                wire_format_policy: Default::default(),
-                padding_size: Default::default(),
-                sender_ratchet_max_out_of_order: Default::default(),
-                sender_ratchet_max_forward_distance: Default::default(),
-            }
-        }
-    }
-    impl Default for wire_cst_group_configuration_result {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
-        }
-    }
-    impl NewWithNullPtr for wire_cst_join_group_result {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                group_id: core::ptr::null_mut(),
-            }
-        }
-    }
-    impl Default for wire_cst_join_group_result {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
-        }
-    }
-    impl NewWithNullPtr for wire_cst_key_package_lifetime {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                not_before: Default::default(),
-                not_after: Default::default(),
-            }
-        }
-    }
-    impl Default for wire_cst_key_package_lifetime {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
-        }
-    }
-    impl NewWithNullPtr for wire_cst_key_package_options {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                lifetime_seconds: core::ptr::null_mut(),
-                last_resort: Default::default(),
-                capabilities: core::ptr::null_mut(),
-                leaf_node_extensions: core::ptr::null_mut(),
-                key_package_extensions: core::ptr::null_mut(),
-            }
-        }
-    }
-    impl Default for wire_cst_key_package_options {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
-        }
-    }
-    impl NewWithNullPtr for wire_cst_key_package_result {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                key_package_bytes: core::ptr::null_mut(),
-            }
-        }
-    }
-    impl Default for wire_cst_key_package_result {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
-        }
-    }
-    impl NewWithNullPtr for wire_cst_leave_group_result {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                message: core::ptr::null_mut(),
-            }
-        }
-    }
-    impl Default for wire_cst_leave_group_result {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
-        }
-    }
-    impl NewWithNullPtr for wire_cst_lifetime_verdict {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                valid: Default::default(),
-                reason: core::ptr::null_mut(),
-            }
-        }
-    }
-    impl Default for wire_cst_lifetime_verdict {
         fn default() -> Self {
             Self::new_with_null_ptr()
         }
@@ -7460,39 +2912,6 @@ mod io {
             Self::new_with_null_ptr()
         }
     }
-    impl NewWithNullPtr for wire_cst_mls_group_context_info {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                group_id: core::ptr::null_mut(),
-                epoch: Default::default(),
-                ciphersuite: Default::default(),
-                tree_hash: core::ptr::null_mut(),
-                confirmed_transcript_hash: core::ptr::null_mut(),
-                extensions: core::ptr::null_mut(),
-            }
-        }
-    }
-    impl Default for wire_cst_mls_group_context_info {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
-        }
-    }
-    impl NewWithNullPtr for wire_cst_mls_leaf_node_info {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                credential: core::ptr::null_mut(),
-                signature_key: core::ptr::null_mut(),
-                encryption_key: core::ptr::null_mut(),
-                capabilities: Default::default(),
-                extensions: core::ptr::null_mut(),
-            }
-        }
-    }
-    impl Default for wire_cst_mls_leaf_node_info {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
-        }
-    }
     impl NewWithNullPtr for wire_cst_mls_member_info {
         fn new_with_null_ptr() -> Self {
             Self {
@@ -7503,49 +2922,6 @@ mod io {
         }
     }
     impl Default for wire_cst_mls_member_info {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
-        }
-    }
-    impl NewWithNullPtr for wire_cst_mls_pending_proposal_info {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                proposal_type: Default::default(),
-                sender_index: core::ptr::null_mut(),
-            }
-        }
-    }
-    impl Default for wire_cst_mls_pending_proposal_info {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
-        }
-    }
-    impl NewWithNullPtr for wire_cst_past_epoch_deletion_policy_result {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                keep_all: Default::default(),
-                max_epochs: Default::default(),
-            }
-        }
-    }
-    impl Default for wire_cst_past_epoch_deletion_policy_result {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
-        }
-    }
-    impl NewWithNullPtr for wire_cst_processed_message_inspect_result {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                message_type: Default::default(),
-                sender_index: core::ptr::null_mut(),
-                epoch: Default::default(),
-                application_message: core::ptr::null_mut(),
-                staged_commit_info: core::ptr::null_mut(),
-                proposal_type: core::ptr::null_mut(),
-            }
-        }
-    }
-    impl Default for wire_cst_processed_message_inspect_result {
         fn default() -> Self {
             Self::new_with_null_ptr()
         }
@@ -7568,69 +2944,12 @@ mod io {
             Self::new_with_null_ptr()
         }
     }
-    impl NewWithNullPtr for wire_cst_proposal_result {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                proposal_message: core::ptr::null_mut(),
-            }
-        }
-    }
-    impl Default for wire_cst_proposal_result {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
-        }
-    }
-    impl NewWithNullPtr for wire_cst_staged_commit_info {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                add_credentials: core::ptr::null_mut(),
-                remove_indices: core::ptr::null_mut(),
-                has_update: Default::default(),
-                self_removed: Default::default(),
-                psk_count: Default::default(),
-            }
-        }
-    }
-    impl Default for wire_cst_staged_commit_info {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
-        }
-    }
-    impl NewWithNullPtr for wire_cst_welcome_inspect_result {
-        fn new_with_null_ptr() -> Self {
-            Self {
-                group_id: core::ptr::null_mut(),
-                ciphersuite: Default::default(),
-                psk_count: Default::default(),
-                epoch: Default::default(),
-            }
-        }
-    }
-    impl Default for wire_cst_welcome_inspect_result {
-        fn default() -> Self {
-            Self::new_with_null_ptr()
-        }
-    }
 
     #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__credential__MlsCredential_basic(
         identity: *mut wire_cst_list_prim_u_8_loose,
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
         wire__crate__api__credential__MlsCredential_basic_impl(identity)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__credential__MlsCredential_certificates(
-        that: usize,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__credential__MlsCredential_certificates_impl(that)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__credential__MlsCredential_credential_type(
-        that: usize,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__credential__MlsCredential_credential_type_impl(that)
     }
 
     #[unsafe(no_mangle)]
@@ -7655,96 +2974,11 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__credential__MlsCredential_serialized_content(
-        that: usize,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__credential__MlsCredential_serialized_content_impl(that)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__credential__MlsCredential_x509(
-        certificate_chain: *mut wire_cst_list_list_prim_u_8_strict,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__credential__MlsCredential_x509_impl(certificate_chain)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_add_members(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        key_packages_bytes: *mut wire_cst_list_list_prim_u_8_strict,
-    ) {
-        wire__crate__api__engine__MlsEngine_add_members_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            key_packages_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_add_members_without_update(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        key_packages_bytes: *mut wire_cst_list_list_prim_u_8_strict,
-    ) {
-        wire__crate__api__engine__MlsEngine_add_members_without_update_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            key_packages_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_clear_pending_commit(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_clear_pending_commit_impl(port_, that, group_id_bytes)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_clear_pending_proposals(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_clear_pending_proposals_impl(
-            port_,
-            that,
-            group_id_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_close(
         port_: i64,
         that: usize,
     ) {
         wire__crate__api__engine__MlsEngine_close_impl(port_, that)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_commit_to_pending_proposals(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_commit_to_pending_proposals_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-        )
     }
 
     #[unsafe(no_mangle)]
@@ -7754,29 +2988,6 @@ mod io {
         encryption_key: *mut wire_cst_list_prim_u_8_loose,
     ) {
         wire__crate__api__engine__MlsEngine_create_impl(port_, db_path, encryption_key)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_create_group(
-        port_: i64,
-        that: usize,
-        config: *mut wire_cst_mls_group_config,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        credential_identity: *mut wire_cst_list_prim_u_8_loose,
-        signer_public_key: *mut wire_cst_list_prim_u_8_loose,
-        group_id: *mut wire_cst_list_prim_u_8_strict,
-        credential_bytes: *mut wire_cst_list_prim_u_8_strict,
-    ) {
-        wire__crate__api__engine__MlsEngine_create_group_impl(
-            port_,
-            that,
-            config,
-            signer_bytes,
-            credential_identity,
-            signer_public_key,
-            group_id,
-            credential_bytes,
-        )
     }
 
     #[unsafe(no_mangle)]
@@ -7811,159 +3022,12 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_create_key_package(
-        port_: i64,
-        that: usize,
-        ciphersuite: i32,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        credential_identity: *mut wire_cst_list_prim_u_8_loose,
-        signer_public_key: *mut wire_cst_list_prim_u_8_loose,
-        credential_bytes: *mut wire_cst_list_prim_u_8_strict,
-    ) {
-        wire__crate__api__engine__MlsEngine_create_key_package_impl(
-            port_,
-            that,
-            ciphersuite,
-            signer_bytes,
-            credential_identity,
-            signer_public_key,
-            credential_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_create_key_package_with_options(
-        port_: i64,
-        that: usize,
-        ciphersuite: i32,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        credential_identity: *mut wire_cst_list_prim_u_8_loose,
-        signer_public_key: *mut wire_cst_list_prim_u_8_loose,
-        options: *mut wire_cst_key_package_options,
-        credential_bytes: *mut wire_cst_list_prim_u_8_strict,
-    ) {
-        wire__crate__api__engine__MlsEngine_create_key_package_with_options_impl(
-            port_,
-            that,
-            ciphersuite,
-            signer_bytes,
-            credential_identity,
-            signer_public_key,
-            options,
-            credential_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_create_message(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        message: *mut wire_cst_list_prim_u_8_loose,
-        aad: *mut wire_cst_list_prim_u_8_strict,
-    ) {
-        wire__crate__api__engine__MlsEngine_create_message_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            message,
-            aad,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_delete_all_past_epoch_secrets(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_delete_all_past_epoch_secrets_impl(
-            port_,
-            that,
-            group_id_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_delete_group(
         port_: i64,
         that: usize,
         group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
     ) {
         wire__crate__api__engine__MlsEngine_delete_group_impl(port_, that, group_id_bytes)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_delete_key_package(
-        port_: i64,
-        that: usize,
-        key_package_ref_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_delete_key_package_impl(
-            port_,
-            that,
-            key_package_ref_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_before(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        unix_seconds: u64,
-        max_past_epochs: *mut u32,
-    ) {
-        wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_before_impl(
-            port_,
-            that,
-            group_id_bytes,
-            unix_seconds,
-            max_past_epochs,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_older_than(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        seconds: u64,
-        max_past_epochs: *mut u32,
-    ) {
-        wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_older_than_impl(
-            port_,
-            that,
-            group_id_bytes,
-            seconds,
-            max_past_epochs,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_without_timestamps(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        max_past_epochs: *mut u32,
-    ) {
-        wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_without_timestamps_impl(
-            port_,
-            that,
-            group_id_bytes,
-            max_past_epochs,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_export_group_context(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_export_group_context_impl(port_, that, group_id_bytes)
     }
 
     #[unsafe(no_mangle)]
@@ -7982,15 +3046,6 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_export_ratchet_tree(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_export_ratchet_tree_impl(port_, that, group_id_bytes)
-    }
-
-    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_export_secret(
         port_: i64,
         that: usize,
@@ -8003,27 +3058,6 @@ mod io {
             port_,
             that,
             group_id_bytes,
-            label,
-            context,
-            key_length,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_export_welcome_secret(
-        port_: i64,
-        that: usize,
-        config: *mut wire_cst_mls_group_config,
-        welcome_bytes: *mut wire_cst_list_prim_u_8_loose,
-        label: *mut wire_cst_list_prim_u_8_strict,
-        context: *mut wire_cst_list_prim_u_8_loose,
-        key_length: u32,
-    ) {
-        wire__crate__api__engine__MlsEngine_export_welcome_secret_impl(
-            port_,
-            that,
-            config,
-            welcome_bytes,
             label,
             context,
             key_length,
@@ -8048,107 +3082,12 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_get_past_resumption_psk(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        epoch: u64,
-    ) {
-        wire__crate__api__engine__MlsEngine_get_past_resumption_psk_impl(
-            port_,
-            that,
-            group_id_bytes,
-            epoch,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_group_ciphersuite(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_ciphersuite_impl(port_, that, group_id_bytes)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_group_configuration(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_configuration_impl(port_, that, group_id_bytes)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_group_confirmation_tag(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_confirmation_tag_impl(port_, that, group_id_bytes)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_group_credential(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_credential_impl(port_, that, group_id_bytes)
-    }
-
-    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_group_epoch(
         port_: i64,
         that: usize,
         group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
     ) {
         wire__crate__api__engine__MlsEngine_group_epoch_impl(port_, that, group_id_bytes)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_group_epoch_authenticator(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_epoch_authenticator_impl(
-            port_,
-            that,
-            group_id_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_group_extensions(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_extensions_impl(port_, that, group_id_bytes)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_group_has_pending_proposals(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_has_pending_proposals_impl(
-            port_,
-            that,
-            group_id_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_group_id(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_id_impl(port_, that, group_id_bytes)
     }
 
     #[unsafe(no_mangle)]
@@ -8161,115 +3100,12 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_group_member_at(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        leaf_index: u32,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_member_at_impl(
-            port_,
-            that,
-            group_id_bytes,
-            leaf_index,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_group_member_leaf_index(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        credential_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_member_leaf_index_impl(
-            port_,
-            that,
-            group_id_bytes,
-            credential_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_group_members(
         port_: i64,
         that: usize,
         group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
     ) {
         wire__crate__api__engine__MlsEngine_group_members_impl(port_, that, group_id_bytes)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_group_own_index(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_own_index_impl(port_, that, group_id_bytes)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_group_own_leaf_node(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_own_leaf_node_impl(port_, that, group_id_bytes)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_group_pending_proposals(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_pending_proposals_impl(
-            port_,
-            that,
-            group_id_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_inspect_welcome(
-        port_: i64,
-        that: usize,
-        config: *mut wire_cst_mls_group_config,
-        welcome_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_inspect_welcome_impl(port_, that, config, welcome_bytes)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_is_closed(
-        that: usize,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__engine__MlsEngine_is_closed_impl(that)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_join_group_external_commit(
-        port_: i64,
-        that: usize,
-        config: *mut wire_cst_mls_group_config,
-        group_info_bytes: *mut wire_cst_list_prim_u_8_loose,
-        ratchet_tree_bytes: *mut wire_cst_list_prim_u_8_strict,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        credential_identity: *mut wire_cst_list_prim_u_8_loose,
-        signer_public_key: *mut wire_cst_list_prim_u_8_loose,
-        credential_bytes: *mut wire_cst_list_prim_u_8_strict,
-    ) {
-        wire__crate__api__engine__MlsEngine_join_group_external_commit_impl(
-            port_,
-            that,
-            config,
-            group_info_bytes,
-            ratchet_tree_bytes,
-            signer_bytes,
-            credential_identity,
-            signer_public_key,
-            credential_bytes,
-        )
     }
 
     #[unsafe(no_mangle)]
@@ -8302,95 +3138,12 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_join_group_from_welcome(
-        port_: i64,
-        that: usize,
-        config: *mut wire_cst_mls_group_config,
-        welcome_bytes: *mut wire_cst_list_prim_u_8_loose,
-        ratchet_tree_bytes: *mut wire_cst_list_prim_u_8_strict,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_join_group_from_welcome_impl(
-            port_,
-            that,
-            config,
-            welcome_bytes,
-            ratchet_tree_bytes,
-            signer_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_join_group_from_welcome_with_options(
-        port_: i64,
-        that: usize,
-        config: *mut wire_cst_mls_group_config,
-        welcome_bytes: *mut wire_cst_list_prim_u_8_loose,
-        ratchet_tree_bytes: *mut wire_cst_list_prim_u_8_strict,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        skip_lifetime_validation: bool,
-    ) {
-        wire__crate__api__engine__MlsEngine_join_group_from_welcome_with_options_impl(
-            port_,
-            that,
-            config,
-            welcome_bytes,
-            ratchet_tree_bytes,
-            signer_bytes,
-            skip_lifetime_validation,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_leave_group(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_leave_group_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_leave_group_via_self_remove(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_leave_group_via_self_remove_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_merge_pending_commit(
         port_: i64,
         that: usize,
         group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
     ) {
         wire__crate__api__engine__MlsEngine_merge_pending_commit_impl(port_, that, group_id_bytes)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_past_epoch_deletion_policy(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_past_epoch_deletion_policy_impl(
-            port_,
-            that,
-            group_id_bytes,
-        )
     }
 
     #[unsafe(no_mangle)]
@@ -8405,349 +3158,6 @@ mod io {
             that,
             group_id_bytes,
             message_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_process_message_with_inspect(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        message_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_process_message_with_inspect_impl(
-            port_,
-            that,
-            group_id_bytes,
-            message_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_propose_add(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        key_package_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_propose_add_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            key_package_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_propose_custom_proposal(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        proposal_type: u16,
-        payload: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_propose_custom_proposal_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            proposal_type,
-            payload,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_propose_external_psk(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        psk_id: *mut wire_cst_list_prim_u_8_loose,
-        psk_nonce: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_propose_external_psk_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            psk_id,
-            psk_nonce,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_propose_group_context_extensions(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        extensions: *mut wire_cst_list_mls_extension,
-    ) {
-        wire__crate__api__engine__MlsEngine_propose_group_context_extensions_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            extensions,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_propose_remove(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        member_index: u32,
-    ) {
-        wire__crate__api__engine__MlsEngine_propose_remove_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            member_index,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_propose_remove_member_by_credential(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        credential_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_propose_remove_member_by_credential_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            credential_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_propose_self_update(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        leaf_node_capabilities: *mut wire_cst_mls_capabilities,
-        leaf_node_extensions: *mut wire_cst_list_mls_extension,
-    ) {
-        wire__crate__api__engine__MlsEngine_propose_self_update_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            leaf_node_capabilities,
-            leaf_node_extensions,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_propose_self_update_with_new_signer(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        old_signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        new_signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        new_credential_identity: *mut wire_cst_list_prim_u_8_loose,
-        new_signer_public_key: *mut wire_cst_list_prim_u_8_loose,
-        new_credential_bytes: *mut wire_cst_list_prim_u_8_strict,
-        leaf_node_capabilities: *mut wire_cst_mls_capabilities,
-        leaf_node_extensions: *mut wire_cst_list_mls_extension,
-    ) {
-        wire__crate__api__engine__MlsEngine_propose_self_update_with_new_signer_impl(
-            port_,
-            that,
-            group_id_bytes,
-            old_signer_bytes,
-            new_signer_bytes,
-            new_credential_identity,
-            new_signer_public_key,
-            new_credential_bytes,
-            leaf_node_capabilities,
-            leaf_node_extensions,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_remove_members(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        member_indices: *mut wire_cst_list_prim_u_32_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_remove_members_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            member_indices,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_remove_pending_proposal(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        proposal_ref_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_remove_pending_proposal_impl(
-            port_,
-            that,
-            group_id_bytes,
-            proposal_ref_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_schema_version(
-        that: usize,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__engine__MlsEngine_schema_version_impl(that)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_self_update(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_self_update_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_self_update_with_new_signer(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        old_signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        new_signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        new_credential_identity: *mut wire_cst_list_prim_u_8_loose,
-        new_signer_public_key: *mut wire_cst_list_prim_u_8_loose,
-        new_credential_bytes: *mut wire_cst_list_prim_u_8_strict,
-    ) {
-        wire__crate__api__engine__MlsEngine_self_update_with_new_signer_impl(
-            port_,
-            that,
-            group_id_bytes,
-            old_signer_bytes,
-            new_signer_bytes,
-            new_credential_identity,
-            new_signer_public_key,
-            new_credential_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_set_configuration(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        config: *mut wire_cst_mls_group_config,
-    ) {
-        wire__crate__api__engine__MlsEngine_set_configuration_impl(
-            port_,
-            that,
-            group_id_bytes,
-            config,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_keep_all(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) {
-        wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_keep_all_impl(
-            port_,
-            that,
-            group_id_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_max_epochs(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        max_epochs: u32,
-    ) {
-        wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_max_epochs_impl(
-            port_,
-            that,
-            group_id_bytes,
-            max_epochs,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_swap_members(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        remove_indices: *mut wire_cst_list_prim_u_32_loose,
-        add_key_packages_bytes: *mut wire_cst_list_list_prim_u_8_strict,
-    ) {
-        wire__crate__api__engine__MlsEngine_swap_members_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            remove_indices,
-            add_key_packages_bytes,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__MlsEngine_update_group_context_extensions(
-        port_: i64,
-        that: usize,
-        group_id_bytes: *mut wire_cst_list_prim_u_8_loose,
-        signer_bytes: *mut wire_cst_list_prim_u_8_loose,
-        extensions: *mut wire_cst_list_mls_extension,
-    ) {
-        wire__crate__api__engine__MlsEngine_update_group_context_extensions_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            extensions,
-        )
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__keys__MlsSignatureKeyPair_deserialize_public(
-        bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__keys__MlsSignatureKeyPair_deserialize_public_impl(bytes)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__keys__MlsSignatureKeyPair_from_raw(
-        ciphersuite: i32,
-        private_key: *mut wire_cst_list_prim_u_8_loose,
-        public_key: *mut wire_cst_list_prim_u_8_loose,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__keys__MlsSignatureKeyPair_from_raw_impl(
-            ciphersuite,
-            private_key,
-            public_key,
         )
     }
 
@@ -8773,29 +3183,6 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__keys__MlsSignatureKeyPair_serialize(
-        that: usize,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__keys__MlsSignatureKeyPair_serialize_impl(that)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__keys__MlsSignatureKeyPair_signature_scheme(
-        that: usize,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__keys__MlsSignatureKeyPair_signature_scheme_impl(that)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__check_lifetime_at(
-        not_before: u64,
-        not_after: u64,
-        now_unix_seconds: u64,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__engine__check_lifetime_at_impl(not_before, not_after, now_unix_seconds)
-    }
-
-    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_wire__crate__api__init__init_openmls(
         _library_path: *mut wire_cst_list_prim_u_8_strict,
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
@@ -8806,13 +3193,6 @@ mod io {
     pub extern "C" fn frbgen_openmls_wire__crate__api__init__is_openmls_initialized(
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
         wire__crate__api__init__is_openmls_initialized_impl()
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__key_package_lifetime(
-        key_package_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__engine__key_package_lifetime_impl(key_package_bytes)
     }
 
     #[unsafe(no_mangle)]
@@ -8834,13 +3214,6 @@ mod io {
         message_bytes: *mut wire_cst_list_prim_u_8_loose,
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
         wire__crate__api__engine__mls_message_extract_epoch_impl(message_bytes)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_wire__crate__api__engine__mls_message_extract_group_id(
-        message_bytes: *mut wire_cst_list_prim_u_8_loose,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__engine__mls_message_extract_group_id_impl(message_bytes)
     }
 
     #[unsafe(no_mangle)]
@@ -8921,14 +3294,6 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_key_package_options(
-    ) -> *mut wire_cst_key_package_options {
-        flutter_rust_bridge::for_generated::new_leak_box_ptr(
-            wire_cst_key_package_options::new_with_null_ptr(),
-        )
-    }
-
-    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_capabilities(
     ) -> *mut wire_cst_mls_capabilities {
         flutter_rust_bridge::for_generated::new_leak_box_ptr(
@@ -8945,24 +3310,8 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_member_info(
-    ) -> *mut wire_cst_mls_member_info {
-        flutter_rust_bridge::for_generated::new_leak_box_ptr(
-            wire_cst_mls_member_info::new_with_null_ptr(),
-        )
-    }
-
-    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_mls_proposal_type(value: i32) -> *mut i32 {
         flutter_rust_bridge::for_generated::new_leak_box_ptr(value)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_staged_commit_info(
-    ) -> *mut wire_cst_staged_commit_info {
-        flutter_rust_bridge::for_generated::new_leak_box_ptr(
-            wire_cst_staged_commit_info::new_with_null_ptr(),
-        )
     }
 
     #[unsafe(no_mangle)]
@@ -9029,35 +3378,10 @@ mod io {
     }
 
     #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_cst_new_list_mls_pending_proposal_info(
-        len: i32,
-    ) -> *mut wire_cst_list_mls_pending_proposal_info {
-        let wrap = wire_cst_list_mls_pending_proposal_info {
-            ptr: flutter_rust_bridge::for_generated::new_leak_vec_ptr(
-                <wire_cst_mls_pending_proposal_info>::new_with_null_ptr(),
-                len,
-            ),
-            len,
-        };
-        flutter_rust_bridge::for_generated::new_leak_box_ptr(wrap)
-    }
-
-    #[unsafe(no_mangle)]
     pub extern "C" fn frbgen_openmls_cst_new_list_prim_u_16_strict(
         len: i32,
     ) -> *mut wire_cst_list_prim_u_16_strict {
         let ans = wire_cst_list_prim_u_16_strict {
-            ptr: flutter_rust_bridge::for_generated::new_leak_vec_ptr(Default::default(), len),
-            len,
-        };
-        flutter_rust_bridge::for_generated::new_leak_box_ptr(ans)
-    }
-
-    #[unsafe(no_mangle)]
-    pub extern "C" fn frbgen_openmls_cst_new_list_prim_u_32_loose(
-        len: i32,
-    ) -> *mut wire_cst_list_prim_u_32_loose {
-        let ans = wire_cst_list_prim_u_32_loose {
             ptr: flutter_rust_bridge::for_generated::new_leak_vec_ptr(Default::default(), len),
             len,
         };
@@ -9099,13 +3423,6 @@ mod io {
 
     #[repr(C)]
     #[derive(Clone, Copy)]
-    pub struct wire_cst_add_members_result {
-        commit: *mut wire_cst_list_prim_u_8_strict,
-        welcome: *mut wire_cst_list_prim_u_8_strict,
-        group_info: *mut wire_cst_list_prim_u_8_strict,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
     pub struct wire_cst_commit_result {
         commit: *mut wire_cst_list_prim_u_8_strict,
         welcome: *mut wire_cst_list_prim_u_8_strict,
@@ -9115,11 +3432,6 @@ mod io {
     #[derive(Clone, Copy)]
     pub struct wire_cst_create_group_result {
         group_id: *mut wire_cst_list_prim_u_8_strict,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
-    pub struct wire_cst_create_message_result {
-        ciphertext: *mut wire_cst_list_prim_u_8_strict,
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
@@ -9139,51 +3451,6 @@ mod io {
         aad: *mut wire_cst_list_prim_u_8_strict,
         create_group_info: bool,
         use_ratchet_tree_extension: bool,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
-    pub struct wire_cst_group_configuration_result {
-        ciphersuite: i32,
-        wire_format_policy: i32,
-        padding_size: u32,
-        sender_ratchet_max_out_of_order: u32,
-        sender_ratchet_max_forward_distance: u32,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
-    pub struct wire_cst_join_group_result {
-        group_id: *mut wire_cst_list_prim_u_8_strict,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
-    pub struct wire_cst_key_package_lifetime {
-        not_before: u64,
-        not_after: u64,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
-    pub struct wire_cst_key_package_options {
-        lifetime_seconds: *mut u64,
-        last_resort: bool,
-        capabilities: *mut wire_cst_mls_capabilities,
-        leaf_node_extensions: *mut wire_cst_list_mls_extension,
-        key_package_extensions: *mut wire_cst_list_mls_extension,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
-    pub struct wire_cst_key_package_result {
-        key_package_bytes: *mut wire_cst_list_prim_u_8_strict,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
-    pub struct wire_cst_leave_group_result {
-        message: *mut wire_cst_list_prim_u_8_strict,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
-    pub struct wire_cst_lifetime_verdict {
-        valid: bool,
-        reason: *mut wire_cst_list_prim_u_8_strict,
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
@@ -9211,20 +3478,8 @@ mod io {
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
-    pub struct wire_cst_list_mls_pending_proposal_info {
-        ptr: *mut wire_cst_mls_pending_proposal_info,
-        len: i32,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
     pub struct wire_cst_list_prim_u_16_strict {
         ptr: *mut u16,
-        len: i32,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
-    pub struct wire_cst_list_prim_u_32_loose {
-        ptr: *mut u32,
         len: i32,
     }
     #[repr(C)]
@@ -9274,51 +3529,10 @@ mod io {
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
-    pub struct wire_cst_mls_group_context_info {
-        group_id: *mut wire_cst_list_prim_u_8_strict,
-        epoch: u64,
-        ciphersuite: i32,
-        tree_hash: *mut wire_cst_list_prim_u_8_strict,
-        confirmed_transcript_hash: *mut wire_cst_list_prim_u_8_strict,
-        extensions: *mut wire_cst_list_prim_u_8_strict,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
-    pub struct wire_cst_mls_leaf_node_info {
-        credential: *mut wire_cst_list_prim_u_8_strict,
-        signature_key: *mut wire_cst_list_prim_u_8_strict,
-        encryption_key: *mut wire_cst_list_prim_u_8_strict,
-        capabilities: wire_cst_mls_capabilities,
-        extensions: *mut wire_cst_list_mls_extension,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
     pub struct wire_cst_mls_member_info {
         index: u32,
         credential: *mut wire_cst_list_prim_u_8_strict,
         signature_key: *mut wire_cst_list_prim_u_8_strict,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
-    pub struct wire_cst_mls_pending_proposal_info {
-        proposal_type: i32,
-        sender_index: *mut u32,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
-    pub struct wire_cst_past_epoch_deletion_policy_result {
-        keep_all: bool,
-        max_epochs: u32,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
-    pub struct wire_cst_processed_message_inspect_result {
-        message_type: i32,
-        sender_index: *mut u32,
-        epoch: u64,
-        application_message: *mut wire_cst_list_prim_u_8_strict,
-        staged_commit_info: *mut wire_cst_staged_commit_info,
-        proposal_type: *mut i32,
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
@@ -9330,28 +3544,6 @@ mod io {
         has_staged_commit: bool,
         has_proposal: bool,
         proposal_type: *mut i32,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
-    pub struct wire_cst_proposal_result {
-        proposal_message: *mut wire_cst_list_prim_u_8_strict,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
-    pub struct wire_cst_staged_commit_info {
-        add_credentials: *mut wire_cst_list_list_prim_u_8_strict,
-        remove_indices: *mut wire_cst_list_prim_u_32_strict,
-        has_update: bool,
-        self_removed: bool,
-        psk_count: u32,
-    }
-    #[repr(C)]
-    #[derive(Clone, Copy)]
-    pub struct wire_cst_welcome_inspect_result {
-        group_id: *mut wire_cst_list_prim_u_8_strict,
-        ciphersuite: i32,
-        psk_count: u32,
-        epoch: u64,
     }
 }
 #[cfg(not(target_family = "wasm"))]
@@ -9387,27 +3579,6 @@ mod web {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> String {
             self
-        }
-    }
-    impl CstDecode<crate::api::engine::AddMembersResult>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::AddMembersResult {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                3,
-                "Expected 3 elements, got {}",
-                self_.length()
-            );
-            crate::api::engine::AddMembersResult {
-                commit: self_.get(0).cst_decode(),
-                welcome: self_.get(1).cst_decode(),
-                group_info: self_.get(2).cst_decode(),
-            }
         }
     }
     impl CstDecode<crate::api::engine::CommitResult>
@@ -9447,25 +3618,6 @@ mod web {
             );
             crate::api::engine::CreateGroupResult {
                 group_id: self_.get(0).cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::engine::CreateMessageResult>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::CreateMessageResult {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                1,
-                "Expected 1 elements, got {}",
-                self_.length()
-            );
-            crate::api::engine::CreateMessageResult {
-                ciphertext: self_.get(0).cst_decode(),
             }
         }
     }
@@ -9516,149 +3668,6 @@ mod web {
             }
         }
     }
-    impl CstDecode<crate::api::engine::GroupConfigurationResult>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::GroupConfigurationResult {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                5,
-                "Expected 5 elements, got {}",
-                self_.length()
-            );
-            crate::api::engine::GroupConfigurationResult {
-                ciphersuite: self_.get(0).cst_decode(),
-                wire_format_policy: self_.get(1).cst_decode(),
-                padding_size: self_.get(2).cst_decode(),
-                sender_ratchet_max_out_of_order: self_.get(3).cst_decode(),
-                sender_ratchet_max_forward_distance: self_.get(4).cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::engine::JoinGroupResult>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::JoinGroupResult {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                1,
-                "Expected 1 elements, got {}",
-                self_.length()
-            );
-            crate::api::engine::JoinGroupResult {
-                group_id: self_.get(0).cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::engine::KeyPackageLifetime>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::KeyPackageLifetime {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                2,
-                "Expected 2 elements, got {}",
-                self_.length()
-            );
-            crate::api::engine::KeyPackageLifetime {
-                not_before: self_.get(0).cst_decode(),
-                not_after: self_.get(1).cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::types::KeyPackageOptions>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::types::KeyPackageOptions {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                5,
-                "Expected 5 elements, got {}",
-                self_.length()
-            );
-            crate::api::types::KeyPackageOptions {
-                lifetime_seconds: self_.get(0).cst_decode(),
-                last_resort: self_.get(1).cst_decode(),
-                capabilities: self_.get(2).cst_decode(),
-                leaf_node_extensions: self_.get(3).cst_decode(),
-                key_package_extensions: self_.get(4).cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::engine::KeyPackageResult>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::KeyPackageResult {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                1,
-                "Expected 1 elements, got {}",
-                self_.length()
-            );
-            crate::api::engine::KeyPackageResult {
-                key_package_bytes: self_.get(0).cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::engine::LeaveGroupResult>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::LeaveGroupResult {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                1,
-                "Expected 1 elements, got {}",
-                self_.length()
-            );
-            crate::api::engine::LeaveGroupResult {
-                message: self_.get(0).cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::engine::LifetimeVerdict>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::LifetimeVerdict {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                2,
-                "Expected 2 elements, got {}",
-                self_.length()
-            );
-            crate::api::engine::LifetimeVerdict {
-                valid: self_.get(0).cst_decode(),
-                reason: self_.get(1).cst_decode(),
-            }
-        }
-    }
     impl CstDecode<Vec<Vec<u8>>> for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> Vec<Vec<u8>> {
@@ -9698,18 +3707,6 @@ mod web {
     {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> Vec<crate::api::types::MlsMemberInfo> {
-            self.dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap()
-                .iter()
-                .map(CstDecode::cst_decode)
-                .collect()
-        }
-    }
-    impl CstDecode<Vec<crate::api::types::MlsPendingProposalInfo>>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> Vec<crate::api::types::MlsPendingProposalInfo> {
             self.dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
                 .unwrap()
                 .iter()
@@ -9804,53 +3801,6 @@ mod web {
             }
         }
     }
-    impl CstDecode<crate::api::types::MlsGroupContextInfo>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::types::MlsGroupContextInfo {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                6,
-                "Expected 6 elements, got {}",
-                self_.length()
-            );
-            crate::api::types::MlsGroupContextInfo {
-                group_id: self_.get(0).cst_decode(),
-                epoch: self_.get(1).cst_decode(),
-                ciphersuite: self_.get(2).cst_decode(),
-                tree_hash: self_.get(3).cst_decode(),
-                confirmed_transcript_hash: self_.get(4).cst_decode(),
-                extensions: self_.get(5).cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::types::MlsLeafNodeInfo>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::types::MlsLeafNodeInfo {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                5,
-                "Expected 5 elements, got {}",
-                self_.length()
-            );
-            crate::api::types::MlsLeafNodeInfo {
-                credential: self_.get(0).cst_decode(),
-                signature_key: self_.get(1).cst_decode(),
-                encryption_key: self_.get(2).cst_decode(),
-                capabilities: self_.get(3).cst_decode(),
-                extensions: self_.get(4).cst_decode(),
-            }
-        }
-    }
     impl CstDecode<crate::api::types::MlsMemberInfo>
         for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
     {
@@ -9872,80 +3822,10 @@ mod web {
             }
         }
     }
-    impl CstDecode<crate::api::types::MlsPendingProposalInfo>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::types::MlsPendingProposalInfo {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                2,
-                "Expected 2 elements, got {}",
-                self_.length()
-            );
-            crate::api::types::MlsPendingProposalInfo {
-                proposal_type: self_.get(0).cst_decode(),
-                sender_index: self_.get(1).cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<Option<String>> for Option<String> {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> Option<String> {
-            self.map(CstDecode::cst_decode)
-        }
-    }
     impl CstDecode<Option<Vec<u8>>> for Option<Box<[u8]>> {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> Option<Vec<u8>> {
             self.map(CstDecode::cst_decode)
-        }
-    }
-    impl CstDecode<crate::api::engine::PastEpochDeletionPolicyResult>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::PastEpochDeletionPolicyResult {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                2,
-                "Expected 2 elements, got {}",
-                self_.length()
-            );
-            crate::api::engine::PastEpochDeletionPolicyResult {
-                keep_all: self_.get(0).cst_decode(),
-                max_epochs: self_.get(1).cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::engine::ProcessedMessageInspectResult>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::ProcessedMessageInspectResult {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                6,
-                "Expected 6 elements, got {}",
-                self_.length()
-            );
-            crate::api::engine::ProcessedMessageInspectResult {
-                message_type: self_.get(0).cst_decode(),
-                sender_index: self_.get(1).cst_decode(),
-                epoch: self_.get(2).cst_decode(),
-                application_message: self_.get(3).cst_decode(),
-                staged_commit_info: self_.get(4).cst_decode(),
-                proposal_type: self_.get(5).cst_decode(),
-            }
         }
     }
     impl CstDecode<crate::api::engine::ProcessedMessageResult>
@@ -9970,70 +3850,6 @@ mod web {
                 has_staged_commit: self_.get(4).cst_decode(),
                 has_proposal: self_.get(5).cst_decode(),
                 proposal_type: self_.get(6).cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::engine::ProposalResult>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::engine::ProposalResult {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                1,
-                "Expected 1 elements, got {}",
-                self_.length()
-            );
-            crate::api::engine::ProposalResult {
-                proposal_message: self_.get(0).cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::types::StagedCommitInfo>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::types::StagedCommitInfo {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                5,
-                "Expected 5 elements, got {}",
-                self_.length()
-            );
-            crate::api::types::StagedCommitInfo {
-                add_credentials: self_.get(0).cst_decode(),
-                remove_indices: self_.get(1).cst_decode(),
-                has_update: self_.get(2).cst_decode(),
-                self_removed: self_.get(3).cst_decode(),
-                psk_count: self_.get(4).cst_decode(),
-            }
-        }
-    }
-    impl CstDecode<crate::api::types::WelcomeInspectResult>
-        for flutter_rust_bridge::for_generated::wasm_bindgen::JsValue
-    {
-        // Codec=Cst (C-struct based), see doc to use other codecs
-        fn cst_decode(self) -> crate::api::types::WelcomeInspectResult {
-            let self_ = self
-                .dyn_into::<flutter_rust_bridge::for_generated::js_sys::Array>()
-                .unwrap();
-            assert_eq!(
-                self_.length(),
-                4,
-                "Expected 4 elements, got {}",
-                self_.length()
-            );
-            crate::api::types::WelcomeInspectResult {
-                group_id: self_.get(0).cst_decode(),
-                ciphersuite: self_.get(1).cst_decode(),
-                psk_count: self_.get(2).cst_decode(),
-                epoch: self_.get(3).cst_decode(),
             }
         }
     }
@@ -10237,20 +4053,6 @@ mod web {
     }
 
     #[wasm_bindgen]
-    pub fn wire__crate__api__credential__MlsCredential_certificates(
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__credential__MlsCredential_certificates_impl(that)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__credential__MlsCredential_credential_type(
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__credential__MlsCredential_credential_type_impl(that)
-    }
-
-    #[wasm_bindgen]
     pub fn wire__crate__api__credential__MlsCredential_deserialize(
         bytes: Box<[u8]>,
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
@@ -10272,96 +4074,11 @@ mod web {
     }
 
     #[wasm_bindgen]
-    pub fn wire__crate__api__credential__MlsCredential_serialized_content(
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__credential__MlsCredential_serialized_content_impl(that)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__credential__MlsCredential_x509(
-        certificate_chain: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__credential__MlsCredential_x509_impl(certificate_chain)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_add_members(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-        key_packages_bytes: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) {
-        wire__crate__api__engine__MlsEngine_add_members_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            key_packages_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_add_members_without_update(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-        key_packages_bytes: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) {
-        wire__crate__api__engine__MlsEngine_add_members_without_update_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            key_packages_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_clear_pending_commit(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_clear_pending_commit_impl(port_, that, group_id_bytes)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_clear_pending_proposals(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_clear_pending_proposals_impl(
-            port_,
-            that,
-            group_id_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
     pub fn wire__crate__api__engine__MlsEngine_close(
         port_: flutter_rust_bridge::for_generated::MessagePort,
         that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
     ) {
         wire__crate__api__engine__MlsEngine_close_impl(port_, that)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_commit_to_pending_proposals(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_commit_to_pending_proposals_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-        )
     }
 
     #[wasm_bindgen]
@@ -10371,29 +4088,6 @@ mod web {
         encryption_key: Box<[u8]>,
     ) {
         wire__crate__api__engine__MlsEngine_create_impl(port_, db_path, encryption_key)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_create_group(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        config: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        signer_bytes: Box<[u8]>,
-        credential_identity: Box<[u8]>,
-        signer_public_key: Box<[u8]>,
-        group_id: Option<Box<[u8]>>,
-        credential_bytes: Option<Box<[u8]>>,
-    ) {
-        wire__crate__api__engine__MlsEngine_create_group_impl(
-            port_,
-            that,
-            config,
-            signer_bytes,
-            credential_identity,
-            signer_public_key,
-            group_id,
-            credential_bytes,
-        )
     }
 
     #[wasm_bindgen]
@@ -10428,159 +4122,12 @@ mod web {
     }
 
     #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_create_key_package(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        ciphersuite: i32,
-        signer_bytes: Box<[u8]>,
-        credential_identity: Box<[u8]>,
-        signer_public_key: Box<[u8]>,
-        credential_bytes: Option<Box<[u8]>>,
-    ) {
-        wire__crate__api__engine__MlsEngine_create_key_package_impl(
-            port_,
-            that,
-            ciphersuite,
-            signer_bytes,
-            credential_identity,
-            signer_public_key,
-            credential_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_create_key_package_with_options(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        ciphersuite: i32,
-        signer_bytes: Box<[u8]>,
-        credential_identity: Box<[u8]>,
-        signer_public_key: Box<[u8]>,
-        options: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        credential_bytes: Option<Box<[u8]>>,
-    ) {
-        wire__crate__api__engine__MlsEngine_create_key_package_with_options_impl(
-            port_,
-            that,
-            ciphersuite,
-            signer_bytes,
-            credential_identity,
-            signer_public_key,
-            options,
-            credential_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_create_message(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-        message: Box<[u8]>,
-        aad: Option<Box<[u8]>>,
-    ) {
-        wire__crate__api__engine__MlsEngine_create_message_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            message,
-            aad,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_delete_all_past_epoch_secrets(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_delete_all_past_epoch_secrets_impl(
-            port_,
-            that,
-            group_id_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
     pub fn wire__crate__api__engine__MlsEngine_delete_group(
         port_: flutter_rust_bridge::for_generated::MessagePort,
         that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         group_id_bytes: Box<[u8]>,
     ) {
         wire__crate__api__engine__MlsEngine_delete_group_impl(port_, that, group_id_bytes)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_delete_key_package(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        key_package_ref_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_delete_key_package_impl(
-            port_,
-            that,
-            key_package_ref_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_before(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        unix_seconds: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        max_past_epochs: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) {
-        wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_before_impl(
-            port_,
-            that,
-            group_id_bytes,
-            unix_seconds,
-            max_past_epochs,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_older_than(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        seconds: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        max_past_epochs: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) {
-        wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_older_than_impl(
-            port_,
-            that,
-            group_id_bytes,
-            seconds,
-            max_past_epochs,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_without_timestamps(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        max_past_epochs: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) {
-        wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_without_timestamps_impl(
-            port_,
-            that,
-            group_id_bytes,
-            max_past_epochs,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_export_group_context(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_export_group_context_impl(port_, that, group_id_bytes)
     }
 
     #[wasm_bindgen]
@@ -10599,15 +4146,6 @@ mod web {
     }
 
     #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_export_ratchet_tree(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_export_ratchet_tree_impl(port_, that, group_id_bytes)
-    }
-
-    #[wasm_bindgen]
     pub fn wire__crate__api__engine__MlsEngine_export_secret(
         port_: flutter_rust_bridge::for_generated::MessagePort,
         that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
@@ -10620,27 +4158,6 @@ mod web {
             port_,
             that,
             group_id_bytes,
-            label,
-            context,
-            key_length,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_export_welcome_secret(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        config: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        welcome_bytes: Box<[u8]>,
-        label: String,
-        context: Box<[u8]>,
-        key_length: u32,
-    ) {
-        wire__crate__api__engine__MlsEngine_export_welcome_secret_impl(
-            port_,
-            that,
-            config,
-            welcome_bytes,
             label,
             context,
             key_length,
@@ -10665,107 +4182,12 @@ mod web {
     }
 
     #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_get_past_resumption_psk(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        epoch: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) {
-        wire__crate__api__engine__MlsEngine_get_past_resumption_psk_impl(
-            port_,
-            that,
-            group_id_bytes,
-            epoch,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_group_ciphersuite(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_ciphersuite_impl(port_, that, group_id_bytes)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_group_configuration(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_configuration_impl(port_, that, group_id_bytes)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_group_confirmation_tag(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_confirmation_tag_impl(port_, that, group_id_bytes)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_group_credential(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_credential_impl(port_, that, group_id_bytes)
-    }
-
-    #[wasm_bindgen]
     pub fn wire__crate__api__engine__MlsEngine_group_epoch(
         port_: flutter_rust_bridge::for_generated::MessagePort,
         that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         group_id_bytes: Box<[u8]>,
     ) {
         wire__crate__api__engine__MlsEngine_group_epoch_impl(port_, that, group_id_bytes)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_group_epoch_authenticator(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_epoch_authenticator_impl(
-            port_,
-            that,
-            group_id_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_group_extensions(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_extensions_impl(port_, that, group_id_bytes)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_group_has_pending_proposals(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_has_pending_proposals_impl(
-            port_,
-            that,
-            group_id_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_group_id(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_id_impl(port_, that, group_id_bytes)
     }
 
     #[wasm_bindgen]
@@ -10778,115 +4200,12 @@ mod web {
     }
 
     #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_group_member_at(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        leaf_index: u32,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_member_at_impl(
-            port_,
-            that,
-            group_id_bytes,
-            leaf_index,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_group_member_leaf_index(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        credential_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_member_leaf_index_impl(
-            port_,
-            that,
-            group_id_bytes,
-            credential_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
     pub fn wire__crate__api__engine__MlsEngine_group_members(
         port_: flutter_rust_bridge::for_generated::MessagePort,
         that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         group_id_bytes: Box<[u8]>,
     ) {
         wire__crate__api__engine__MlsEngine_group_members_impl(port_, that, group_id_bytes)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_group_own_index(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_own_index_impl(port_, that, group_id_bytes)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_group_own_leaf_node(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_own_leaf_node_impl(port_, that, group_id_bytes)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_group_pending_proposals(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_group_pending_proposals_impl(
-            port_,
-            that,
-            group_id_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_inspect_welcome(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        config: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        welcome_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_inspect_welcome_impl(port_, that, config, welcome_bytes)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_is_closed(
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__engine__MlsEngine_is_closed_impl(that)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_join_group_external_commit(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        config: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_info_bytes: Box<[u8]>,
-        ratchet_tree_bytes: Option<Box<[u8]>>,
-        signer_bytes: Box<[u8]>,
-        credential_identity: Box<[u8]>,
-        signer_public_key: Box<[u8]>,
-        credential_bytes: Option<Box<[u8]>>,
-    ) {
-        wire__crate__api__engine__MlsEngine_join_group_external_commit_impl(
-            port_,
-            that,
-            config,
-            group_info_bytes,
-            ratchet_tree_bytes,
-            signer_bytes,
-            credential_identity,
-            signer_public_key,
-            credential_bytes,
-        )
     }
 
     #[wasm_bindgen]
@@ -10919,95 +4238,12 @@ mod web {
     }
 
     #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_join_group_from_welcome(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        config: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        welcome_bytes: Box<[u8]>,
-        ratchet_tree_bytes: Option<Box<[u8]>>,
-        signer_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_join_group_from_welcome_impl(
-            port_,
-            that,
-            config,
-            welcome_bytes,
-            ratchet_tree_bytes,
-            signer_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_join_group_from_welcome_with_options(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        config: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        welcome_bytes: Box<[u8]>,
-        ratchet_tree_bytes: Option<Box<[u8]>>,
-        signer_bytes: Box<[u8]>,
-        skip_lifetime_validation: bool,
-    ) {
-        wire__crate__api__engine__MlsEngine_join_group_from_welcome_with_options_impl(
-            port_,
-            that,
-            config,
-            welcome_bytes,
-            ratchet_tree_bytes,
-            signer_bytes,
-            skip_lifetime_validation,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_leave_group(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_leave_group_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_leave_group_via_self_remove(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_leave_group_via_self_remove_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
     pub fn wire__crate__api__engine__MlsEngine_merge_pending_commit(
         port_: flutter_rust_bridge::for_generated::MessagePort,
         that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
         group_id_bytes: Box<[u8]>,
     ) {
         wire__crate__api__engine__MlsEngine_merge_pending_commit_impl(port_, that, group_id_bytes)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_past_epoch_deletion_policy(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_past_epoch_deletion_policy_impl(
-            port_,
-            that,
-            group_id_bytes,
-        )
     }
 
     #[wasm_bindgen]
@@ -11022,349 +4258,6 @@ mod web {
             that,
             group_id_bytes,
             message_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_process_message_with_inspect(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        message_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_process_message_with_inspect_impl(
-            port_,
-            that,
-            group_id_bytes,
-            message_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_propose_add(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-        key_package_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_propose_add_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            key_package_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_propose_custom_proposal(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-        proposal_type: u16,
-        payload: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_propose_custom_proposal_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            proposal_type,
-            payload,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_propose_external_psk(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-        psk_id: Box<[u8]>,
-        psk_nonce: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_propose_external_psk_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            psk_id,
-            psk_nonce,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_propose_group_context_extensions(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-        extensions: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) {
-        wire__crate__api__engine__MlsEngine_propose_group_context_extensions_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            extensions,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_propose_remove(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-        member_index: u32,
-    ) {
-        wire__crate__api__engine__MlsEngine_propose_remove_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            member_index,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_propose_remove_member_by_credential(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-        credential_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_propose_remove_member_by_credential_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            credential_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_propose_self_update(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-        leaf_node_capabilities: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        leaf_node_extensions: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) {
-        wire__crate__api__engine__MlsEngine_propose_self_update_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            leaf_node_capabilities,
-            leaf_node_extensions,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_propose_self_update_with_new_signer(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        old_signer_bytes: Box<[u8]>,
-        new_signer_bytes: Box<[u8]>,
-        new_credential_identity: Box<[u8]>,
-        new_signer_public_key: Box<[u8]>,
-        new_credential_bytes: Option<Box<[u8]>>,
-        leaf_node_capabilities: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        leaf_node_extensions: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) {
-        wire__crate__api__engine__MlsEngine_propose_self_update_with_new_signer_impl(
-            port_,
-            that,
-            group_id_bytes,
-            old_signer_bytes,
-            new_signer_bytes,
-            new_credential_identity,
-            new_signer_public_key,
-            new_credential_bytes,
-            leaf_node_capabilities,
-            leaf_node_extensions,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_remove_members(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-        member_indices: Box<[u32]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_remove_members_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            member_indices,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_remove_pending_proposal(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        proposal_ref_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_remove_pending_proposal_impl(
-            port_,
-            that,
-            group_id_bytes,
-            proposal_ref_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_schema_version(
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__engine__MlsEngine_schema_version_impl(that)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_self_update(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_self_update_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_self_update_with_new_signer(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        old_signer_bytes: Box<[u8]>,
-        new_signer_bytes: Box<[u8]>,
-        new_credential_identity: Box<[u8]>,
-        new_signer_public_key: Box<[u8]>,
-        new_credential_bytes: Option<Box<[u8]>>,
-    ) {
-        wire__crate__api__engine__MlsEngine_self_update_with_new_signer_impl(
-            port_,
-            that,
-            group_id_bytes,
-            old_signer_bytes,
-            new_signer_bytes,
-            new_credential_identity,
-            new_signer_public_key,
-            new_credential_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_set_configuration(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        config: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) {
-        wire__crate__api__engine__MlsEngine_set_configuration_impl(
-            port_,
-            that,
-            group_id_bytes,
-            config,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_keep_all(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-    ) {
-        wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_keep_all_impl(
-            port_,
-            that,
-            group_id_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_max_epochs(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        max_epochs: u32,
-    ) {
-        wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_max_epochs_impl(
-            port_,
-            that,
-            group_id_bytes,
-            max_epochs,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_swap_members(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-        remove_indices: Box<[u32]>,
-        add_key_packages_bytes: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) {
-        wire__crate__api__engine__MlsEngine_swap_members_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            remove_indices,
-            add_key_packages_bytes,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__MlsEngine_update_group_context_extensions(
-        port_: flutter_rust_bridge::for_generated::MessagePort,
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        group_id_bytes: Box<[u8]>,
-        signer_bytes: Box<[u8]>,
-        extensions: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) {
-        wire__crate__api__engine__MlsEngine_update_group_context_extensions_impl(
-            port_,
-            that,
-            group_id_bytes,
-            signer_bytes,
-            extensions,
-        )
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__keys__MlsSignatureKeyPair_deserialize_public(
-        bytes: Box<[u8]>,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__keys__MlsSignatureKeyPair_deserialize_public_impl(bytes)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__keys__MlsSignatureKeyPair_from_raw(
-        ciphersuite: i32,
-        private_key: Box<[u8]>,
-        public_key: Box<[u8]>,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__keys__MlsSignatureKeyPair_from_raw_impl(
-            ciphersuite,
-            private_key,
-            public_key,
         )
     }
 
@@ -11390,29 +4283,6 @@ mod web {
     }
 
     #[wasm_bindgen]
-    pub fn wire__crate__api__keys__MlsSignatureKeyPair_serialize(
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__keys__MlsSignatureKeyPair_serialize_impl(that)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__keys__MlsSignatureKeyPair_signature_scheme(
-        that: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__keys__MlsSignatureKeyPair_signature_scheme_impl(that)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__check_lifetime_at(
-        not_before: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        not_after: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-        now_unix_seconds: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__engine__check_lifetime_at_impl(not_before, not_after, now_unix_seconds)
-    }
-
-    #[wasm_bindgen]
     pub fn wire__crate__api__init__init_openmls(
         _library_path: String,
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
@@ -11423,13 +4293,6 @@ mod web {
     pub fn wire__crate__api__init__is_openmls_initialized(
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
         wire__crate__api__init__is_openmls_initialized_impl()
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__key_package_lifetime(
-        key_package_bytes: Box<[u8]>,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__engine__key_package_lifetime_impl(key_package_bytes)
     }
 
     #[wasm_bindgen]
@@ -11451,13 +4314,6 @@ mod web {
         message_bytes: Box<[u8]>,
     ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
         wire__crate__api__engine__mls_message_extract_epoch_impl(message_bytes)
-    }
-
-    #[wasm_bindgen]
-    pub fn wire__crate__api__engine__mls_message_extract_group_id(
-        message_bytes: Box<[u8]>,
-    ) -> flutter_rust_bridge::for_generated::WireSyncRust2DartDco {
-        wire__crate__api__engine__mls_message_extract_group_id_impl(message_bytes)
     }
 
     #[wasm_bindgen]

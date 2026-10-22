@@ -27,29 +27,6 @@ Uint8List serializeSigner({
 
 // Rust type: RustOpaqueNom<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsSignatureKeyPair>>
 abstract class MlsSignatureKeyPair implements RustOpaqueInterface {
-  /// Deserialize a key pair from bytes (public key + scheme only).
-  ///
-  /// Note: This only restores the public key and scheme. To reconstruct
-  /// a full key pair with private key, use `fromRaw()`.
-  static MlsSignatureKeyPair deserializePublic({required List<int> bytes}) =>
-      RustLib.instance.api.crateApiKeysMlsSignatureKeyPairDeserializePublic(
-        bytes: bytes,
-      );
-
-  /// Reconstruct a key pair from raw private and public key bytes.
-  ///
-  /// # Security
-  /// `privateKey` is moved (not copied) into the key pair.
-  static MlsSignatureKeyPair fromRaw({
-    required MlsCiphersuite ciphersuite,
-    required List<int> privateKey,
-    required List<int> publicKey,
-  }) => RustLib.instance.api.crateApiKeysMlsSignatureKeyPairFromRaw(
-    ciphersuite: ciphersuite,
-    privateKey: privateKey,
-    publicKey: publicKey,
-  );
-
   /// Generate a new signature key pair for the given ciphersuite's signature scheme.
   static MlsSignatureKeyPair generate({required MlsCiphersuite ciphersuite}) =>
       RustLib.instance.api.crateApiKeysMlsSignatureKeyPairGenerate(
@@ -65,14 +42,4 @@ abstract class MlsSignatureKeyPair implements RustOpaqueInterface {
 
   /// Returns the public key bytes.
   Uint8List publicKey();
-
-  /// Serialize the key pair to bytes for storage.
-  ///
-  /// The returned bytes contain the **public key and signature scheme only** —
-  /// no private key material. To reconstruct a full key pair with private key,
-  /// use `fromRaw()` with the original private key bytes.
-  Uint8List serialize();
-
-  /// Returns the signature scheme as a u16.
-  int signatureScheme();
 }

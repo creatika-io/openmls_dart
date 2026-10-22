@@ -21,18 +21,23 @@ use openmls::prelude::*;
 use openmls::prelude::tls_codec::{
     DeserializeBytes as TlsDeserializeBytes, Serialize as TlsSerialize,
 };
-use openmls::ciphersuite::hash_ref::ProposalRef;
-use openmls::schedule::PreSharedKeyId;
+#[cfg(feature = "full-api")]
+use openmls::{ciphersuite::hash_ref::ProposalRef, schedule::PreSharedKeyId};
 use openmls_traits::OpenMlsProvider;
+#[cfg(feature = "full-api")]
 use openmls_traits::storage::StorageProvider;
 
 use super::config::MlsGroupConfig;
 use super::keys::signer_from_bytes;
 use super::types::{
-    ciphersuite_to_native, native_to_ciphersuite, capabilities_to_native, extensions_from_mls,
-    FlexibleCommitOptions, KeyPackageOptions, MlsCapabilities, MlsCiphersuite, MlsExtension,
-    MlsGroupContextInfo, MlsLeafNodeInfo, MlsMemberInfo, MlsPendingProposalInfo, MlsProposalType,
-    MlsWireFormatPolicy, ProcessedMessageType, StagedCommitInfo, WelcomeInspectResult,
+    ciphersuite_to_native, capabilities_to_native, extensions_from_mls, FlexibleCommitOptions,
+    MlsCapabilities, MlsCiphersuite, MlsExtension, MlsMemberInfo, MlsProposalType,
+    MlsWireFormatPolicy, ProcessedMessageType, StagedCommitInfo,
+};
+#[cfg(feature = "full-api")]
+use super::types::{
+    native_to_ciphersuite, KeyPackageOptions, MlsGroupContextInfo, MlsLeafNodeInfo,
+    MlsPendingProposalInfo, WelcomeInspectResult,
 };
 use crate::snapshot_storage::{SnapshotOpenMlsProvider, SnapshotStorageProvider};
 
@@ -442,6 +447,7 @@ impl MlsEngine {
     /// last-resort, or attach extensions, use `createKeyPackageWithOptions`
     /// instead: `KeyPackageOptions.capabilities` is where the ciphersuite list
     /// goes.
+    #[cfg(feature = "full-api")]
     pub async fn create_key_package(
         &self,
         ciphersuite: MlsCiphersuite,
@@ -482,6 +488,7 @@ impl MlsEngine {
     /// setting `MlsCapabilities.ciphersuites` to an explicit list of raw code
     /// points is the only way to stop a key package advertising every suite
     /// this provider supports, experimental ones included.
+    #[cfg(feature = "full-api")]
     pub async fn create_key_package_with_options(
         &self,
         ciphersuite: MlsCiphersuite,
@@ -540,6 +547,7 @@ impl MlsEngine {
     // GROUP CREATION
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn create_group(
         &self,
         config: MlsGroupConfig,
@@ -657,6 +665,7 @@ impl MlsEngine {
     // JOINING A GROUP
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn join_group_from_welcome(
         &self,
         config: MlsGroupConfig,
@@ -699,6 +708,7 @@ impl MlsEngine {
         Ok(JoinGroupResult { group_id: gid })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn join_group_from_welcome_with_options(
         &self,
         config: MlsGroupConfig,
@@ -748,6 +758,7 @@ impl MlsEngine {
         Ok(JoinGroupResult { group_id: gid })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn inspect_welcome(
         &self,
         config: MlsGroupConfig,
@@ -803,6 +814,7 @@ impl MlsEngine {
     /// keys). So a Welcome that carries PSKs resolves them here or fails here
     /// for the same reason it would there — this function is never the narrower
     /// of the two.
+    #[cfg(feature = "full-api")]
     pub async fn export_welcome_secret(
         &self,
         config: MlsGroupConfig,
@@ -831,6 +843,7 @@ impl MlsEngine {
 
     #[allow(deprecated)]
     #[allow(clippy::too_many_arguments)]
+    #[cfg(feature = "full-api")]
     pub async fn join_group_external_commit(
         &self,
         config: MlsGroupConfig,
@@ -969,6 +982,7 @@ impl MlsEngine {
     // STATE QUERIES (read-only)
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn group_id(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1016,6 +1030,7 @@ impl MlsEngine {
         Ok(members)
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_ciphersuite(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1025,6 +1040,7 @@ impl MlsEngine {
         native_to_ciphersuite(group.ciphersuite())
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_own_index(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1034,6 +1050,7 @@ impl MlsEngine {
         Ok(group.own_leaf_index().u32())
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_credential(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1046,6 +1063,7 @@ impl MlsEngine {
             .map_err(|e| format!("Failed to serialize credential: {}", e))
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_extensions(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1058,6 +1076,7 @@ impl MlsEngine {
             .map_err(|e| format!("Failed to serialize extensions: {}", e))
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_pending_proposals(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1085,6 +1104,7 @@ impl MlsEngine {
         Ok(proposals)
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_has_pending_proposals(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1094,6 +1114,7 @@ impl MlsEngine {
         Ok(group.has_pending_proposals())
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_member_at(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1116,6 +1137,7 @@ impl MlsEngine {
         }
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_member_leaf_index(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1132,6 +1154,7 @@ impl MlsEngine {
     // EXPORT OPERATIONS (read-only)
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn export_ratchet_tree(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1174,6 +1197,7 @@ impl MlsEngine {
             .map_err(|e| format!("Failed to export secret: {}", e))
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn export_group_context(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1196,6 +1220,7 @@ impl MlsEngine {
         })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_confirmation_tag(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1208,6 +1233,7 @@ impl MlsEngine {
             .map_err(|e| format!("Failed to serialize confirmation tag: {}", e))
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_own_leaf_node(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1258,6 +1284,7 @@ impl MlsEngine {
         })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn get_past_resumption_psk(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1274,6 +1301,7 @@ impl MlsEngine {
     // MEMBER MANAGEMENT (mutating)
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn add_members(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1311,6 +1339,7 @@ impl MlsEngine {
         Ok(AddMembersResult { commit: commit_bytes, welcome: welcome_bytes, group_info: gi_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn add_members_without_update(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1344,6 +1373,7 @@ impl MlsEngine {
         Ok(AddMembersResult { commit: commit_bytes, welcome: welcome_bytes, group_info: gi_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn remove_members(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1369,6 +1399,7 @@ impl MlsEngine {
         Ok(CommitResult { commit: commit_bytes, welcome: welcome_bytes, group_info: gi_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn self_update(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1393,6 +1424,7 @@ impl MlsEngine {
         Ok(CommitResult { commit: commit_bytes, welcome: welcome_bytes, group_info: gi_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn self_update_with_new_signer(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1429,6 +1461,7 @@ impl MlsEngine {
         Ok(CommitResult { commit: commit_bytes, welcome: welcome_bytes, group_info: gi_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn swap_members(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1463,6 +1496,7 @@ impl MlsEngine {
         Ok(AddMembersResult { commit: commit_bytes, welcome: welcome_bytes, group_info: gi_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn leave_group(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1480,6 +1514,7 @@ impl MlsEngine {
         Ok(LeaveGroupResult { message: msg_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn leave_group_via_self_remove(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1501,6 +1536,7 @@ impl MlsEngine {
     // PROPOSALS (mutating)
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn propose_add(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1525,6 +1561,7 @@ impl MlsEngine {
         Ok(ProposalResult { proposal_message: msg_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn propose_remove(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1544,6 +1581,7 @@ impl MlsEngine {
         Ok(ProposalResult { proposal_message: msg_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn propose_self_update(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1607,6 +1645,7 @@ impl MlsEngine {
     /// `test-utils` was deliberately dropped from the shipped binary in 3.0.0,
     /// so `not(virtual-clients-draft)` is the only arm holding it open here.
     #[allow(clippy::too_many_arguments)]
+    #[cfg(feature = "full-api")]
     pub async fn propose_self_update_with_new_signer(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1651,6 +1690,7 @@ impl MlsEngine {
         Ok(ProposalResult { proposal_message: msg_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn propose_external_psk(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1672,6 +1712,7 @@ impl MlsEngine {
         Ok(ProposalResult { proposal_message: msg_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn propose_group_context_extensions(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1694,6 +1735,7 @@ impl MlsEngine {
         Ok(ProposalResult { proposal_message: msg_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn propose_custom_proposal(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1715,6 +1757,7 @@ impl MlsEngine {
         Ok(ProposalResult { proposal_message: msg_bytes })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn propose_remove_member_by_credential(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1740,6 +1783,7 @@ impl MlsEngine {
     // COMMIT / MERGE OPERATIONS (mutating)
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn commit_to_pending_proposals(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1774,6 +1818,7 @@ impl MlsEngine {
         self.commit(provider, Some(&group_id_bytes)).await
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn clear_pending_commit(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1785,6 +1830,7 @@ impl MlsEngine {
         self.commit(provider, Some(&group_id_bytes)).await
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn clear_pending_proposals(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1807,6 +1853,7 @@ impl MlsEngine {
     /// `setPastEpochDeletionPolicyKeepAll` made earlier, along with the past
     /// epoch secrets the lower number no longer admits. When both are used,
     /// set the policy after the configuration, not before.
+    #[cfg(feature = "full-api")]
     pub async fn set_configuration(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1820,6 +1867,7 @@ impl MlsEngine {
         self.commit(provider, Some(&group_id_bytes)).await
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn update_group_context_extensions(
         &self,
         group_id_bytes: Vec<u8>,
@@ -1907,6 +1955,7 @@ impl MlsEngine {
     // MESSAGES (mutating)
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn create_message(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2018,6 +2067,7 @@ impl MlsEngine {
         })
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn process_message_with_inspect(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2140,6 +2190,7 @@ impl MlsEngine {
             .await
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn delete_key_package(
         &self,
         key_package_ref_bytes: Vec<u8>,
@@ -2157,6 +2208,7 @@ impl MlsEngine {
     // ADDITIONAL STATE QUERIES / MUTATING
     // ═══════════════════════════════════════════════════════════
 
+    #[cfg(feature = "full-api")]
     pub async fn remove_pending_proposal(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2172,6 +2224,7 @@ impl MlsEngine {
         self.commit(provider, Some(&group_id_bytes)).await
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_epoch_authenticator(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2181,6 +2234,7 @@ impl MlsEngine {
         Ok(group.epoch_authenticator().as_slice().to_vec())
     }
 
+    #[cfg(feature = "full-api")]
     pub async fn group_configuration(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2213,6 +2267,7 @@ impl MlsEngine {
     /// A group that was never told otherwise reports the `maxPastEpochs` its
     /// `MlsGroupConfig` carried when it was created or joined — the two are
     /// the same setting.
+    #[cfg(feature = "full-api")]
     pub async fn past_epoch_deletion_policy(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2241,6 +2296,7 @@ impl MlsEngine {
     /// `usize` is 32 bits — the Web and 32-bit Android — so accepting it would
     /// make two settings one stored value there and two everywhere else. Use
     /// `setPastEpochDeletionPolicyKeepAll` if that is what you mean.
+    #[cfg(feature = "full-api")]
     pub async fn set_past_epoch_deletion_policy_max_epochs(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2265,6 +2321,7 @@ impl MlsEngine {
     ///
     /// It does not bring back what an earlier policy already discarded, and
     /// like the one above it is reset by `setConfiguration`.
+    #[cfg(feature = "full-api")]
     pub async fn set_past_epoch_deletion_policy_keep_all(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2283,6 +2340,7 @@ impl MlsEngine {
     /// `setPastEpochDeletionPolicyKeepAll` the next commit starts recording
     /// past epochs again, so this is a sweep to be repeated rather than a
     /// switch. To stop it, set a `maxEpochs` policy.
+    #[cfg(feature = "full-api")]
     pub async fn delete_all_past_epoch_secrets(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2307,6 +2365,7 @@ impl MlsEngine {
     /// upgrade they sit alongside dated ones and a retention window built only
     /// out of this method keeps them forever.
     /// `deletePastEpochSecretsWithoutTimestamps` is the step that clears them.
+    #[cfg(feature = "full-api")]
     pub async fn delete_past_epoch_secrets_older_than(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2334,6 +2393,7 @@ impl MlsEngine {
     /// first, and a present-day millisecond count is about a thousand times
     /// too large: that lands past the year 9999 and is refused here, rather
     /// than quietly deleting every past epoch the group has.
+    #[cfg(feature = "full-api")]
     pub async fn delete_past_epoch_secrets_before(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2362,6 +2422,7 @@ impl MlsEngine {
     ///
     /// `maxPastEpochs` additionally caps what survives at that many of the
     /// newest past epochs; omit it to apply no cap.
+    #[cfg(feature = "full-api")]
     pub async fn delete_past_epoch_secrets_without_timestamps(
         &self,
         group_id_bytes: Vec<u8>,
@@ -2416,6 +2477,7 @@ impl MlsEngine {
     /// After a successful `create()`, this is always `LATEST_SCHEMA_VERSION`.
     /// Useful for diagnostics and debugging migration issues.
     #[flutter_rust_bridge::frb(sync)]
+    #[cfg(feature = "full-api")]
     pub fn schema_version(&self) -> u32 {
         crate::encrypted_db::LATEST_SCHEMA_VERSION
     }
@@ -2440,6 +2502,7 @@ impl MlsEngine {
 
     /// Check whether this engine has been closed.
     #[flutter_rust_bridge::frb(sync)]
+    #[cfg(feature = "full-api")]
     pub fn is_closed(&self) -> bool {
         self.db.read().is_none()
     }
@@ -2455,6 +2518,7 @@ impl MlsEngine {
 /// `processMessage`. Returns an error if the message is not a protocol
 /// message (i.e. it's a Welcome, GroupInfo, or KeyPackage).
 #[flutter_rust_bridge::frb(sync)]
+#[cfg(feature = "full-api")]
 pub fn mls_message_extract_group_id(message_bytes: Vec<u8>) -> Result<Vec<u8>, String> {
     let msg_in = MlsMessageIn::tls_deserialize_exact_bytes(&message_bytes)
         .map_err(|e| format!("Failed to deserialize message: {}", e))?;
@@ -2536,6 +2600,7 @@ pub struct LifetimeVerdict {
 /// of functions can apply an authority stricter than the local clock, not
 /// rescue a package the local clock has already rejected.
 #[flutter_rust_bridge::frb(sync)]
+#[cfg(feature = "full-api")]
 pub fn key_package_lifetime(key_package_bytes: Vec<u8>) -> Result<KeyPackageLifetime, String> {
     let kp_in = KeyPackageIn::tls_deserialize_exact_bytes(&key_package_bytes)
         .map_err(|e| format!("Failed to deserialize key package: {}", e))?;
@@ -2623,6 +2688,7 @@ fn unix_seconds_to_system_time(unix_seconds: u64) -> Result<SystemTime, String> 
 /// loudly here instead of returning a confident verdict about a date tens of
 /// thousands of years out.
 #[flutter_rust_bridge::frb(sync)]
+#[cfg(feature = "full-api")]
 pub fn check_lifetime_at(
     not_before: u64,
     not_after: u64,
@@ -2728,7 +2794,7 @@ mod past_epoch_policy_tests {
 /// and the keep-all encoding round-trips by itself. Only here does the
 /// normalization above carry the result, and only execution can show it: a
 /// wasm32 body is a different implementation of the same function.
-#[cfg(all(test, target_arch = "wasm32"))]
+#[cfg(all(test, target_arch = "wasm32", feature = "full-api"))]
 mod past_epoch_web_tests {
     use super::*;
     use wasm_bindgen_test::{wasm_bindgen_test, wasm_bindgen_test_configure};

@@ -37,6 +37,7 @@ impl MlsSignatureKeyPair {
     /// # Security
     /// `privateKey` is moved (not copied) into the key pair.
     #[flutter_rust_bridge::frb(sync)]
+    #[cfg(feature = "full-api")]
     pub fn from_raw(
         ciphersuite: MlsCiphersuite,
         private_key: Vec<u8>,
@@ -65,6 +66,7 @@ impl MlsSignatureKeyPair {
 
     /// Returns the signature scheme as a u16.
     #[flutter_rust_bridge::frb(sync)]
+    #[cfg(feature = "full-api")]
     pub fn signature_scheme(&self) -> u16 {
         self.inner.signature_scheme() as u16
     }
@@ -75,6 +77,7 @@ impl MlsSignatureKeyPair {
     /// no private key material. To reconstruct a full key pair with private key,
     /// use `fromRaw()` with the original private key bytes.
     #[flutter_rust_bridge::frb(sync)]
+    #[cfg(feature = "full-api")]
     pub fn serialize(&self) -> Result<Vec<u8>, String> {
         // SignatureKeyPair doesn't expose private key bytes directly.
         // We serialize by storing public key + scheme, and the private key
@@ -95,6 +98,7 @@ impl MlsSignatureKeyPair {
     /// Note: This only restores the public key and scheme. To reconstruct
     /// a full key pair with private key, use `fromRaw()`.
     #[flutter_rust_bridge::frb(sync)]
+    #[cfg(feature = "full-api")]
     pub fn deserialize_public(bytes: Vec<u8>) -> Result<MlsSignatureKeyPair, String> {
         let skp: SerializableKeyPair =
             serde_json::from_slice(&bytes).map_err(|e| format!("Failed to deserialize key pair: {}", e))?;

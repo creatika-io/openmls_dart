@@ -177,6 +177,21 @@ make format-check                        # Check formatting without changes
 make doc                                 # Generate documentation (FAILS on unresolved doc refs)
 ```
 
+⚠ **The committed bindings export only what the creatika app calls.** The rest
+of the API sits behind the `full-api` Cargo feature, and FRB reads the API
+through `cargo expand`, so the bindings follow the features codegen saw. The
+tests written against the whole API live in `test_full_api/` (excluded from
+`make analyze`), and the `example/` and `example_cli/` demos need it too (only
+`example/integration_test/` uses the narrow surface). CI's "Full API tests"
+step runs them the same way locally:
+
+```bash
+make codegen ARGS="--rust-features full-api"   # rewrites lib/src/rust/ — do not commit
+make build ARGS="--features full-api,all-ciphersuites"
+make test ARGS="test test_full_api"
+make codegen                                   # back to the committed bindings
+```
+
 **`make doc` is a gate, not just a generator.** `dartdoc_options.yaml` promotes
 `unresolved-doc-reference` to an error, so the target exits non-zero when a
 docstring references a symbol dartdoc cannot resolve, and CI runs it. This

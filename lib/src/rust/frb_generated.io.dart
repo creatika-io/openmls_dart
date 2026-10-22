@@ -93,9 +93,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String dco_decode_String(dynamic raw);
 
   @protected
-  AddMembersResult dco_decode_add_members_result(dynamic raw);
-
-  @protected
   bool dco_decode_bool(dynamic raw);
 
   @protected
@@ -104,22 +101,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  KeyPackageOptions dco_decode_box_autoadd_key_package_options(dynamic raw);
-
-  @protected
   MlsCapabilities dco_decode_box_autoadd_mls_capabilities(dynamic raw);
 
   @protected
   MlsGroupConfig dco_decode_box_autoadd_mls_group_config(dynamic raw);
 
   @protected
-  MlsMemberInfo dco_decode_box_autoadd_mls_member_info(dynamic raw);
-
-  @protected
   MlsProposalType dco_decode_box_autoadd_mls_proposal_type(dynamic raw);
-
-  @protected
-  StagedCommitInfo dco_decode_box_autoadd_staged_commit_info(dynamic raw);
 
   @protected
   int dco_decode_box_autoadd_u_32(dynamic raw);
@@ -134,37 +122,13 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   CreateGroupResult dco_decode_create_group_result(dynamic raw);
 
   @protected
-  CreateMessageResult dco_decode_create_message_result(dynamic raw);
-
-  @protected
   ExternalJoinResult dco_decode_external_join_result(dynamic raw);
 
   @protected
   FlexibleCommitOptions dco_decode_flexible_commit_options(dynamic raw);
 
   @protected
-  GroupConfigurationResult dco_decode_group_configuration_result(dynamic raw);
-
-  @protected
   int dco_decode_i_32(dynamic raw);
-
-  @protected
-  JoinGroupResult dco_decode_join_group_result(dynamic raw);
-
-  @protected
-  KeyPackageLifetime dco_decode_key_package_lifetime(dynamic raw);
-
-  @protected
-  KeyPackageOptions dco_decode_key_package_options(dynamic raw);
-
-  @protected
-  KeyPackageResult dco_decode_key_package_result(dynamic raw);
-
-  @protected
-  LeaveGroupResult dco_decode_leave_group_result(dynamic raw);
-
-  @protected
-  LifetimeVerdict dco_decode_lifetime_verdict(dynamic raw);
 
   @protected
   List<Uint8List> dco_decode_list_list_prim_u_8_strict(dynamic raw);
@@ -179,15 +143,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   List<MlsMemberInfo> dco_decode_list_mls_member_info(dynamic raw);
 
   @protected
-  List<MlsPendingProposalInfo> dco_decode_list_mls_pending_proposal_info(
-    dynamic raw,
-  );
-
-  @protected
   Uint16List dco_decode_list_prim_u_16_strict(dynamic raw);
-
-  @protected
-  List<int> dco_decode_list_prim_u_32_loose(dynamic raw);
 
   @protected
   Uint32List dco_decode_list_prim_u_32_strict(dynamic raw);
@@ -211,16 +167,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsGroupConfig dco_decode_mls_group_config(dynamic raw);
 
   @protected
-  MlsGroupContextInfo dco_decode_mls_group_context_info(dynamic raw);
-
-  @protected
-  MlsLeafNodeInfo dco_decode_mls_leaf_node_info(dynamic raw);
-
-  @protected
   MlsMemberInfo dco_decode_mls_member_info(dynamic raw);
-
-  @protected
-  MlsPendingProposalInfo dco_decode_mls_pending_proposal_info(dynamic raw);
 
   @protected
   MlsProposalType dco_decode_mls_proposal_type(dynamic raw);
@@ -229,19 +176,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsWireFormatPolicy dco_decode_mls_wire_format_policy(dynamic raw);
 
   @protected
-  String? dco_decode_opt_String(dynamic raw);
-
-  @protected
   MlsCapabilities? dco_decode_opt_box_autoadd_mls_capabilities(dynamic raw);
 
   @protected
-  MlsMemberInfo? dco_decode_opt_box_autoadd_mls_member_info(dynamic raw);
-
-  @protected
   MlsProposalType? dco_decode_opt_box_autoadd_mls_proposal_type(dynamic raw);
-
-  @protected
-  StagedCommitInfo? dco_decode_opt_box_autoadd_staged_commit_info(dynamic raw);
 
   @protected
   int? dco_decode_opt_box_autoadd_u_32(dynamic raw);
@@ -256,26 +194,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List? dco_decode_opt_list_prim_u_8_strict(dynamic raw);
 
   @protected
-  PastEpochDeletionPolicyResult dco_decode_past_epoch_deletion_policy_result(
-    dynamic raw,
-  );
-
-  @protected
-  ProcessedMessageInspectResult dco_decode_processed_message_inspect_result(
-    dynamic raw,
-  );
-
-  @protected
   ProcessedMessageResult dco_decode_processed_message_result(dynamic raw);
 
   @protected
   ProcessedMessageType dco_decode_processed_message_type(dynamic raw);
-
-  @protected
-  ProposalResult dco_decode_proposal_result(dynamic raw);
-
-  @protected
-  StagedCommitInfo dco_decode_staged_commit_info(dynamic raw);
 
   @protected
   int dco_decode_u_16(dynamic raw);
@@ -294,9 +216,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   BigInt dco_decode_usize(dynamic raw);
-
-  @protected
-  WelcomeInspectResult dco_decode_welcome_inspect_result(dynamic raw);
 
   @protected
   MlsCredential
@@ -356,18 +275,10 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String sse_decode_String(SseDeserializer deserializer);
 
   @protected
-  AddMembersResult sse_decode_add_members_result(SseDeserializer deserializer);
-
-  @protected
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
   FlexibleCommitOptions sse_decode_box_autoadd_flexible_commit_options(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  KeyPackageOptions sse_decode_box_autoadd_key_package_options(
     SseDeserializer deserializer,
   );
 
@@ -382,17 +293,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  MlsMemberInfo sse_decode_box_autoadd_mls_member_info(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   MlsProposalType sse_decode_box_autoadd_mls_proposal_type(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  StagedCommitInfo sse_decode_box_autoadd_staged_commit_info(
     SseDeserializer deserializer,
   );
 
@@ -411,11 +312,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  CreateMessageResult sse_decode_create_message_result(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   ExternalJoinResult sse_decode_external_join_result(
     SseDeserializer deserializer,
   );
@@ -426,34 +322,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  GroupConfigurationResult sse_decode_group_configuration_result(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   int sse_decode_i_32(SseDeserializer deserializer);
-
-  @protected
-  JoinGroupResult sse_decode_join_group_result(SseDeserializer deserializer);
-
-  @protected
-  KeyPackageLifetime sse_decode_key_package_lifetime(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  KeyPackageOptions sse_decode_key_package_options(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  KeyPackageResult sse_decode_key_package_result(SseDeserializer deserializer);
-
-  @protected
-  LeaveGroupResult sse_decode_leave_group_result(SseDeserializer deserializer);
-
-  @protected
-  LifetimeVerdict sse_decode_lifetime_verdict(SseDeserializer deserializer);
 
   @protected
   List<Uint8List> sse_decode_list_list_prim_u_8_strict(
@@ -476,15 +345,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  List<MlsPendingProposalInfo> sse_decode_list_mls_pending_proposal_info(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   Uint16List sse_decode_list_prim_u_16_strict(SseDeserializer deserializer);
-
-  @protected
-  List<int> sse_decode_list_prim_u_32_loose(SseDeserializer deserializer);
 
   @protected
   Uint32List sse_decode_list_prim_u_32_strict(SseDeserializer deserializer);
@@ -508,20 +369,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   MlsGroupConfig sse_decode_mls_group_config(SseDeserializer deserializer);
 
   @protected
-  MlsGroupContextInfo sse_decode_mls_group_context_info(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  MlsLeafNodeInfo sse_decode_mls_leaf_node_info(SseDeserializer deserializer);
-
-  @protected
   MlsMemberInfo sse_decode_mls_member_info(SseDeserializer deserializer);
-
-  @protected
-  MlsPendingProposalInfo sse_decode_mls_pending_proposal_info(
-    SseDeserializer deserializer,
-  );
 
   @protected
   MlsProposalType sse_decode_mls_proposal_type(SseDeserializer deserializer);
@@ -532,25 +380,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  String? sse_decode_opt_String(SseDeserializer deserializer);
-
-  @protected
   MlsCapabilities? sse_decode_opt_box_autoadd_mls_capabilities(
     SseDeserializer deserializer,
   );
 
   @protected
-  MlsMemberInfo? sse_decode_opt_box_autoadd_mls_member_info(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   MlsProposalType? sse_decode_opt_box_autoadd_mls_proposal_type(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  StagedCommitInfo? sse_decode_opt_box_autoadd_staged_commit_info(
     SseDeserializer deserializer,
   );
 
@@ -569,16 +404,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   Uint8List? sse_decode_opt_list_prim_u_8_strict(SseDeserializer deserializer);
 
   @protected
-  PastEpochDeletionPolicyResult sse_decode_past_epoch_deletion_policy_result(
-    SseDeserializer deserializer,
-  );
-
-  @protected
-  ProcessedMessageInspectResult sse_decode_processed_message_inspect_result(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   ProcessedMessageResult sse_decode_processed_message_result(
     SseDeserializer deserializer,
   );
@@ -587,12 +412,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   ProcessedMessageType sse_decode_processed_message_type(
     SseDeserializer deserializer,
   );
-
-  @protected
-  ProposalResult sse_decode_proposal_result(SseDeserializer deserializer);
-
-  @protected
-  StagedCommitInfo sse_decode_staged_commit_info(SseDeserializer deserializer);
 
   @protected
   int sse_decode_u_16(SseDeserializer deserializer);
@@ -613,11 +432,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   BigInt sse_decode_usize(SseDeserializer deserializer);
 
   @protected
-  WelcomeInspectResult sse_decode_welcome_inspect_result(
-    SseDeserializer deserializer,
-  );
-
-  @protected
   ffi.Pointer<wire_cst_list_prim_u_8_strict> cst_encode_String(String raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return cst_encode_list_prim_u_8_strict(utf8.encoder.convert(raw));
@@ -629,15 +443,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     // Codec=Cst (C-struct based), see doc to use other codecs
     final ptr = wire.cst_new_box_autoadd_flexible_commit_options();
     cst_api_fill_to_wire_flexible_commit_options(raw, ptr.ref);
-    return ptr;
-  }
-
-  @protected
-  ffi.Pointer<wire_cst_key_package_options>
-  cst_encode_box_autoadd_key_package_options(KeyPackageOptions raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    final ptr = wire.cst_new_box_autoadd_key_package_options();
-    cst_api_fill_to_wire_key_package_options(raw, ptr.ref);
     return ptr;
   }
 
@@ -660,16 +465,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  ffi.Pointer<wire_cst_mls_member_info> cst_encode_box_autoadd_mls_member_info(
-    MlsMemberInfo raw,
-  ) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    final ptr = wire.cst_new_box_autoadd_mls_member_info();
-    cst_api_fill_to_wire_mls_member_info(raw, ptr.ref);
-    return ptr;
-  }
-
-  @protected
   ffi.Pointer<ffi.Int32> cst_encode_box_autoadd_mls_proposal_type(
     MlsProposalType raw,
   ) {
@@ -677,15 +472,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     return wire.cst_new_box_autoadd_mls_proposal_type(
       cst_encode_mls_proposal_type(raw),
     );
-  }
-
-  @protected
-  ffi.Pointer<wire_cst_staged_commit_info>
-  cst_encode_box_autoadd_staged_commit_info(StagedCommitInfo raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    final ptr = wire.cst_new_box_autoadd_staged_commit_info();
-    cst_api_fill_to_wire_staged_commit_info(raw, ptr.ref);
-    return ptr;
   }
 
   @protected
@@ -748,32 +534,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  ffi.Pointer<wire_cst_list_mls_pending_proposal_info>
-  cst_encode_list_mls_pending_proposal_info(List<MlsPendingProposalInfo> raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    final ans = wire.cst_new_list_mls_pending_proposal_info(raw.length);
-    for (var i = 0; i < raw.length; ++i) {
-      cst_api_fill_to_wire_mls_pending_proposal_info(raw[i], ans.ref.ptr[i]);
-    }
-    return ans;
-  }
-
-  @protected
   ffi.Pointer<wire_cst_list_prim_u_16_strict> cst_encode_list_prim_u_16_strict(
     Uint16List raw,
   ) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     final ans = wire.cst_new_list_prim_u_16_strict(raw.length);
-    ans.ref.ptr.asTypedList(raw.length).setAll(0, raw);
-    return ans;
-  }
-
-  @protected
-  ffi.Pointer<wire_cst_list_prim_u_32_loose> cst_encode_list_prim_u_32_loose(
-    List<int> raw,
-  ) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    final ans = wire.cst_new_list_prim_u_32_loose(raw.length);
     ans.ref.ptr.asTypedList(raw.length).setAll(0, raw);
     return ans;
   }
@@ -809,29 +574,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  ffi.Pointer<wire_cst_list_prim_u_8_strict> cst_encode_opt_String(
-    String? raw,
-  ) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return raw == null ? ffi.nullptr : cst_encode_String(raw);
-  }
-
-  @protected
   ffi.Pointer<wire_cst_mls_capabilities>
   cst_encode_opt_box_autoadd_mls_capabilities(MlsCapabilities? raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return raw == null
         ? ffi.nullptr
         : cst_encode_box_autoadd_mls_capabilities(raw);
-  }
-
-  @protected
-  ffi.Pointer<wire_cst_mls_member_info>
-  cst_encode_opt_box_autoadd_mls_member_info(MlsMemberInfo? raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return raw == null
-        ? ffi.nullptr
-        : cst_encode_box_autoadd_mls_member_info(raw);
   }
 
   @protected
@@ -842,15 +590,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     return raw == null
         ? ffi.nullptr
         : cst_encode_box_autoadd_mls_proposal_type(raw);
-  }
-
-  @protected
-  ffi.Pointer<wire_cst_staged_commit_info>
-  cst_encode_opt_box_autoadd_staged_commit_info(StagedCommitInfo? raw) {
-    // Codec=Cst (C-struct based), see doc to use other codecs
-    return raw == null
-        ? ffi.nullptr
-        : cst_encode_box_autoadd_staged_commit_info(raw);
   }
 
   @protected
@@ -893,29 +632,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  void cst_api_fill_to_wire_add_members_result(
-    AddMembersResult apiObj,
-    wire_cst_add_members_result wireObj,
-  ) {
-    wireObj.commit = cst_encode_list_prim_u_8_strict(apiObj.commit);
-    wireObj.welcome = cst_encode_list_prim_u_8_strict(apiObj.welcome);
-    wireObj.group_info = cst_encode_opt_list_prim_u_8_strict(apiObj.groupInfo);
-  }
-
-  @protected
   void cst_api_fill_to_wire_box_autoadd_flexible_commit_options(
     FlexibleCommitOptions apiObj,
     ffi.Pointer<wire_cst_flexible_commit_options> wireObj,
   ) {
     cst_api_fill_to_wire_flexible_commit_options(apiObj, wireObj.ref);
-  }
-
-  @protected
-  void cst_api_fill_to_wire_box_autoadd_key_package_options(
-    KeyPackageOptions apiObj,
-    ffi.Pointer<wire_cst_key_package_options> wireObj,
-  ) {
-    cst_api_fill_to_wire_key_package_options(apiObj, wireObj.ref);
   }
 
   @protected
@@ -935,22 +656,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  void cst_api_fill_to_wire_box_autoadd_mls_member_info(
-    MlsMemberInfo apiObj,
-    ffi.Pointer<wire_cst_mls_member_info> wireObj,
-  ) {
-    cst_api_fill_to_wire_mls_member_info(apiObj, wireObj.ref);
-  }
-
-  @protected
-  void cst_api_fill_to_wire_box_autoadd_staged_commit_info(
-    StagedCommitInfo apiObj,
-    ffi.Pointer<wire_cst_staged_commit_info> wireObj,
-  ) {
-    cst_api_fill_to_wire_staged_commit_info(apiObj, wireObj.ref);
-  }
-
-  @protected
   void cst_api_fill_to_wire_commit_result(
     CommitResult apiObj,
     wire_cst_commit_result wireObj,
@@ -966,14 +671,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     wire_cst_create_group_result wireObj,
   ) {
     wireObj.group_id = cst_encode_list_prim_u_8_strict(apiObj.groupId);
-  }
-
-  @protected
-  void cst_api_fill_to_wire_create_message_result(
-    CreateMessageResult apiObj,
-    wire_cst_create_message_result wireObj,
-  ) {
-    wireObj.ciphertext = cst_encode_list_prim_u_8_strict(apiObj.ciphertext);
   }
 
   @protected
@@ -1009,88 +706,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     wireObj.use_ratchet_tree_extension = cst_encode_bool(
       apiObj.useRatchetTreeExtension,
     );
-  }
-
-  @protected
-  void cst_api_fill_to_wire_group_configuration_result(
-    GroupConfigurationResult apiObj,
-    wire_cst_group_configuration_result wireObj,
-  ) {
-    wireObj.ciphersuite = cst_encode_mls_ciphersuite(apiObj.ciphersuite);
-    wireObj.wire_format_policy = cst_encode_mls_wire_format_policy(
-      apiObj.wireFormatPolicy,
-    );
-    wireObj.padding_size = cst_encode_u_32(apiObj.paddingSize);
-    wireObj.sender_ratchet_max_out_of_order = cst_encode_u_32(
-      apiObj.senderRatchetMaxOutOfOrder,
-    );
-    wireObj.sender_ratchet_max_forward_distance = cst_encode_u_32(
-      apiObj.senderRatchetMaxForwardDistance,
-    );
-  }
-
-  @protected
-  void cst_api_fill_to_wire_join_group_result(
-    JoinGroupResult apiObj,
-    wire_cst_join_group_result wireObj,
-  ) {
-    wireObj.group_id = cst_encode_list_prim_u_8_strict(apiObj.groupId);
-  }
-
-  @protected
-  void cst_api_fill_to_wire_key_package_lifetime(
-    KeyPackageLifetime apiObj,
-    wire_cst_key_package_lifetime wireObj,
-  ) {
-    wireObj.not_before = cst_encode_u_64(apiObj.notBefore);
-    wireObj.not_after = cst_encode_u_64(apiObj.notAfter);
-  }
-
-  @protected
-  void cst_api_fill_to_wire_key_package_options(
-    KeyPackageOptions apiObj,
-    wire_cst_key_package_options wireObj,
-  ) {
-    wireObj.lifetime_seconds = cst_encode_opt_box_autoadd_u_64(
-      apiObj.lifetimeSeconds,
-    );
-    wireObj.last_resort = cst_encode_bool(apiObj.lastResort);
-    wireObj.capabilities = cst_encode_opt_box_autoadd_mls_capabilities(
-      apiObj.capabilities,
-    );
-    wireObj.leaf_node_extensions = cst_encode_opt_list_mls_extension(
-      apiObj.leafNodeExtensions,
-    );
-    wireObj.key_package_extensions = cst_encode_opt_list_mls_extension(
-      apiObj.keyPackageExtensions,
-    );
-  }
-
-  @protected
-  void cst_api_fill_to_wire_key_package_result(
-    KeyPackageResult apiObj,
-    wire_cst_key_package_result wireObj,
-  ) {
-    wireObj.key_package_bytes = cst_encode_list_prim_u_8_strict(
-      apiObj.keyPackageBytes,
-    );
-  }
-
-  @protected
-  void cst_api_fill_to_wire_leave_group_result(
-    LeaveGroupResult apiObj,
-    wire_cst_leave_group_result wireObj,
-  ) {
-    wireObj.message = cst_encode_list_prim_u_8_strict(apiObj.message);
-  }
-
-  @protected
-  void cst_api_fill_to_wire_lifetime_verdict(
-    LifetimeVerdict apiObj,
-    wire_cst_lifetime_verdict wireObj,
-  ) {
-    wireObj.valid = cst_encode_bool(apiObj.valid);
-    wireObj.reason = cst_encode_opt_String(apiObj.reason);
   }
 
   @protected
@@ -1142,40 +757,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   }
 
   @protected
-  void cst_api_fill_to_wire_mls_group_context_info(
-    MlsGroupContextInfo apiObj,
-    wire_cst_mls_group_context_info wireObj,
-  ) {
-    wireObj.group_id = cst_encode_list_prim_u_8_strict(apiObj.groupId);
-    wireObj.epoch = cst_encode_u_64(apiObj.epoch);
-    wireObj.ciphersuite = cst_encode_mls_ciphersuite(apiObj.ciphersuite);
-    wireObj.tree_hash = cst_encode_list_prim_u_8_strict(apiObj.treeHash);
-    wireObj.confirmed_transcript_hash = cst_encode_list_prim_u_8_strict(
-      apiObj.confirmedTranscriptHash,
-    );
-    wireObj.extensions = cst_encode_list_prim_u_8_strict(apiObj.extensions);
-  }
-
-  @protected
-  void cst_api_fill_to_wire_mls_leaf_node_info(
-    MlsLeafNodeInfo apiObj,
-    wire_cst_mls_leaf_node_info wireObj,
-  ) {
-    wireObj.credential = cst_encode_list_prim_u_8_strict(apiObj.credential);
-    wireObj.signature_key = cst_encode_list_prim_u_8_strict(
-      apiObj.signatureKey,
-    );
-    wireObj.encryption_key = cst_encode_list_prim_u_8_strict(
-      apiObj.encryptionKey,
-    );
-    cst_api_fill_to_wire_mls_capabilities(
-      apiObj.capabilities,
-      wireObj.capabilities,
-    );
-    wireObj.extensions = cst_encode_list_mls_extension(apiObj.extensions);
-  }
-
-  @protected
   void cst_api_fill_to_wire_mls_member_info(
     MlsMemberInfo apiObj,
     wire_cst_mls_member_info wireObj,
@@ -1184,45 +765,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     wireObj.credential = cst_encode_list_prim_u_8_strict(apiObj.credential);
     wireObj.signature_key = cst_encode_list_prim_u_8_strict(
       apiObj.signatureKey,
-    );
-  }
-
-  @protected
-  void cst_api_fill_to_wire_mls_pending_proposal_info(
-    MlsPendingProposalInfo apiObj,
-    wire_cst_mls_pending_proposal_info wireObj,
-  ) {
-    wireObj.proposal_type = cst_encode_mls_proposal_type(apiObj.proposalType);
-    wireObj.sender_index = cst_encode_opt_box_autoadd_u_32(apiObj.senderIndex);
-  }
-
-  @protected
-  void cst_api_fill_to_wire_past_epoch_deletion_policy_result(
-    PastEpochDeletionPolicyResult apiObj,
-    wire_cst_past_epoch_deletion_policy_result wireObj,
-  ) {
-    wireObj.keep_all = cst_encode_bool(apiObj.keepAll);
-    wireObj.max_epochs = cst_encode_u_32(apiObj.maxEpochs);
-  }
-
-  @protected
-  void cst_api_fill_to_wire_processed_message_inspect_result(
-    ProcessedMessageInspectResult apiObj,
-    wire_cst_processed_message_inspect_result wireObj,
-  ) {
-    wireObj.message_type = cst_encode_processed_message_type(
-      apiObj.messageType,
-    );
-    wireObj.sender_index = cst_encode_opt_box_autoadd_u_32(apiObj.senderIndex);
-    wireObj.epoch = cst_encode_u_64(apiObj.epoch);
-    wireObj.application_message = cst_encode_opt_list_prim_u_8_strict(
-      apiObj.applicationMessage,
-    );
-    wireObj.staged_commit_info = cst_encode_opt_box_autoadd_staged_commit_info(
-      apiObj.stagedCommitInfo,
-    );
-    wireObj.proposal_type = cst_encode_opt_box_autoadd_mls_proposal_type(
-      apiObj.proposalType,
     );
   }
 
@@ -1244,43 +786,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     wireObj.proposal_type = cst_encode_opt_box_autoadd_mls_proposal_type(
       apiObj.proposalType,
     );
-  }
-
-  @protected
-  void cst_api_fill_to_wire_proposal_result(
-    ProposalResult apiObj,
-    wire_cst_proposal_result wireObj,
-  ) {
-    wireObj.proposal_message = cst_encode_list_prim_u_8_strict(
-      apiObj.proposalMessage,
-    );
-  }
-
-  @protected
-  void cst_api_fill_to_wire_staged_commit_info(
-    StagedCommitInfo apiObj,
-    wire_cst_staged_commit_info wireObj,
-  ) {
-    wireObj.add_credentials = cst_encode_list_list_prim_u_8_strict(
-      apiObj.addCredentials,
-    );
-    wireObj.remove_indices = cst_encode_list_prim_u_32_strict(
-      apiObj.removeIndices,
-    );
-    wireObj.has_update = cst_encode_bool(apiObj.hasUpdate);
-    wireObj.self_removed = cst_encode_bool(apiObj.selfRemoved);
-    wireObj.psk_count = cst_encode_u_32(apiObj.pskCount);
-  }
-
-  @protected
-  void cst_api_fill_to_wire_welcome_inspect_result(
-    WelcomeInspectResult apiObj,
-    wire_cst_welcome_inspect_result wireObj,
-  ) {
-    wireObj.group_id = cst_encode_list_prim_u_8_strict(apiObj.groupId);
-    wireObj.ciphersuite = cst_encode_mls_ciphersuite(apiObj.ciphersuite);
-    wireObj.psk_count = cst_encode_u_32(apiObj.pskCount);
-    wireObj.epoch = cst_encode_u_64(apiObj.epoch);
   }
 
   @protected
@@ -1434,23 +939,11 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_String(String self, SseSerializer serializer);
 
   @protected
-  void sse_encode_add_members_result(
-    AddMembersResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
   void sse_encode_box_autoadd_flexible_commit_options(
     FlexibleCommitOptions self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_box_autoadd_key_package_options(
-    KeyPackageOptions self,
     SseSerializer serializer,
   );
 
@@ -1467,20 +960,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_box_autoadd_mls_member_info(
-    MlsMemberInfo self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_box_autoadd_mls_proposal_type(
     MlsProposalType self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_box_autoadd_staged_commit_info(
-    StagedCommitInfo self,
     SseSerializer serializer,
   );
 
@@ -1500,12 +981,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_create_message_result(
-    CreateMessageResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_external_join_result(
     ExternalJoinResult self,
     SseSerializer serializer,
@@ -1518,49 +993,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_group_configuration_result(
-    GroupConfigurationResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_i_32(int self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_join_group_result(
-    JoinGroupResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_key_package_lifetime(
-    KeyPackageLifetime self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_key_package_options(
-    KeyPackageOptions self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_key_package_result(
-    KeyPackageResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_leave_group_result(
-    LeaveGroupResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_lifetime_verdict(
-    LifetimeVerdict self,
-    SseSerializer serializer,
-  );
 
   @protected
   void sse_encode_list_list_prim_u_8_strict(
@@ -1587,20 +1020,8 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_list_mls_pending_proposal_info(
-    List<MlsPendingProposalInfo> self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_list_prim_u_16_strict(
     Uint16List self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_list_prim_u_32_loose(
-    List<int> self,
     SseSerializer serializer,
   );
 
@@ -1641,25 +1062,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_mls_group_context_info(
-    MlsGroupContextInfo self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_mls_leaf_node_info(
-    MlsLeafNodeInfo self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_mls_member_info(MlsMemberInfo self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_mls_pending_proposal_info(
-    MlsPendingProposalInfo self,
-    SseSerializer serializer,
-  );
 
   @protected
   void sse_encode_mls_proposal_type(
@@ -1674,29 +1077,14 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_opt_String(String? self, SseSerializer serializer);
-
-  @protected
   void sse_encode_opt_box_autoadd_mls_capabilities(
     MlsCapabilities? self,
     SseSerializer serializer,
   );
 
   @protected
-  void sse_encode_opt_box_autoadd_mls_member_info(
-    MlsMemberInfo? self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_opt_box_autoadd_mls_proposal_type(
     MlsProposalType? self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_opt_box_autoadd_staged_commit_info(
-    StagedCommitInfo? self,
     SseSerializer serializer,
   );
 
@@ -1719,18 +1107,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
-  void sse_encode_past_epoch_deletion_policy_result(
-    PastEpochDeletionPolicyResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_processed_message_inspect_result(
-    ProcessedMessageInspectResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
   void sse_encode_processed_message_result(
     ProcessedMessageResult self,
     SseSerializer serializer,
@@ -1739,18 +1115,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   @protected
   void sse_encode_processed_message_type(
     ProcessedMessageType self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_proposal_result(
-    ProposalResult self,
-    SseSerializer serializer,
-  );
-
-  @protected
-  void sse_encode_staged_commit_info(
-    StagedCommitInfo self,
     SseSerializer serializer,
   );
 
@@ -1771,12 +1135,6 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   void sse_encode_usize(BigInt self, SseSerializer serializer);
-
-  @protected
-  void sse_encode_welcome_inspect_result(
-    WelcomeInspectResult self,
-    SseSerializer serializer,
-  );
 }
 
 // Section: wire_class
@@ -1838,33 +1196,6 @@ class RustLibWire implements BaseWire {
             )
           >();
 
-  WireSyncRust2DartDco wire__crate__api__credential__MlsCredential_certificates(
-    int that,
-  ) {
-    return _wire__crate__api__credential__MlsCredential_certificates(that);
-  }
-
-  late final _wire__crate__api__credential__MlsCredential_certificatesPtr =
-      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
-        'frbgen_openmls_wire__crate__api__credential__MlsCredential_certificates',
-      );
-  late final _wire__crate__api__credential__MlsCredential_certificates =
-      _wire__crate__api__credential__MlsCredential_certificatesPtr
-          .asFunction<WireSyncRust2DartDco Function(int)>();
-
-  WireSyncRust2DartDco
-  wire__crate__api__credential__MlsCredential_credential_type(int that) {
-    return _wire__crate__api__credential__MlsCredential_credential_type(that);
-  }
-
-  late final _wire__crate__api__credential__MlsCredential_credential_typePtr =
-      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
-        'frbgen_openmls_wire__crate__api__credential__MlsCredential_credential_type',
-      );
-  late final _wire__crate__api__credential__MlsCredential_credential_type =
-      _wire__crate__api__credential__MlsCredential_credential_typePtr
-          .asFunction<WireSyncRust2DartDco Function(int)>();
-
   WireSyncRust2DartDco wire__crate__api__credential__MlsCredential_deserialize(
     ffi.Pointer<wire_cst_list_prim_u_8_loose> bytes,
   ) {
@@ -1917,185 +1248,6 @@ class RustLibWire implements BaseWire {
       _wire__crate__api__credential__MlsCredential_serializePtr
           .asFunction<WireSyncRust2DartDco Function(int)>();
 
-  WireSyncRust2DartDco
-  wire__crate__api__credential__MlsCredential_serialized_content(int that) {
-    return _wire__crate__api__credential__MlsCredential_serialized_content(
-      that,
-    );
-  }
-
-  late final _wire__crate__api__credential__MlsCredential_serialized_contentPtr =
-      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
-        'frbgen_openmls_wire__crate__api__credential__MlsCredential_serialized_content',
-      );
-  late final _wire__crate__api__credential__MlsCredential_serialized_content =
-      _wire__crate__api__credential__MlsCredential_serialized_contentPtr
-          .asFunction<WireSyncRust2DartDco Function(int)>();
-
-  WireSyncRust2DartDco wire__crate__api__credential__MlsCredential_x509(
-    ffi.Pointer<wire_cst_list_list_prim_u_8_strict> certificate_chain,
-  ) {
-    return _wire__crate__api__credential__MlsCredential_x509(certificate_chain);
-  }
-
-  late final _wire__crate__api__credential__MlsCredential_x509Ptr =
-      _lookup<
-        ffi.NativeFunction<
-          WireSyncRust2DartDco Function(
-            ffi.Pointer<wire_cst_list_list_prim_u_8_strict>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__credential__MlsCredential_x509');
-  late final _wire__crate__api__credential__MlsCredential_x509 =
-      _wire__crate__api__credential__MlsCredential_x509Ptr
-          .asFunction<
-            WireSyncRust2DartDco Function(
-              ffi.Pointer<wire_cst_list_list_prim_u_8_strict>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_add_members(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_list_prim_u_8_strict> key_packages_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_add_members(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-      key_packages_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_add_membersPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_list_prim_u_8_strict>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_add_members');
-  late final _wire__crate__api__engine__MlsEngine_add_members =
-      _wire__crate__api__engine__MlsEngine_add_membersPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_list_prim_u_8_strict>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_add_members_without_update(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_list_prim_u_8_strict> key_packages_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_add_members_without_update(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-      key_packages_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_add_members_without_updatePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_list_prim_u_8_strict>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_add_members_without_update',
-      );
-  late final _wire__crate__api__engine__MlsEngine_add_members_without_update =
-      _wire__crate__api__engine__MlsEngine_add_members_without_updatePtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_list_prim_u_8_strict>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_clear_pending_commit(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_clear_pending_commit(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_clear_pending_commitPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_clear_pending_commit',
-      );
-  late final _wire__crate__api__engine__MlsEngine_clear_pending_commit =
-      _wire__crate__api__engine__MlsEngine_clear_pending_commitPtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
-  void wire__crate__api__engine__MlsEngine_clear_pending_proposals(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_clear_pending_proposals(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_clear_pending_proposalsPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_clear_pending_proposals',
-      );
-  late final _wire__crate__api__engine__MlsEngine_clear_pending_proposals =
-      _wire__crate__api__engine__MlsEngine_clear_pending_proposalsPtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
   void wire__crate__api__engine__MlsEngine_close(int port_, int that) {
     return _wire__crate__api__engine__MlsEngine_close(port_, that);
   }
@@ -2107,44 +1259,6 @@ class RustLibWire implements BaseWire {
   late final _wire__crate__api__engine__MlsEngine_close =
       _wire__crate__api__engine__MlsEngine_closePtr
           .asFunction<void Function(int, int)>();
-
-  void wire__crate__api__engine__MlsEngine_commit_to_pending_proposals(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_commit_to_pending_proposals(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_commit_to_pending_proposalsPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_commit_to_pending_proposals',
-      );
-  late final _wire__crate__api__engine__MlsEngine_commit_to_pending_proposals =
-      _wire__crate__api__engine__MlsEngine_commit_to_pending_proposalsPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
 
   void wire__crate__api__engine__MlsEngine_create(
     int port_,
@@ -2175,58 +1289,6 @@ class RustLibWire implements BaseWire {
               int,
               ffi.Pointer<wire_cst_list_prim_u_8_strict>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_create_group(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_mls_group_config> config,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> credential_identity,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_public_key,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> credential_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_create_group(
-      port_,
-      that,
-      config,
-      signer_bytes,
-      credential_identity,
-      signer_public_key,
-      group_id,
-      credential_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_create_groupPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_mls_group_config>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_create_group');
-  late final _wire__crate__api__engine__MlsEngine_create_group =
-      _wire__crate__api__engine__MlsEngine_create_groupPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_mls_group_config>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
             )
           >();
 
@@ -2300,184 +1362,6 @@ class RustLibWire implements BaseWire {
             )
           >();
 
-  void wire__crate__api__engine__MlsEngine_create_key_package(
-    int port_,
-    int that,
-    int ciphersuite,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> credential_identity,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_public_key,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> credential_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_create_key_package(
-      port_,
-      that,
-      ciphersuite,
-      signer_bytes,
-      credential_identity,
-      signer_public_key,
-      credential_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_create_key_packagePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Int32,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_create_key_package',
-      );
-  late final _wire__crate__api__engine__MlsEngine_create_key_package =
-      _wire__crate__api__engine__MlsEngine_create_key_packagePtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_create_key_package_with_options(
-    int port_,
-    int that,
-    int ciphersuite,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> credential_identity,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_public_key,
-    ffi.Pointer<wire_cst_key_package_options> options,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> credential_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_create_key_package_with_options(
-      port_,
-      that,
-      ciphersuite,
-      signer_bytes,
-      credential_identity,
-      signer_public_key,
-      options,
-      credential_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_create_key_package_with_optionsPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Int32,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_key_package_options>,
-            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_create_key_package_with_options',
-      );
-  late final _wire__crate__api__engine__MlsEngine_create_key_package_with_options =
-      _wire__crate__api__engine__MlsEngine_create_key_package_with_optionsPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_key_package_options>,
-              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_create_message(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> message,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> aad,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_create_message(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-      message,
-      aad,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_create_messagePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_create_message');
-  late final _wire__crate__api__engine__MlsEngine_create_message =
-      _wire__crate__api__engine__MlsEngine_create_messagePtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_delete_all_past_epoch_secrets(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_delete_all_past_epoch_secrets(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_delete_all_past_epoch_secretsPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_delete_all_past_epoch_secrets',
-      );
-  late final _wire__crate__api__engine__MlsEngine_delete_all_past_epoch_secrets =
-      _wire__crate__api__engine__MlsEngine_delete_all_past_epoch_secretsPtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
   void wire__crate__api__engine__MlsEngine_delete_group(
     int port_,
     int that,
@@ -2502,189 +1386,6 @@ class RustLibWire implements BaseWire {
       >('frbgen_openmls_wire__crate__api__engine__MlsEngine_delete_group');
   late final _wire__crate__api__engine__MlsEngine_delete_group =
       _wire__crate__api__engine__MlsEngine_delete_groupPtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
-  void wire__crate__api__engine__MlsEngine_delete_key_package(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> key_package_ref_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_delete_key_package(
-      port_,
-      that,
-      key_package_ref_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_delete_key_packagePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_delete_key_package',
-      );
-  late final _wire__crate__api__engine__MlsEngine_delete_key_package =
-      _wire__crate__api__engine__MlsEngine_delete_key_packagePtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
-  void wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_before(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    int unix_seconds,
-    ffi.Pointer<ffi.Uint32> max_past_epochs,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_before(
-      port_,
-      that,
-      group_id_bytes,
-      unix_seconds,
-      max_past_epochs,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_beforePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Uint64,
-            ffi.Pointer<ffi.Uint32>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_before',
-      );
-  late final _wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_before =
-      _wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_beforePtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              int,
-              ffi.Pointer<ffi.Uint32>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_older_than(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    int seconds,
-    ffi.Pointer<ffi.Uint32> max_past_epochs,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_older_than(
-      port_,
-      that,
-      group_id_bytes,
-      seconds,
-      max_past_epochs,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_older_thanPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Uint64,
-            ffi.Pointer<ffi.Uint32>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_older_than',
-      );
-  late final _wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_older_than =
-      _wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_older_thanPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              int,
-              ffi.Pointer<ffi.Uint32>,
-            )
-          >();
-
-  void
-  wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_without_timestamps(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<ffi.Uint32> max_past_epochs,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_without_timestamps(
-      port_,
-      that,
-      group_id_bytes,
-      max_past_epochs,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_without_timestampsPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<ffi.Uint32>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_without_timestamps',
-      );
-  late final _wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_without_timestamps =
-      _wire__crate__api__engine__MlsEngine_delete_past_epoch_secrets_without_timestampsPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<ffi.Uint32>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_export_group_context(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_export_group_context(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_export_group_contextPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_export_group_context',
-      );
-  late final _wire__crate__api__engine__MlsEngine_export_group_context =
-      _wire__crate__api__engine__MlsEngine_export_group_contextPtr
           .asFunction<
             void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
           >();
@@ -2725,36 +1426,6 @@ class RustLibWire implements BaseWire {
             )
           >();
 
-  void wire__crate__api__engine__MlsEngine_export_ratchet_tree(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_export_ratchet_tree(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_export_ratchet_treePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_export_ratchet_tree',
-      );
-  late final _wire__crate__api__engine__MlsEngine_export_ratchet_tree =
-      _wire__crate__api__engine__MlsEngine_export_ratchet_treePtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
   void wire__crate__api__engine__MlsEngine_export_secret(
     int port_,
     int that,
@@ -2792,56 +1463,6 @@ class RustLibWire implements BaseWire {
             void Function(
               int,
               int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              int,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_export_welcome_secret(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_mls_group_config> config,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> welcome_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> label,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> context,
-    int key_length,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_export_welcome_secret(
-      port_,
-      that,
-      config,
-      welcome_bytes,
-      label,
-      context,
-      key_length,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_export_welcome_secretPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_mls_group_config>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Uint32,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_export_welcome_secret',
-      );
-  late final _wire__crate__api__engine__MlsEngine_export_welcome_secret =
-      _wire__crate__api__engine__MlsEngine_export_welcome_secretPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_mls_group_config>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_prim_u_8_strict>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
@@ -2889,160 +1510,6 @@ class RustLibWire implements BaseWire {
             )
           >();
 
-  void wire__crate__api__engine__MlsEngine_get_past_resumption_psk(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    int epoch,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_get_past_resumption_psk(
-      port_,
-      that,
-      group_id_bytes,
-      epoch,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_get_past_resumption_pskPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Uint64,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_get_past_resumption_psk',
-      );
-  late final _wire__crate__api__engine__MlsEngine_get_past_resumption_psk =
-      _wire__crate__api__engine__MlsEngine_get_past_resumption_pskPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              int,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_group_ciphersuite(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_group_ciphersuite(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_group_ciphersuitePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_group_ciphersuite');
-  late final _wire__crate__api__engine__MlsEngine_group_ciphersuite =
-      _wire__crate__api__engine__MlsEngine_group_ciphersuitePtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
-  void wire__crate__api__engine__MlsEngine_group_configuration(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_group_configuration(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_group_configurationPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_group_configuration',
-      );
-  late final _wire__crate__api__engine__MlsEngine_group_configuration =
-      _wire__crate__api__engine__MlsEngine_group_configurationPtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
-  void wire__crate__api__engine__MlsEngine_group_confirmation_tag(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_group_confirmation_tag(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_group_confirmation_tagPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_group_confirmation_tag',
-      );
-  late final _wire__crate__api__engine__MlsEngine_group_confirmation_tag =
-      _wire__crate__api__engine__MlsEngine_group_confirmation_tagPtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
-  void wire__crate__api__engine__MlsEngine_group_credential(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_group_credential(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_group_credentialPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_group_credential');
-  late final _wire__crate__api__engine__MlsEngine_group_credential =
-      _wire__crate__api__engine__MlsEngine_group_credentialPtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
   void wire__crate__api__engine__MlsEngine_group_epoch(
     int port_,
     int that,
@@ -3067,122 +1534,6 @@ class RustLibWire implements BaseWire {
       >('frbgen_openmls_wire__crate__api__engine__MlsEngine_group_epoch');
   late final _wire__crate__api__engine__MlsEngine_group_epoch =
       _wire__crate__api__engine__MlsEngine_group_epochPtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
-  void wire__crate__api__engine__MlsEngine_group_epoch_authenticator(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_group_epoch_authenticator(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_group_epoch_authenticatorPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_group_epoch_authenticator',
-      );
-  late final _wire__crate__api__engine__MlsEngine_group_epoch_authenticator =
-      _wire__crate__api__engine__MlsEngine_group_epoch_authenticatorPtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
-  void wire__crate__api__engine__MlsEngine_group_extensions(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_group_extensions(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_group_extensionsPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_group_extensions');
-  late final _wire__crate__api__engine__MlsEngine_group_extensions =
-      _wire__crate__api__engine__MlsEngine_group_extensionsPtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
-  void wire__crate__api__engine__MlsEngine_group_has_pending_proposals(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_group_has_pending_proposals(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_group_has_pending_proposalsPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_group_has_pending_proposals',
-      );
-  late final _wire__crate__api__engine__MlsEngine_group_has_pending_proposals =
-      _wire__crate__api__engine__MlsEngine_group_has_pending_proposalsPtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
-  void wire__crate__api__engine__MlsEngine_group_id(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_group_id(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_group_idPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_group_id');
-  late final _wire__crate__api__engine__MlsEngine_group_id =
-      _wire__crate__api__engine__MlsEngine_group_idPtr
           .asFunction<
             void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
           >();
@@ -3215,80 +1566,6 @@ class RustLibWire implements BaseWire {
             void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
           >();
 
-  void wire__crate__api__engine__MlsEngine_group_member_at(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    int leaf_index,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_group_member_at(
-      port_,
-      that,
-      group_id_bytes,
-      leaf_index,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_group_member_atPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Uint32,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_group_member_at');
-  late final _wire__crate__api__engine__MlsEngine_group_member_at =
-      _wire__crate__api__engine__MlsEngine_group_member_atPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              int,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_group_member_leaf_index(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> credential_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_group_member_leaf_index(
-      port_,
-      that,
-      group_id_bytes,
-      credential_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_group_member_leaf_indexPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_group_member_leaf_index',
-      );
-  late final _wire__crate__api__engine__MlsEngine_group_member_leaf_index =
-      _wire__crate__api__engine__MlsEngine_group_member_leaf_indexPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
-
   void wire__crate__api__engine__MlsEngine_group_members(
     int port_,
     int that,
@@ -3315,200 +1592,6 @@ class RustLibWire implements BaseWire {
       _wire__crate__api__engine__MlsEngine_group_membersPtr
           .asFunction<
             void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
-  void wire__crate__api__engine__MlsEngine_group_own_index(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_group_own_index(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_group_own_indexPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_group_own_index');
-  late final _wire__crate__api__engine__MlsEngine_group_own_index =
-      _wire__crate__api__engine__MlsEngine_group_own_indexPtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
-  void wire__crate__api__engine__MlsEngine_group_own_leaf_node(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_group_own_leaf_node(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_group_own_leaf_nodePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_group_own_leaf_node',
-      );
-  late final _wire__crate__api__engine__MlsEngine_group_own_leaf_node =
-      _wire__crate__api__engine__MlsEngine_group_own_leaf_nodePtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
-  void wire__crate__api__engine__MlsEngine_group_pending_proposals(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_group_pending_proposals(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_group_pending_proposalsPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_group_pending_proposals',
-      );
-  late final _wire__crate__api__engine__MlsEngine_group_pending_proposals =
-      _wire__crate__api__engine__MlsEngine_group_pending_proposalsPtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
-  void wire__crate__api__engine__MlsEngine_inspect_welcome(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_mls_group_config> config,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> welcome_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_inspect_welcome(
-      port_,
-      that,
-      config,
-      welcome_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_inspect_welcomePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_mls_group_config>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_inspect_welcome');
-  late final _wire__crate__api__engine__MlsEngine_inspect_welcome =
-      _wire__crate__api__engine__MlsEngine_inspect_welcomePtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_mls_group_config>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
-
-  WireSyncRust2DartDco wire__crate__api__engine__MlsEngine_is_closed(int that) {
-    return _wire__crate__api__engine__MlsEngine_is_closed(that);
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_is_closedPtr =
-      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_is_closed',
-      );
-  late final _wire__crate__api__engine__MlsEngine_is_closed =
-      _wire__crate__api__engine__MlsEngine_is_closedPtr
-          .asFunction<WireSyncRust2DartDco Function(int)>();
-
-  void wire__crate__api__engine__MlsEngine_join_group_external_commit(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_mls_group_config> config,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_info_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> ratchet_tree_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> credential_identity,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_public_key,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> credential_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_join_group_external_commit(
-      port_,
-      that,
-      config,
-      group_info_bytes,
-      ratchet_tree_bytes,
-      signer_bytes,
-      credential_identity,
-      signer_public_key,
-      credential_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_join_group_external_commitPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_mls_group_config>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_join_group_external_commit',
-      );
-  late final _wire__crate__api__engine__MlsEngine_join_group_external_commit =
-      _wire__crate__api__engine__MlsEngine_join_group_external_commitPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_mls_group_config>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-            )
           >();
 
   void wire__crate__api__engine__MlsEngine_join_group_external_commit_v2(
@@ -3577,176 +1660,6 @@ class RustLibWire implements BaseWire {
             )
           >();
 
-  void wire__crate__api__engine__MlsEngine_join_group_from_welcome(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_mls_group_config> config,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> welcome_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> ratchet_tree_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_join_group_from_welcome(
-      port_,
-      that,
-      config,
-      welcome_bytes,
-      ratchet_tree_bytes,
-      signer_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_join_group_from_welcomePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_mls_group_config>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_join_group_from_welcome',
-      );
-  late final _wire__crate__api__engine__MlsEngine_join_group_from_welcome =
-      _wire__crate__api__engine__MlsEngine_join_group_from_welcomePtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_mls_group_config>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_join_group_from_welcome_with_options(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_mls_group_config> config,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> welcome_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> ratchet_tree_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    bool skip_lifetime_validation,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_join_group_from_welcome_with_options(
-      port_,
-      that,
-      config,
-      welcome_bytes,
-      ratchet_tree_bytes,
-      signer_bytes,
-      skip_lifetime_validation,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_join_group_from_welcome_with_optionsPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_mls_group_config>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Bool,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_join_group_from_welcome_with_options',
-      );
-  late final _wire__crate__api__engine__MlsEngine_join_group_from_welcome_with_options =
-      _wire__crate__api__engine__MlsEngine_join_group_from_welcome_with_optionsPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_mls_group_config>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              bool,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_leave_group(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_leave_group(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_leave_groupPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_leave_group');
-  late final _wire__crate__api__engine__MlsEngine_leave_group =
-      _wire__crate__api__engine__MlsEngine_leave_groupPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_leave_group_via_self_remove(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_leave_group_via_self_remove(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_leave_group_via_self_removePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_leave_group_via_self_remove',
-      );
-  late final _wire__crate__api__engine__MlsEngine_leave_group_via_self_remove =
-      _wire__crate__api__engine__MlsEngine_leave_group_via_self_removePtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
-
   void wire__crate__api__engine__MlsEngine_merge_pending_commit(
     int port_,
     int that,
@@ -3773,36 +1686,6 @@ class RustLibWire implements BaseWire {
       );
   late final _wire__crate__api__engine__MlsEngine_merge_pending_commit =
       _wire__crate__api__engine__MlsEngine_merge_pending_commitPtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
-  void wire__crate__api__engine__MlsEngine_past_epoch_deletion_policy(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_past_epoch_deletion_policy(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_past_epoch_deletion_policyPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_past_epoch_deletion_policy',
-      );
-  late final _wire__crate__api__engine__MlsEngine_past_epoch_deletion_policy =
-      _wire__crate__api__engine__MlsEngine_past_epoch_deletion_policyPtr
           .asFunction<
             void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
           >();
@@ -3837,841 +1720,6 @@ class RustLibWire implements BaseWire {
           .asFunction<
             void Function(
               int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_process_message_with_inspect(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> message_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_process_message_with_inspect(
-      port_,
-      that,
-      group_id_bytes,
-      message_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_process_message_with_inspectPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_process_message_with_inspect',
-      );
-  late final _wire__crate__api__engine__MlsEngine_process_message_with_inspect =
-      _wire__crate__api__engine__MlsEngine_process_message_with_inspectPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_propose_add(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> key_package_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_propose_add(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-      key_package_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_propose_addPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_propose_add');
-  late final _wire__crate__api__engine__MlsEngine_propose_add =
-      _wire__crate__api__engine__MlsEngine_propose_addPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_propose_custom_proposal(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    int proposal_type,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> payload,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_propose_custom_proposal(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-      proposal_type,
-      payload,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_propose_custom_proposalPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Uint16,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_propose_custom_proposal',
-      );
-  late final _wire__crate__api__engine__MlsEngine_propose_custom_proposal =
-      _wire__crate__api__engine__MlsEngine_propose_custom_proposalPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_propose_external_psk(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> psk_id,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> psk_nonce,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_propose_external_psk(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-      psk_id,
-      psk_nonce,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_propose_external_pskPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_propose_external_psk',
-      );
-  late final _wire__crate__api__engine__MlsEngine_propose_external_psk =
-      _wire__crate__api__engine__MlsEngine_propose_external_pskPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_propose_group_context_extensions(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_mls_extension> extensions,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_propose_group_context_extensions(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-      extensions,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_propose_group_context_extensionsPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_mls_extension>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_propose_group_context_extensions',
-      );
-  late final _wire__crate__api__engine__MlsEngine_propose_group_context_extensions =
-      _wire__crate__api__engine__MlsEngine_propose_group_context_extensionsPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_mls_extension>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_propose_remove(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    int member_index,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_propose_remove(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-      member_index,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_propose_removePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Uint32,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_propose_remove');
-  late final _wire__crate__api__engine__MlsEngine_propose_remove =
-      _wire__crate__api__engine__MlsEngine_propose_removePtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              int,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_propose_remove_member_by_credential(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> credential_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_propose_remove_member_by_credential(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-      credential_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_propose_remove_member_by_credentialPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_propose_remove_member_by_credential',
-      );
-  late final _wire__crate__api__engine__MlsEngine_propose_remove_member_by_credential =
-      _wire__crate__api__engine__MlsEngine_propose_remove_member_by_credentialPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_propose_self_update(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_mls_capabilities> leaf_node_capabilities,
-    ffi.Pointer<wire_cst_list_mls_extension> leaf_node_extensions,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_propose_self_update(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-      leaf_node_capabilities,
-      leaf_node_extensions,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_propose_self_updatePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_mls_capabilities>,
-            ffi.Pointer<wire_cst_list_mls_extension>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_propose_self_update',
-      );
-  late final _wire__crate__api__engine__MlsEngine_propose_self_update =
-      _wire__crate__api__engine__MlsEngine_propose_self_updatePtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_mls_capabilities>,
-              ffi.Pointer<wire_cst_list_mls_extension>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_propose_self_update_with_new_signer(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> old_signer_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> new_signer_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> new_credential_identity,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> new_signer_public_key,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> new_credential_bytes,
-    ffi.Pointer<wire_cst_mls_capabilities> leaf_node_capabilities,
-    ffi.Pointer<wire_cst_list_mls_extension> leaf_node_extensions,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_propose_self_update_with_new_signer(
-      port_,
-      that,
-      group_id_bytes,
-      old_signer_bytes,
-      new_signer_bytes,
-      new_credential_identity,
-      new_signer_public_key,
-      new_credential_bytes,
-      leaf_node_capabilities,
-      leaf_node_extensions,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_propose_self_update_with_new_signerPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-            ffi.Pointer<wire_cst_mls_capabilities>,
-            ffi.Pointer<wire_cst_list_mls_extension>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_propose_self_update_with_new_signer',
-      );
-  late final _wire__crate__api__engine__MlsEngine_propose_self_update_with_new_signer =
-      _wire__crate__api__engine__MlsEngine_propose_self_update_with_new_signerPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-              ffi.Pointer<wire_cst_mls_capabilities>,
-              ffi.Pointer<wire_cst_list_mls_extension>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_remove_members(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_32_loose> member_indices,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_remove_members(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-      member_indices,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_remove_membersPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_32_loose>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_remove_members');
-  late final _wire__crate__api__engine__MlsEngine_remove_members =
-      _wire__crate__api__engine__MlsEngine_remove_membersPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_32_loose>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_remove_pending_proposal(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> proposal_ref_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_remove_pending_proposal(
-      port_,
-      that,
-      group_id_bytes,
-      proposal_ref_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_remove_pending_proposalPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_remove_pending_proposal',
-      );
-  late final _wire__crate__api__engine__MlsEngine_remove_pending_proposal =
-      _wire__crate__api__engine__MlsEngine_remove_pending_proposalPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
-
-  WireSyncRust2DartDco wire__crate__api__engine__MlsEngine_schema_version(
-    int that,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_schema_version(that);
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_schema_versionPtr =
-      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_schema_version',
-      );
-  late final _wire__crate__api__engine__MlsEngine_schema_version =
-      _wire__crate__api__engine__MlsEngine_schema_versionPtr
-          .asFunction<WireSyncRust2DartDco Function(int)>();
-
-  void wire__crate__api__engine__MlsEngine_self_update(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_self_update(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_self_updatePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_self_update');
-  late final _wire__crate__api__engine__MlsEngine_self_update =
-      _wire__crate__api__engine__MlsEngine_self_updatePtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_self_update_with_new_signer(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> old_signer_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> new_signer_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> new_credential_identity,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> new_signer_public_key,
-    ffi.Pointer<wire_cst_list_prim_u_8_strict> new_credential_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_self_update_with_new_signer(
-      port_,
-      that,
-      group_id_bytes,
-      old_signer_bytes,
-      new_signer_bytes,
-      new_credential_identity,
-      new_signer_public_key,
-      new_credential_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_self_update_with_new_signerPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_self_update_with_new_signer',
-      );
-  late final _wire__crate__api__engine__MlsEngine_self_update_with_new_signer =
-      _wire__crate__api__engine__MlsEngine_self_update_with_new_signerPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_strict>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_set_configuration(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_mls_group_config> config,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_set_configuration(
-      port_,
-      that,
-      group_id_bytes,
-      config,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_set_configurationPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_mls_group_config>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_set_configuration');
-  late final _wire__crate__api__engine__MlsEngine_set_configuration =
-      _wire__crate__api__engine__MlsEngine_set_configurationPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_mls_group_config>,
-            )
-          >();
-
-  void
-  wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_keep_all(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_keep_all(
-      port_,
-      that,
-      group_id_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_keep_allPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_keep_all',
-      );
-  late final _wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_keep_all =
-      _wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_keep_allPtr
-          .asFunction<
-            void Function(int, int, ffi.Pointer<wire_cst_list_prim_u_8_loose>)
-          >();
-
-  void
-  wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_max_epochs(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    int max_epochs,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_max_epochs(
-      port_,
-      that,
-      group_id_bytes,
-      max_epochs,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_max_epochsPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Uint32,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_max_epochs',
-      );
-  late final _wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_max_epochs =
-      _wire__crate__api__engine__MlsEngine_set_past_epoch_deletion_policy_max_epochsPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              int,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_swap_members(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_32_loose> remove_indices,
-    ffi.Pointer<wire_cst_list_list_prim_u_8_strict> add_key_packages_bytes,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_swap_members(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-      remove_indices,
-      add_key_packages_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_swap_membersPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_32_loose>,
-            ffi.Pointer<wire_cst_list_list_prim_u_8_strict>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__MlsEngine_swap_members');
-  late final _wire__crate__api__engine__MlsEngine_swap_members =
-      _wire__crate__api__engine__MlsEngine_swap_membersPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_32_loose>,
-              ffi.Pointer<wire_cst_list_list_prim_u_8_strict>,
-            )
-          >();
-
-  void wire__crate__api__engine__MlsEngine_update_group_context_extensions(
-    int port_,
-    int that,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> group_id_bytes,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> signer_bytes,
-    ffi.Pointer<wire_cst_list_mls_extension> extensions,
-  ) {
-    return _wire__crate__api__engine__MlsEngine_update_group_context_extensions(
-      port_,
-      that,
-      group_id_bytes,
-      signer_bytes,
-      extensions,
-    );
-  }
-
-  late final _wire__crate__api__engine__MlsEngine_update_group_context_extensionsPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Void Function(
-            ffi.Int64,
-            ffi.UintPtr,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_mls_extension>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__MlsEngine_update_group_context_extensions',
-      );
-  late final _wire__crate__api__engine__MlsEngine_update_group_context_extensions =
-      _wire__crate__api__engine__MlsEngine_update_group_context_extensionsPtr
-          .asFunction<
-            void Function(
-              int,
-              int,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-              ffi.Pointer<wire_cst_list_mls_extension>,
-            )
-          >();
-
-  WireSyncRust2DartDco
-  wire__crate__api__keys__MlsSignatureKeyPair_deserialize_public(
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> bytes,
-  ) {
-    return _wire__crate__api__keys__MlsSignatureKeyPair_deserialize_public(
-      bytes,
-    );
-  }
-
-  late final _wire__crate__api__keys__MlsSignatureKeyPair_deserialize_publicPtr =
-      _lookup<
-        ffi.NativeFunction<
-          WireSyncRust2DartDco Function(
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__keys__MlsSignatureKeyPair_deserialize_public',
-      );
-  late final _wire__crate__api__keys__MlsSignatureKeyPair_deserialize_public =
-      _wire__crate__api__keys__MlsSignatureKeyPair_deserialize_publicPtr
-          .asFunction<
-            WireSyncRust2DartDco Function(
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
-
-  WireSyncRust2DartDco wire__crate__api__keys__MlsSignatureKeyPair_from_raw(
-    int ciphersuite,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> private_key,
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> public_key,
-  ) {
-    return _wire__crate__api__keys__MlsSignatureKeyPair_from_raw(
-      ciphersuite,
-      private_key,
-      public_key,
-    );
-  }
-
-  late final _wire__crate__api__keys__MlsSignatureKeyPair_from_rawPtr =
-      _lookup<
-        ffi.NativeFunction<
-          WireSyncRust2DartDco Function(
-            ffi.Int32,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__keys__MlsSignatureKeyPair_from_raw');
-  late final _wire__crate__api__keys__MlsSignatureKeyPair_from_raw =
-      _wire__crate__api__keys__MlsSignatureKeyPair_from_rawPtr
-          .asFunction<
-            WireSyncRust2DartDco Function(
               int,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
@@ -4720,55 +1768,6 @@ class RustLibWire implements BaseWire {
       _wire__crate__api__keys__MlsSignatureKeyPair_public_keyPtr
           .asFunction<WireSyncRust2DartDco Function(int)>();
 
-  WireSyncRust2DartDco wire__crate__api__keys__MlsSignatureKeyPair_serialize(
-    int that,
-  ) {
-    return _wire__crate__api__keys__MlsSignatureKeyPair_serialize(that);
-  }
-
-  late final _wire__crate__api__keys__MlsSignatureKeyPair_serializePtr =
-      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
-        'frbgen_openmls_wire__crate__api__keys__MlsSignatureKeyPair_serialize',
-      );
-  late final _wire__crate__api__keys__MlsSignatureKeyPair_serialize =
-      _wire__crate__api__keys__MlsSignatureKeyPair_serializePtr
-          .asFunction<WireSyncRust2DartDco Function(int)>();
-
-  WireSyncRust2DartDco
-  wire__crate__api__keys__MlsSignatureKeyPair_signature_scheme(int that) {
-    return _wire__crate__api__keys__MlsSignatureKeyPair_signature_scheme(that);
-  }
-
-  late final _wire__crate__api__keys__MlsSignatureKeyPair_signature_schemePtr =
-      _lookup<ffi.NativeFunction<WireSyncRust2DartDco Function(ffi.UintPtr)>>(
-        'frbgen_openmls_wire__crate__api__keys__MlsSignatureKeyPair_signature_scheme',
-      );
-  late final _wire__crate__api__keys__MlsSignatureKeyPair_signature_scheme =
-      _wire__crate__api__keys__MlsSignatureKeyPair_signature_schemePtr
-          .asFunction<WireSyncRust2DartDco Function(int)>();
-
-  WireSyncRust2DartDco wire__crate__api__engine__check_lifetime_at(
-    int not_before,
-    int not_after,
-    int now_unix_seconds,
-  ) {
-    return _wire__crate__api__engine__check_lifetime_at(
-      not_before,
-      not_after,
-      now_unix_seconds,
-    );
-  }
-
-  late final _wire__crate__api__engine__check_lifetime_atPtr =
-      _lookup<
-        ffi.NativeFunction<
-          WireSyncRust2DartDco Function(ffi.Uint64, ffi.Uint64, ffi.Uint64)
-        >
-      >('frbgen_openmls_wire__crate__api__engine__check_lifetime_at');
-  late final _wire__crate__api__engine__check_lifetime_at =
-      _wire__crate__api__engine__check_lifetime_atPtr
-          .asFunction<WireSyncRust2DartDco Function(int, int, int)>();
-
   WireSyncRust2DartDco wire__crate__api__init__init_openmls(
     ffi.Pointer<wire_cst_list_prim_u_8_strict> _library_path,
   ) {
@@ -4802,28 +1801,6 @@ class RustLibWire implements BaseWire {
   late final _wire__crate__api__init__is_openmls_initialized =
       _wire__crate__api__init__is_openmls_initializedPtr
           .asFunction<WireSyncRust2DartDco Function()>();
-
-  WireSyncRust2DartDco wire__crate__api__engine__key_package_lifetime(
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> key_package_bytes,
-  ) {
-    return _wire__crate__api__engine__key_package_lifetime(key_package_bytes);
-  }
-
-  late final _wire__crate__api__engine__key_package_lifetimePtr =
-      _lookup<
-        ffi.NativeFunction<
-          WireSyncRust2DartDco Function(
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >('frbgen_openmls_wire__crate__api__engine__key_package_lifetime');
-  late final _wire__crate__api__engine__key_package_lifetime =
-      _wire__crate__api__engine__key_package_lifetimePtr
-          .asFunction<
-            WireSyncRust2DartDco Function(
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
 
   WireSyncRust2DartDco
   wire__crate__api__config__mls_group_config_default_config(int ciphersuite) {
@@ -4878,32 +1855,6 @@ class RustLibWire implements BaseWire {
       >('frbgen_openmls_wire__crate__api__engine__mls_message_extract_epoch');
   late final _wire__crate__api__engine__mls_message_extract_epoch =
       _wire__crate__api__engine__mls_message_extract_epochPtr
-          .asFunction<
-            WireSyncRust2DartDco Function(
-              ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-            )
-          >();
-
-  WireSyncRust2DartDco wire__crate__api__engine__mls_message_extract_group_id(
-    ffi.Pointer<wire_cst_list_prim_u_8_loose> message_bytes,
-  ) {
-    return _wire__crate__api__engine__mls_message_extract_group_id(
-      message_bytes,
-    );
-  }
-
-  late final _wire__crate__api__engine__mls_message_extract_group_idPtr =
-      _lookup<
-        ffi.NativeFunction<
-          WireSyncRust2DartDco Function(
-            ffi.Pointer<wire_cst_list_prim_u_8_loose>,
-          )
-        >
-      >(
-        'frbgen_openmls_wire__crate__api__engine__mls_message_extract_group_id',
-      );
-  late final _wire__crate__api__engine__mls_message_extract_group_id =
-      _wire__crate__api__engine__mls_message_extract_group_idPtr
           .asFunction<
             WireSyncRust2DartDco Function(
               ffi.Pointer<wire_cst_list_prim_u_8_loose>,
@@ -5073,19 +2024,6 @@ class RustLibWire implements BaseWire {
             ffi.Pointer<wire_cst_flexible_commit_options> Function()
           >();
 
-  ffi.Pointer<wire_cst_key_package_options>
-  cst_new_box_autoadd_key_package_options() {
-    return _cst_new_box_autoadd_key_package_options();
-  }
-
-  late final _cst_new_box_autoadd_key_package_optionsPtr =
-      _lookup<
-        ffi.NativeFunction<ffi.Pointer<wire_cst_key_package_options> Function()>
-      >('frbgen_openmls_cst_new_box_autoadd_key_package_options');
-  late final _cst_new_box_autoadd_key_package_options =
-      _cst_new_box_autoadd_key_package_optionsPtr
-          .asFunction<ffi.Pointer<wire_cst_key_package_options> Function()>();
-
   ffi.Pointer<wire_cst_mls_capabilities>
   cst_new_box_autoadd_mls_capabilities() {
     return _cst_new_box_autoadd_mls_capabilities();
@@ -5112,18 +2050,6 @@ class RustLibWire implements BaseWire {
       _cst_new_box_autoadd_mls_group_configPtr
           .asFunction<ffi.Pointer<wire_cst_mls_group_config> Function()>();
 
-  ffi.Pointer<wire_cst_mls_member_info> cst_new_box_autoadd_mls_member_info() {
-    return _cst_new_box_autoadd_mls_member_info();
-  }
-
-  late final _cst_new_box_autoadd_mls_member_infoPtr =
-      _lookup<
-        ffi.NativeFunction<ffi.Pointer<wire_cst_mls_member_info> Function()>
-      >('frbgen_openmls_cst_new_box_autoadd_mls_member_info');
-  late final _cst_new_box_autoadd_mls_member_info =
-      _cst_new_box_autoadd_mls_member_infoPtr
-          .asFunction<ffi.Pointer<wire_cst_mls_member_info> Function()>();
-
   ffi.Pointer<ffi.Int32> cst_new_box_autoadd_mls_proposal_type(int value) {
     return _cst_new_box_autoadd_mls_proposal_type(value);
   }
@@ -5135,19 +2061,6 @@ class RustLibWire implements BaseWire {
   late final _cst_new_box_autoadd_mls_proposal_type =
       _cst_new_box_autoadd_mls_proposal_typePtr
           .asFunction<ffi.Pointer<ffi.Int32> Function(int)>();
-
-  ffi.Pointer<wire_cst_staged_commit_info>
-  cst_new_box_autoadd_staged_commit_info() {
-    return _cst_new_box_autoadd_staged_commit_info();
-  }
-
-  late final _cst_new_box_autoadd_staged_commit_infoPtr =
-      _lookup<
-        ffi.NativeFunction<ffi.Pointer<wire_cst_staged_commit_info> Function()>
-      >('frbgen_openmls_cst_new_box_autoadd_staged_commit_info');
-  late final _cst_new_box_autoadd_staged_commit_info =
-      _cst_new_box_autoadd_staged_commit_infoPtr
-          .asFunction<ffi.Pointer<wire_cst_staged_commit_info> Function()>();
 
   ffi.Pointer<ffi.Uint32> cst_new_box_autoadd_u_32(int value) {
     return _cst_new_box_autoadd_u_32(value);
@@ -5231,25 +2144,6 @@ class RustLibWire implements BaseWire {
   late final _cst_new_list_mls_member_info = _cst_new_list_mls_member_infoPtr
       .asFunction<ffi.Pointer<wire_cst_list_mls_member_info> Function(int)>();
 
-  ffi.Pointer<wire_cst_list_mls_pending_proposal_info>
-  cst_new_list_mls_pending_proposal_info(int len) {
-    return _cst_new_list_mls_pending_proposal_info(len);
-  }
-
-  late final _cst_new_list_mls_pending_proposal_infoPtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Pointer<wire_cst_list_mls_pending_proposal_info> Function(
-            ffi.Int32,
-          )
-        >
-      >('frbgen_openmls_cst_new_list_mls_pending_proposal_info');
-  late final _cst_new_list_mls_pending_proposal_info =
-      _cst_new_list_mls_pending_proposal_infoPtr
-          .asFunction<
-            ffi.Pointer<wire_cst_list_mls_pending_proposal_info> Function(int)
-          >();
-
   ffi.Pointer<wire_cst_list_prim_u_16_strict> cst_new_list_prim_u_16_strict(
     int len,
   ) {
@@ -5264,21 +2158,6 @@ class RustLibWire implements BaseWire {
       >('frbgen_openmls_cst_new_list_prim_u_16_strict');
   late final _cst_new_list_prim_u_16_strict = _cst_new_list_prim_u_16_strictPtr
       .asFunction<ffi.Pointer<wire_cst_list_prim_u_16_strict> Function(int)>();
-
-  ffi.Pointer<wire_cst_list_prim_u_32_loose> cst_new_list_prim_u_32_loose(
-    int len,
-  ) {
-    return _cst_new_list_prim_u_32_loose(len);
-  }
-
-  late final _cst_new_list_prim_u_32_loosePtr =
-      _lookup<
-        ffi.NativeFunction<
-          ffi.Pointer<wire_cst_list_prim_u_32_loose> Function(ffi.Int32)
-        >
-      >('frbgen_openmls_cst_new_list_prim_u_32_loose');
-  late final _cst_new_list_prim_u_32_loose = _cst_new_list_prim_u_32_loosePtr
-      .asFunction<ffi.Pointer<wire_cst_list_prim_u_32_loose> Function(int)>();
 
   ffi.Pointer<wire_cst_list_prim_u_32_strict> cst_new_list_prim_u_32_strict(
     int len,
@@ -5360,13 +2239,6 @@ final class wire_cst_list_prim_u_8_strict extends ffi.Struct {
   external int len;
 }
 
-final class wire_cst_list_list_prim_u_8_strict extends ffi.Struct {
-  external ffi.Pointer<ffi.Pointer<wire_cst_list_prim_u_8_strict>> ptr;
-
-  @ffi.Int32()
-  external int len;
-}
-
 final class wire_cst_mls_group_config extends ffi.Struct {
   @ffi.Int32()
   external int ciphersuite;
@@ -5426,17 +2298,11 @@ final class wire_cst_mls_capabilities extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_16_strict> credentials;
 }
 
-final class wire_cst_key_package_options extends ffi.Struct {
-  external ffi.Pointer<ffi.Uint64> lifetime_seconds;
+final class wire_cst_list_list_prim_u_8_strict extends ffi.Struct {
+  external ffi.Pointer<ffi.Pointer<wire_cst_list_prim_u_8_strict>> ptr;
 
-  @ffi.Bool()
-  external bool last_resort;
-
-  external ffi.Pointer<wire_cst_mls_capabilities> capabilities;
-
-  external ffi.Pointer<wire_cst_list_mls_extension> leaf_node_extensions;
-
-  external ffi.Pointer<wire_cst_list_mls_extension> key_package_extensions;
+  @ffi.Int32()
+  external int len;
 }
 
 final class wire_cst_list_prim_u_32_strict extends ffi.Struct {
@@ -5468,8 +2334,8 @@ final class wire_cst_flexible_commit_options extends ffi.Struct {
   external bool use_ratchet_tree_extension;
 }
 
-final class wire_cst_list_prim_u_32_loose extends ffi.Struct {
-  external ffi.Pointer<ffi.Uint32> ptr;
+final class wire_cst_list_mls_ciphersuite extends ffi.Struct {
+  external ffi.Pointer<ffi.Int32> ptr;
 
   @ffi.Int32()
   external int len;
@@ -5484,55 +2350,11 @@ final class wire_cst_mls_member_info extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> signature_key;
 }
 
-final class wire_cst_staged_commit_info extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_list_prim_u_8_strict> add_credentials;
-
-  external ffi.Pointer<wire_cst_list_prim_u_32_strict> remove_indices;
-
-  @ffi.Bool()
-  external bool has_update;
-
-  @ffi.Bool()
-  external bool self_removed;
-
-  @ffi.Uint32()
-  external int psk_count;
-}
-
-final class wire_cst_list_mls_ciphersuite extends ffi.Struct {
-  external ffi.Pointer<ffi.Int32> ptr;
-
-  @ffi.Int32()
-  external int len;
-}
-
 final class wire_cst_list_mls_member_info extends ffi.Struct {
   external ffi.Pointer<wire_cst_mls_member_info> ptr;
 
   @ffi.Int32()
   external int len;
-}
-
-final class wire_cst_mls_pending_proposal_info extends ffi.Struct {
-  @ffi.Int32()
-  external int proposal_type;
-
-  external ffi.Pointer<ffi.Uint32> sender_index;
-}
-
-final class wire_cst_list_mls_pending_proposal_info extends ffi.Struct {
-  external ffi.Pointer<wire_cst_mls_pending_proposal_info> ptr;
-
-  @ffi.Int32()
-  external int len;
-}
-
-final class wire_cst_add_members_result extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> commit;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> welcome;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_info;
 }
 
 final class wire_cst_commit_result extends ffi.Struct {
@@ -5547,112 +2369,12 @@ final class wire_cst_create_group_result extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
 }
 
-final class wire_cst_create_message_result extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> ciphertext;
-}
-
 final class wire_cst_external_join_result extends ffi.Struct {
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
 
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> commit;
 
   external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_info;
-}
-
-final class wire_cst_group_configuration_result extends ffi.Struct {
-  @ffi.Int32()
-  external int ciphersuite;
-
-  @ffi.Int32()
-  external int wire_format_policy;
-
-  @ffi.Uint32()
-  external int padding_size;
-
-  @ffi.Uint32()
-  external int sender_ratchet_max_out_of_order;
-
-  @ffi.Uint32()
-  external int sender_ratchet_max_forward_distance;
-}
-
-final class wire_cst_join_group_result extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
-}
-
-final class wire_cst_key_package_lifetime extends ffi.Struct {
-  @ffi.Uint64()
-  external int not_before;
-
-  @ffi.Uint64()
-  external int not_after;
-}
-
-final class wire_cst_key_package_result extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> key_package_bytes;
-}
-
-final class wire_cst_leave_group_result extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> message;
-}
-
-final class wire_cst_lifetime_verdict extends ffi.Struct {
-  @ffi.Bool()
-  external bool valid;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> reason;
-}
-
-final class wire_cst_mls_group_context_info extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
-
-  @ffi.Uint64()
-  external int epoch;
-
-  @ffi.Int32()
-  external int ciphersuite;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> tree_hash;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> confirmed_transcript_hash;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> extensions;
-}
-
-final class wire_cst_mls_leaf_node_info extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> credential;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> signature_key;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> encryption_key;
-
-  external wire_cst_mls_capabilities capabilities;
-
-  external ffi.Pointer<wire_cst_list_mls_extension> extensions;
-}
-
-final class wire_cst_past_epoch_deletion_policy_result extends ffi.Struct {
-  @ffi.Bool()
-  external bool keep_all;
-
-  @ffi.Uint32()
-  external int max_epochs;
-}
-
-final class wire_cst_processed_message_inspect_result extends ffi.Struct {
-  @ffi.Int32()
-  external int message_type;
-
-  external ffi.Pointer<ffi.Uint32> sender_index;
-
-  @ffi.Uint64()
-  external int epoch;
-
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> application_message;
-
-  external ffi.Pointer<wire_cst_staged_commit_info> staged_commit_info;
-
-  external ffi.Pointer<ffi.Int32> proposal_type;
 }
 
 final class wire_cst_processed_message_result extends ffi.Struct {
@@ -5673,21 +2395,4 @@ final class wire_cst_processed_message_result extends ffi.Struct {
   external bool has_proposal;
 
   external ffi.Pointer<ffi.Int32> proposal_type;
-}
-
-final class wire_cst_proposal_result extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> proposal_message;
-}
-
-final class wire_cst_welcome_inspect_result extends ffi.Struct {
-  external ffi.Pointer<wire_cst_list_prim_u_8_strict> group_id;
-
-  @ffi.Int32()
-  external int ciphersuite;
-
-  @ffi.Uint32()
-  external int psk_count;
-
-  @ffi.Uint64()
-  external int epoch;
 }

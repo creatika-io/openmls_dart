@@ -16,6 +16,8 @@ analyzer:
     # Example apps (separate packages with own analysis_options.yaml)
     - "example/**"
     - "example_cli/**"
+    # Compiles only against bindings generated with the `full-api` Cargo feature.
+    - "test_full_api/**"
 
   errors:
     # Treat unused imports as warnings (useful during development)

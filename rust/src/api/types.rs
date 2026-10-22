@@ -390,8 +390,8 @@ pub(crate) fn extensions_from_mls(exts: &[MlsExtension]) -> Vec<Extension> {
 /// suite `mls128DhkemX25519Aes128GcmSha256Ed25519`. Every entry is covered by a
 /// full group-lifecycle test.
 // The tests are the `*_full_group_lifecycle` tests of the two crypto backends
-// and the per-suite loop in
-// test/group_lifecycle_test.dart. Kept out of the doc comment: FRB copies that
+// and the per-suite loop in test_full_api/group_lifecycle_test.dart. Kept out
+// of the doc comment: FRB copies that
 // into the published Dart API, where a pointer to a private Rust test module is
 // noise for consumers.
 #[flutter_rust_bridge::frb(sync)]

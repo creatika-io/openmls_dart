@@ -41,21 +41,16 @@ void main() {
     dbPath = '${dir.path}/mls.db';
   });
 
-  /// Create a group so the database holds real MLS state, then close.
-  Future<void> writeGroupState(MlsEngine engine, String identity) async {
+  /// Create a group so the database holds real MLS state; returns its id.
+  Future<Uint8List> writeGroupState(MlsEngine engine, String identity) async {
     final id = TestIdentity.create(identity);
-    await engine.createGroup(
+    final created = await engine.createGroupWithBuilder(
       config: defaultConfig(),
       signerBytes: id.signerBytes,
       credentialIdentity: id.credentialIdentity,
       signerPublicKey: id.publicKey,
     );
-    await engine.createKeyPackage(
-      ciphersuite: ciphersuite,
-      signerBytes: id.signerBytes,
-      credentialIdentity: id.credentialIdentity,
-      signerPublicKey: id.publicKey,
-    );
+    return created.groupId;
   }
 
   group('encryption at rest', () {
@@ -85,7 +80,7 @@ void main() {
         dbPath: dbPath,
         encryptionKey: rightKey,
       );
-      await writeGroupState(engine, 'wrong-key-test');
+      final groupId = await writeGroupState(engine, 'wrong-key-test');
       await engine.close();
 
       await expectLater(
@@ -102,7 +97,7 @@ void main() {
         dbPath: dbPath,
         encryptionKey: rightKey,
       );
-      expect(reopened.isClosed(), isFalse);
+      expect(await reopened.groupEpoch(groupIdBytes: groupId), BigInt.zero);
       await reopened.close();
     });
 
@@ -129,7 +124,7 @@ void main() {
     test('a second engine on the same file is refused', () async {
       final key = testEncryptionKey();
       final first = await MlsEngine.create(dbPath: dbPath, encryptionKey: key);
-      await writeGroupState(first, 'single-writer');
+      final groupId = await writeGroupState(first, 'single-writer');
 
       await expectLater(
         MlsEngine.create(dbPath: dbPath, encryptionKey: key),
@@ -141,7 +136,7 @@ void main() {
       // Closing the first engine hands the file over.
       await first.close();
       final second = await MlsEngine.create(dbPath: dbPath, encryptionKey: key);
-      expect(second.isClosed(), isFalse);
+      expect(await second.groupEpoch(groupIdBytes: groupId), BigInt.zero);
       await second.close();
     });
 
