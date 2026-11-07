@@ -39,7 +39,7 @@
   regenerated with `flutter_rust_bridge` 2.14.0-beta.2, a prerelease.
 - **openmls v0.9.2** — fixes GHSA-94v4-rg25-x625 and GHSA-p276-g3f3-wwgh,
   alongside the previous 0.9.1 fix.
-- **openmls_frb v3.0.0** — Rust FFI bindings
+- **openmls_frb v3.1.0** — Rust FFI bindings
 
 #### Changed (Breaking)
 
