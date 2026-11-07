@@ -61,6 +61,18 @@ and `test-reusable.yml`, together — a gate on a different tool than the releas
 is not a gate), and `make verify-android-alignment` measures the result rather
 than trusting the pin. Both jobs run it.
 
+⚠ **The Apple libraries are linked with `-headerpad_max_install_names`, by
+`rust/build.rs`.** `dart run`, `dart test` and `flutter test` copy the dylib into
+the consuming project and rewrite its install name to the copy's absolute path;
+without the flag the header has room for a path of about 180 characters, and the
+rewrite fails beyond it ("larger updated load commands do not fit"). A build
+script and not `rust/.cargo/config.toml`, because `make build` runs cargo from
+the repository root, where that file is not read — the trap the wasm32 lint
+below works around with `cd rust` — and a `RUSTFLAGS` in the environment would
+replace it. `make verify-release-artifacts` refuses a Mach-O library with room
+for fewer than 1,024 characters, so a lost flag fails the release rather than a
+consumer's build.
+
 ⚠ **`make build-web` stamps `rust/target/wasm32/.crate-version`, and the build
 hook REFUSES a local WASM build whose stamp is missing or disagrees with
 `rust/Cargo.toml`** — `HookException` and a stopped build, not a silent
@@ -77,6 +89,30 @@ in both directions with the content unchanged.
 rejected.** That is the intended answer rather than a regression, and it is what
 the first web build after adopting this looks like: run `make build-web`, or
 delete the directory to use the released module instead.
+
+⚠ **`make build` stamps the host library the same way, in
+`rust/target/release/.crate-version`, and the hook refuses a local host
+library whose stamp is missing or disagrees** — the same `HookException`, for
+the same reason: a library left over from an earlier crate loads silently, and
+once the way values cross the bridge has moved, its calls fail in ways nothing
+names. Only `rust/target/release/` is read; a `--target` build lands in
+`rust/target/<triple>/`, is never read and gets no stamp. A library built
+before the stamp existed, or by a bare `cargo build`, is refused: run
+`make build`, or delete `rust/target/release/` to use the released library.
+So after `make release-frb` bumps the crate, `make test` needs a `make build`
+first.
+
+⚠ **Each stamp comes with `.cargo-lock`, a copy of the `rust/Cargo.lock` the
+build was made from, and the hook refuses a local build whose copy differs from
+the lock file in the tree.** An upstream update moves the dependencies while the
+crate version stays put — the crate moves at release time — so a build made
+before the update used to pass the version check and run the previous upstream
+code. After any change to the lock file, build again; a build from before the
+copy existed is refused the same way. `make build` also drops the hook's cached
+result for this package, `.dart_tool/hooks_runner/openmls/`: when the
+hook last ran without a host build here, it downloaded the released library and
+declared only `rust/Cargo.toml`, so `dart test` kept loading that download after
+the build.
 
 ### Web
 
@@ -136,14 +172,17 @@ revision, the entrypoint, the build mode and the output path — the target
 platform is **not** in that key — so a debug run for macOS and a debug run for
 Chrome share one `dart_build` stamp. Whichever ran first makes the other skip
 the build hook outright (`Skipping target: dart_build`, visible under
-`--verbose`), and `example/web/pkg/` is then never provisioned:
-`RustLib.init()` never completes: flutter_rust_bridge waits for the `load`
-event of `pkg/openmls_frb.js` with no error path or timeout, so a missing
+`--verbose`), and `example/web/pkg/` is then never provisioned: `init()`
+throws a `StateError` naming the missing `pkg/openmls_frb.js`. It checks
+for the module first because flutter_rust_bridge's loader waits for the
+`load` event of that script with no error path or timeout, so a missing
 module (a 404, or the app's HTML page the dev server serves in its place
-with a 200) leaves the call pending. The hook cannot
+with a 200) would leave the call pending. The hook cannot
 declare its way out of it — the skip happens above `hooks_runner`, where
-nothing it declares is read. Consumers of the published package hit the same
-thing; the README's *Known Limitations* names the escapes.
+nothing it declares is read. This is Flutter 3.38 to 3.41 only: from 3.44
+`flutter run` runs build hooks per target platform, outside that stamp.
+Consumers of the published package on those versions hit the same thing; the
+README's *Known Limitations* names the escapes.
 
 
 ### Rust Quality
@@ -241,11 +280,16 @@ make verify-android-alignment     # Check built Android libraries are 16 KB-alig
 make verify-release-artifacts ARGS=<dir>  # Check release archives hold what their names say
 make actionlint                   # Lint the GitHub Actions workflows
 make check-new-openmls-version  # Check for new upstream openmls version
+make check-upstream-advisories    # Check openmls/openmls's published advisories against Cargo.lock
 make check-new-openmls-version ARGS="--update"  # Apply update
 make check-template-updates       # Check for copier template updates
 make update-template ARGS="--version vX.Y.Z"  # Apply a template update (runs copier)
+make update-template ARGS="--version vX.Y.Z --data key=value"  # ...answering a question it adds
 make check-targets                # Check deployment targets (iOS/macOS/Android)
 make check-targets ARGS="--ios --set 14.0"  # Set iOS target everywhere
+make check-msrv                   # Check the minimum Rust version against the graph
+make check-msrv ARGS="--update"   # Raise it everywhere it is stated
+make update-evidence ARGS="--out /tmp/evidence"  # What an upstream update changed
 make update-changelog ARGS="--version X.Y.Z"  # Update CHANGELOG with AI
 make help                         # Show all available commands
 ```
@@ -382,7 +426,7 @@ See `.github/rulesets/README.md`.
 Two different versions live here and neither is in `pubspec.yaml`:
 
 - **The upstream openmls version** is the crates.io version
-  `rust/Cargo.toml` pins `openmls` to — exactly, `"=0.9.1"`, on both
+  `rust/Cargo.toml` pins `openmls` to — exactly, `"=0.9.2"`, on both
   declarations of it (the second is the `wasm32` target table). The other four
   openmls crates are at the requirement that release itself declares,
   recorded in `upstream_crate_versions` in `.copier-answers.yml`. That is what
@@ -464,6 +508,12 @@ that wrote the entry.
 If no model answers, nothing is guessed: the entry is left unwritten, the run
 says why, and the pull request is labelled `changelog-needed`.
 
+The same run decides whether the update could be merged unread — `mergeEligibilityFrom`
+in `scripts/src/update_changelog.dart` — and the pull request says so under
+*Merge without review?*. It is a report: nothing merges on it yet. The rule is
+strict on purpose: in the crates this package builds only quoted version
+strings may move, so a protocol constant never passes.
+
 ### What the entry is judged against
 
 `.github/agent-prompts/changelog-scope.md` holds this project's own statement of
@@ -505,11 +555,20 @@ described as our features.
   moved by Dependabot — it does not read `cargo install` or `curl` lines — so
   both move by hand
 - Runner images are named by version too: every Ubuntu job runs on
-  `ubuntu-26.04` (`ubuntu-26.04-arm` for arm64), never on `ubuntu-latest`,
-  which GitHub moves to a new image without a commit. The next image is a
-  change of its own, to every label at once, and the Linux release build is
-  the one to measure first: its image sets the oldest glibc a consumer needs
+  `ubuntu-26.04` (`ubuntu-26.04-arm` for arm64), every macOS job on
+  `macos-26` and every Windows job on `windows-2025-vs2026`, never on a
+  `-latest` label, which GitHub moves to a new image without a commit. The
+  next image is a change of its own, to every job on that system at once, and
+  for Linux the release build is the one to measure first: its image sets the
+  oldest glibc a consumer needs
   (`build-openmls.yml`)
+- openmls/openmls's own security advisories are read daily
+  (`make check-upstream-advisories`, a job of `check-openmls-updates.yml`)
+  and held against the crates `rust/Cargo.lock` resolves. `make rust-audit`
+  reads RustSec and Dependabot reads GitHub's global database, and an advisory
+  an upstream publishes only in its own repository reaches neither until
+  someone files it there. A covered version, a range the check cannot read and
+  a fetch that failed all turn the run red; drafts are never asked for
 
 ### Code Review Checklist
 1. No hardcoded keys or secrets

@@ -113,11 +113,16 @@ jobs:
             CHANGELOG="Release version $VERSION"
           fi
 
-          # Use heredoc for multiline output (no escaping needed)
+          # A multiline output, its delimiter random. A fixed one ends the
+          # value at the first line of the section that reads the same and
+          # takes every line after it as more `name=value` outputs; a section
+          # quoting a shell heredoc would have truncated the release notes.
+          # This is GitHub's own recipe for the delimiter.
+          delimiter="CHANGELOG_$(dd if=/dev/urandom bs=15 count=1 status=none | base64)"
           {
-            echo "changelog<<EOF"
+            echo "changelog<<$delimiter"
             echo "$CHANGELOG"
-            echo "EOF"
+            echo "$delimiter"
           } >> "$GITHUB_OUTPUT"
 
       - name: Validate CHANGELOG.md has entry for this version
@@ -163,6 +168,12 @@ jobs:
   # ============================================
   publish:
     needs: [validate, test, validate-package]
+    # A tag only. The pub.dev environment lets in `v*` tags alone (its
+    # deployment policy, set by `make setup-repo-protections`), so a run
+    # started from a branch would be refused there, red. Such a run publishes
+    # nothing anyway, and validate-package has already made its dry run, so
+    # the job is skipped instead.
+    if: github.ref_type == 'tag'
     runs-on: ubuntu-26.04
     environment: pub.dev
     permissions:
@@ -179,14 +190,14 @@ jobs:
         shell: bash
 
       - name: Publish to pub.dev (dry run)
-        if: github.ref_type != 'tag' || inputs.dry-run
+        if: inputs.dry-run
         run: |
           echo "DRY RUN - would publish version ${{ needs.validate.outputs.version }}"
           make publish-dry-run
         shell: bash
 
       - name: Publish to pub.dev
-        if: github.ref_type == 'tag' && !inputs.dry-run
+        if: "!inputs.dry-run"
         run: make publish ARGS="--force"
         shell: bash
 

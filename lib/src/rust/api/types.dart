@@ -6,8 +6,8 @@
 import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
-// These functions are ignored because they are not marked as `pub`: `capabilities_to_native`, `ciphersuite_code_point`, `ciphersuite_from_code_point`, `ciphersuite_to_native`, `executed_ciphersuites`, `extensions_from_mls`, `native_to_ciphersuite`, `require_executed_ciphersuite`, `require_executed_signature_scheme`, `unsupported_ciphersuite`, `wire_format_to_native`
-// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `KeyPackageOptions`, `MlsGroupContextInfo`, `MlsLeafNodeInfo`, `MlsPendingProposalInfo`, `StagedCommitInfo`, `WelcomeInspectResult`
+// These functions are ignored because they are not marked as `pub`: `capabilities_to_native`, `ciphersuite_code_point`, `ciphersuite_from_code_point`, `ciphersuite_to_native`, `executed_ciphersuites`, `extension_from_mls`, `extension_to_mls`, `extensions_from_mls`, `external_senders_to_mls`, `native_to_ciphersuite`, `require_executed_ciphersuite`, `require_executed_signature_scheme`, `unsupported_ciphersuite`, `wire_format_to_native`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `KeyPackageOptions`, `MlsExternalSenderInfo`, `MlsGroupContextInfo`, `MlsLeafNodeInfo`, `MlsPendingProposalInfo`, `MlsSenderInfo`, `MlsSenderKind`, `StagedCommitInfo`, `StagedProposalInfo`, `WelcomeInspectResult`
 
 /// Returns every ciphersuite this build can execute.
 ///

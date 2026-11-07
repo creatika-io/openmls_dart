@@ -1,4 +1,4 @@
-_commit: v4.17.0
+_commit: v4.19.0
 _src_path: https://github.com/djx-y-z/copier-dart-frb-wrapper.git
 android_compile_sdk: '36'
 android_gradle_version: 8.11.1
@@ -14,6 +14,7 @@ enable_claude: true
 enable_freezed: false
 enable_fuzzing: true
 enable_protoc: false
+enable_upstream_advisories: true
 enable_web: true
 flutter_sdk_version: '>=3.38.0'
 flutter_version: 3.38.4
@@ -32,4 +33,4 @@ topics: mls,encryption,messaging,e2ee,rust
 upstream_crate_versions: openmls_rust_crypto=0.6.0,openmls_basic_credential=0.6.0,openmls_traits=0.6.0,openmls_libcrux_crypto=0.4.0
 upstream_crates: openmls,openmls_rust_crypto,openmls_basic_credential,openmls_traits,openmls_libcrux_crypto
 upstream_source: crates_io
-upstream_version: 0.9.1
+upstream_version: 0.9.2
