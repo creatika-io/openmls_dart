@@ -706,6 +706,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     wireObj.use_ratchet_tree_extension = cst_encode_bool(
       apiObj.useRatchetTreeExtension,
     );
+    wireObj.keep_pending = cst_encode_bool(apiObj.keepPending);
   }
 
   @protected
@@ -2332,6 +2333,9 @@ final class wire_cst_flexible_commit_options extends ffi.Struct {
 
   @ffi.Bool()
   external bool use_ratchet_tree_extension;
+
+  @ffi.Bool()
+  external bool keep_pending;
 }
 
 final class wire_cst_list_mls_ciphersuite extends ffi.Struct {

@@ -1290,6 +1290,7 @@ impl SseDecode for crate::api::types::FlexibleCommitOptions {
         let mut var_aad = <Option<Vec<u8>>>::sse_decode(deserializer);
         let mut var_createGroupInfo = <bool>::sse_decode(deserializer);
         let mut var_useRatchetTreeExtension = <bool>::sse_decode(deserializer);
+        let mut var_keepPending = <bool>::sse_decode(deserializer);
         return crate::api::types::FlexibleCommitOptions {
             add_key_packages: var_addKeyPackages,
             remove_indices: var_removeIndices,
@@ -1299,6 +1300,7 @@ impl SseDecode for crate::api::types::FlexibleCommitOptions {
             aad: var_aad,
             create_group_info: var_createGroupInfo,
             use_ratchet_tree_extension: var_useRatchetTreeExtension,
+            keep_pending: var_keepPending,
         };
     }
 }
@@ -1817,6 +1819,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::FlexibleCommitOptions 
             self.aad.into_into_dart().into_dart(),
             self.create_group_info.into_into_dart().into_dart(),
             self.use_ratchet_tree_extension.into_into_dart().into_dart(),
+            self.keep_pending.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -2166,6 +2169,7 @@ impl SseEncode for crate::api::types::FlexibleCommitOptions {
         <Option<Vec<u8>>>::sse_encode(self.aad, serializer);
         <bool>::sse_encode(self.create_group_info, serializer);
         <bool>::sse_encode(self.use_ratchet_tree_extension, serializer);
+        <bool>::sse_encode(self.keep_pending, serializer);
     }
 }
 
@@ -2664,6 +2668,7 @@ mod io {
                 aad: self.aad.cst_decode(),
                 create_group_info: self.create_group_info.cst_decode(),
                 use_ratchet_tree_extension: self.use_ratchet_tree_extension.cst_decode(),
+                keep_pending: self.keep_pending.cst_decode(),
             }
         }
     }
@@ -2856,6 +2861,7 @@ mod io {
                 aad: core::ptr::null_mut(),
                 create_group_info: Default::default(),
                 use_ratchet_tree_extension: Default::default(),
+                keep_pending: Default::default(),
             }
         }
     }
@@ -3451,6 +3457,7 @@ mod io {
         aad: *mut wire_cst_list_prim_u_8_strict,
         create_group_info: bool,
         use_ratchet_tree_extension: bool,
+        keep_pending: bool,
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
@@ -3652,8 +3659,8 @@ mod web {
                 .unwrap();
             assert_eq!(
                 self_.length(),
-                8,
-                "Expected 8 elements, got {}",
+                9,
+                "Expected 9 elements, got {}",
                 self_.length()
             );
             crate::api::types::FlexibleCommitOptions {
@@ -3665,6 +3672,7 @@ mod web {
                 aad: self_.get(5).cst_decode(),
                 create_group_info: self_.get(6).cst_decode(),
                 use_ratchet_tree_extension: self_.get(7).cst_decode(),
+                keep_pending: self_.get(8).cst_decode(),
             }
         }
     }

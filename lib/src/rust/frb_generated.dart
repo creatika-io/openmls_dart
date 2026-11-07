@@ -1420,8 +1420,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   FlexibleCommitOptions dco_decode_flexible_commit_options(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = dcoDecodeList(raw);
-    if (arr.length != 8)
-      throw Exception('unexpected arr length: expect 8 but see ${arr.length}');
+    if (arr.length != 9)
+      throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
     return FlexibleCommitOptions(
       addKeyPackages: dco_decode_list_list_prim_u_8_strict(arr[0]),
       removeIndices: dco_decode_list_prim_u_32_strict(arr[1]),
@@ -1431,6 +1431,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       aad: dco_decode_opt_list_prim_u_8_strict(arr[5]),
       createGroupInfo: dco_decode_bool(arr[6]),
       useRatchetTreeExtension: dco_decode_bool(arr[7]),
+      keepPending: dco_decode_bool(arr[8]),
     );
   }
 
@@ -1876,6 +1877,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_aad = sse_decode_opt_list_prim_u_8_strict(deserializer);
     var var_createGroupInfo = sse_decode_bool(deserializer);
     var var_useRatchetTreeExtension = sse_decode_bool(deserializer);
+    var var_keepPending = sse_decode_bool(deserializer);
     return FlexibleCommitOptions(
       addKeyPackages: var_addKeyPackages,
       removeIndices: var_removeIndices,
@@ -1885,6 +1887,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       aad: var_aad,
       createGroupInfo: var_createGroupInfo,
       useRatchetTreeExtension: var_useRatchetTreeExtension,
+      keepPending: var_keepPending,
     );
   }
 
@@ -2574,6 +2577,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_opt_list_prim_u_8_strict(self.aad, serializer);
     sse_encode_bool(self.createGroupInfo, serializer);
     sse_encode_bool(self.useRatchetTreeExtension, serializer);
+    sse_encode_bool(self.keepPending, serializer);
   }
 
   @protected

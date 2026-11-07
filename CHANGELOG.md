@@ -4,6 +4,22 @@
 
 #### ✨ Highlights
 
+- **Merge upstream v3.3.0 while retaining the Creatika build** — openmls
+  0.9.2, ctutils 0.4.5 and upstream's #72 lockfile updates; FRB stays at
+  2.14.0-beta.2, default ciphersuite 0x0001, SQLCipher on CommonCrypto on
+  Apple, and the existing package/crate versions remain unchanged.
+- **Commit inspection requires `full-api`; `keepPending` follows its type** —
+  `inspectMessage` and `decodeExternalSenders` stay behind `full-api`;
+  `FlexibleCommitOptions.keepPending` is available by default (default `false`).
+  The current Creatika app calls none of these additions.
+  New staged-commit and inspected-message fields follow their existing types.
+  Adopting deferred commits also requires `mergePendingCommit` and
+  `clearPendingCommit`, and changing the app's submit/recovery flow.
+- **`flexibleCommit` refuses an already-pending commit** — the default still
+  merges immediately; malformed known extensions now fail decoding rather
+  than being passed as unknown extensions. Apple dylibs reserve install-name
+  space for deep consumer paths. Local builds must match both crate version
+  and Cargo.lock. See the upstream release entries below for details.
 - **A peer can no longer crash the application with nested extensions** —
   GHSA-gc79-23g3-8g52, fixed upstream in openmls 0.9.1; every earlier release
   of this package is affected.
@@ -21,8 +37,8 @@
   `Openmls.init()`** — native platforms; see *Fixed*.
 - **Web apps built with `--wasm` (dart2wasm) now work** — the bindings are
   regenerated with `flutter_rust_bridge` 2.14.0-beta.2, a prerelease.
-- **openmls v0.9.1** — a patch release: the GHSA-gc79-23g3-8g52 fix, and
-  nothing else this package's API exposes.
+- **openmls v0.9.2** — fixes GHSA-94v4-rg25-x625 and GHSA-p276-g3f3-wwgh,
+  alongside the previous 0.9.1 fix.
 - **openmls_frb v3.0.0** — Rust FFI bindings
 
 #### Changed (Breaking)
@@ -147,23 +163,11 @@
 #### Fixed
 
 - **An async call could wait forever when another isolate shut down during
-  `Openmls.init()`** (`lib/src/openmls.dart`,
-  `lib/src/platform/platform_io.dart`, `lib/src/platform/platform_web.dart`) —
-  flutter_rust_bridge sends every Rust-to-Dart message (an async call's
-  result, a store callback) through one process-wide `Dart_PostCObject`
-  pointer and replaces it with a no-op when its count of initialized isolates
-  drops to zero. `RustLib.init()` installs the real pointer *before* it counts
-  the new isolate, so when the last other counted isolate group shut down in
-  that window, the new isolate kept the no-op: sync calls worked, and every
-  async call waited for an answer that had been dropped. `Openmls.init()` now
-  installs the real pointer again once the isolate is counted, on native
-  platforms; the web has neither the pointer nor the count. ⚠ **Not fixed by
-  this: several flutter_rust_bridge libraries in one application.** An
-  isolate is counted only by the *first* such library it initializes, so when
-  the main isolate initialized a library second, a worker isolate that
-  initializes that library alone and exits switches its channel off for the
-  whole process. Initialize them in the same order in every isolate, workers
-  included; the fix belongs in flutter_rust_bridge.
+  `Openmls.init()`** — takes upstream's fix: count the isolate in openmls's
+  own native library through `frb_create_shutdown_callback` *before*
+  `RustLib.init()`, and keep it counted for its lifetime. This also covers
+  applications initializing several flutter_rust_bridge libraries in any
+  order; another library still needs its own fix. Web has no isolate count.
 
 - **Calls into Rust no longer fail under dart2wasm** (`lib/src/rust/`,
   `pubspec.yaml`, `rust/Cargo.toml`) — `flutter_rust_bridge` 2.13's decoder
@@ -192,12 +196,11 @@
 
 #### Documentation
 
-- **A missing `web/pkg/` leaves `RustLib.init()` pending; it does not fail on
-  a 404** (`README.md`, *Known Limitations*) — flutter_rust_bridge 2.13.0
-  injects the module as a `<script>` and awaits its `load` event with no error
-  path or timeout, and under `flutter run` the dev server answers the missing
-  `pkg/openmls_frb.js` with the app's own page and a 200, so the call neither
-  returns nor throws.
+- **The README explains missing `web/pkg/` and the recovery** (*Known
+  Limitations*) — `Openmls.init()` now checks `pkg/openmls_frb.js` before
+  loading: a failed HTTP response or HTML in its place throws a `StateError`
+  naming the missing module and how to provision it. This takes upstream's
+  check, so a missing module no longer leaves initialization pending.
 - **`SECURITY.md` no longer says the tag ruleset stops a `write`
   collaborator** — it reserved tags to "Admins/Maintainers", but the
   ruleset's bypass list also held role 4, which GitHub names `write`. The list
@@ -364,6 +367,637 @@
   `rust/deny.toml` no longer allows the openmls git repository, and Dependabot
   ignores the four openmls crates that arrive only through the others, so they
   move with the openmls release that requires them.
+
+---
+
+## [3.3.0] - 2026-10-26
+
+### For Users
+
+#### ✨ Highlights
+
+- **Judge a commit before it takes effect** — `inspectMessage` reports what a
+  commit would do, with who proposed each change and whose leaves it removes,
+  and applies nothing.
+- **Merge an own commit only once the delivery service took it** —
+  `FlexibleCommitOptions.keepPending`.
+- **Group-context extensions OpenMLS defines are passed typed** — so an
+  application's own extension can be required with `RequiredCapabilities`.
+- **On macOS, `dart run`, `dart test` and `flutter test` work from a deep
+  project path** — the native library now leaves room for any path in its
+  install name; see *Fixed*.
+- **openmls v0.9.2** — unchanged this release.
+- **openmls_frb v2.4.0** — Rust FFI bindings
+
+#### Added
+
+- **`MlsEngine.inspectMessage`** — processes a message like
+  `processMessageWithInspect` and reports the same, without merging a commit,
+  storing a proposal, advancing a ratchet or writing to storage. MLS lets any
+  member commit any Add or Remove and leaves who may to the application; with
+  this, an application judges a commit by its own policy and processes it
+  only when it accepts it. A refused commit is never processed by the member
+  that refuses it — which keeps only that member in the current epoch: if
+  others accept it, the refuser is the one left behind (see `SECURITY.md`).
+- **`StagedCommitInfo.removeCredentials`** — the credential of each removed
+  member, read before the merge, one per `removeIndices` entry: after the
+  merge those leaves are gone.
+- **`StagedCommitInfo.proposals`** (`StagedProposalInfo`) — every proposal
+  the commit applies, with its own sender and whether it came by reference.
+  A commit can carry other members' proposals, so the committer is not
+  necessarily the author of each change.
+- **`StagedCommitInfo.committerCredential`** — the committer's new leaf
+  credential when the commit has an update path, which can replace it.
+- **`StagedCommitInfo.groupContextExtensions`** — every extension of the
+  group context the commit leads to, the types OpenMLS interprets itself
+  (`RequiredCapabilities`, `ExternalSenders`, …) included, in wire form.
+- **`StagedCommitInfo.externalSenders`** (`MlsExternalSenderInfo`) — the
+  external senders that group context admits, decoded: each may propose adds
+  and removes without being a member. **`decodeExternalSenders`** decodes the
+  same from an extension's data.
+- **Per-proposal detail in `StagedProposalInfo`** — `sender`
+  (`MlsSenderInfo`: member, external sender, new member), `leaf` (the
+  credential, signature and encryption key an Update or Add introduces),
+  `affectedMember` (the member a Remove takes out or an Update replaces, as
+  this client's tree has it) and `extensions` (what a GroupContextExtensions
+  proposal sets). OpenMLS does not check that an Update keeps the proposer's
+  identity; with `leaf` next to `affectedMember` the application can.
+- **`ProcessedMessageInspectResult.sender` and `.proposalInfo`** — the
+  authenticated sender of any inspected message, external senders included
+  (`senderIndex` is `null` for those), and for a proposal message the same
+  detail as a commit's proposals, before it is stored.
+- **`FlexibleCommitOptions.keepPending`** (default `false`) — leaves the
+  commit pending instead of merging it, for `mergePendingCommit` once the
+  delivery service accepted it or `clearPendingCommit` when another member's
+  commit won the epoch. Processing that member's commit also replaces it.
+
+#### Changed
+
+- **Extensions are decoded as OpenMLS decodes received ones**
+  (`extensions_from_mls`) — a type OpenMLS defines (`RequiredCapabilities`
+  0x0003, `ExternalSenders` 0x0005, …) becomes its typed variant instead of an
+  unknown extension, wherever the API takes `MlsExtension`s: group creation,
+  key packages, leaf nodes, group-context updates and proposals, flexible
+  commits. OpenMLS looks for the typed variants: an application's
+  group-context extension used to be refused for want of a
+  `RequiredCapabilities` listing it, which could not be given. A malformed
+  extension of such a type is now an `Invalid extension 0x….` error at the
+  call.
+- **`StagedCommitInfo` has five more fields, `ProcessedMessageInspectResult`
+  two** — all optional in their constructors (empty lists, `null`), so code
+  that builds one itself, a test double say, compiles unchanged.
+- **Own messages that cannot be read back say so more helpfully** — a
+  commit of this member's fanned back while it is pending now points to
+  `mergePendingCommit` under the ciphertext wire format too. The hint is
+  wording only: the content type it reads is not authenticated before
+  decryption, and any member can send a message that names this one as
+  its sender, so nothing acts on it and the error says the message proves
+  nothing — merge on the delivery service's confirmation, not on it.
+- **`flexibleCommit` refuses to run while a commit is pending** — with or
+  without `keepPending`, which is what lets a commit stay pending. OpenMLS's
+  commit builder replaced a pending commit silently; had the first already
+  reached other members and been replaced, the group would have forked onto
+  incompatible epoch secrets. Merge or clear the pending commit first.
+- **The native library's dependencies move to their latest compatible
+  releases** (`rust/Cargo.lock`, #72) — Dependabot's 47 updates, none of them
+  an openmls crate and none adding or removing one: among them the
+  post-quantum `ml-kem` 0.3.2 → 0.3.3 and `x-wing` 0.1.0 → 0.1.1, `sha2`
+  0.11.0 → 0.11.1, `der` 0.8.3, `spki` 0.8.1, `rand` 0.10.3, `zerocopy`
+  0.8.63, `tokio` 1.54.1, and `cc` 1.4.4 → 1.10.0, which compiles the bundled
+  SQLCipher and OpenSSL. CI built and tested the library with them on Linux,
+  macOS and Windows, cross-compiled it for Android, type-checked it for iOS,
+  and passed `cargo audit`, `cargo deny` and the fuzz targets. Takes effect
+  with the next `openmls_frb` release.
+
+#### Fixed
+
+- **On macOS, `dart run`, `dart test` and `flutter test` no longer fail from a
+  deep project path** (`rust/build.rs`) — each copies the native library into
+  the project and rewrites its install name to the copy's absolute path
+  (`install_name_tool -id`), and the released libraries left room in their
+  Mach-O header for about 180 characters of it: 183 for the arm64 build, 199
+  for x86_64. A project whose copy landed deeper failed with "larger updated
+  load commands do not fit". `openmls_frb` is now linked with
+  `-headerpad_max_install_names` on Apple targets, which leaves room for any
+  path, and the release workflow refuses a library without that room.
+  Measured on a local build: room for 3,255 characters instead of 183, a
+  library no larger, and consumers at a 186-character path, which failed under
+  both `dart run` and `flutter test`, now pass, as do ones at 400. Flutter app
+  builds for macOS and iOS were never affected: they install the library as a
+  framework under a short `@rpath/` name. Takes effect with the next
+  `openmls_frb` release.
+
+#### Documentation
+
+- **Commit refusal, forks and Welcome ordering** — `inspectMessage`,
+  `CommitResult.welcome`, `FlexibleCommitOptions.keepPending` and
+  `SECURITY.md` (item 7, which said there was no inspect-then-reject path)
+  now state that a refusal is local, that a delivery service can fork a group
+  and `groupEpochAuthenticator` detects it, that reported credentials are
+  claims to verify, that inspecting an application message consumes nothing,
+  and that a Welcome goes out only after the delivery service accepted its
+  commit.
+- **A commit's GroupInfo waits for the delivery service too** —
+  `CommitResult.groupInfo` and `FlexibleCommitOptions.keepPending` say so: a
+  party joining by external commit from a GroupInfo published early enters an
+  epoch that may never happen. And `MlsSenderInfo.index` of an external sender
+  says which list it counts in: the `ExternalSenders` the message was verified
+  against, which for a commit's proposals is the one before the commit, not
+  `StagedCommitInfo.externalSenders`.
+
+### For Contributors
+
+#### Added
+
+- **Tests that hold #57's guarantees from the outside**
+  (`test/inspect_guarantees_test.dart`) — written when it was merged, apart
+  from its own tests: `inspectMessage` leaves the database file byte for byte
+  as it was, for a commit, a proposal and an application message, and the
+  same bytes then process, while `processMessageWithInspect` does apply the
+  commit it reports; `decodeExternalSenders` refuses every truncation of a
+  valid body, lengths that claim more than follows and trailing data, and
+  answers boundary mutations and 2,000 random inputs without a panic; no call
+  that makes a commit replaces a pending one, which then merges as the commit
+  the others applied; and an `ExternalSenders` change proposed on its own
+  shows in the inspected proposal and in the commit that applies it.
+
+#### Changed
+
+- **Copier template v4.18.0 → v4.19.0** — `repair-build` refuses a named run
+  built from a fork, by the run's `head_repository`, instead of checking out
+  the fork's tree beside the agent's provider key; an AI provider key holding
+  anything but printable ASCII is refused when it is read, by the name of its
+  variable, so `dart:io`'s header error can no longer carry it into a
+  template-update pull request; an upstream `RELEASE_NOTES.md` or
+  `CHANGELOG.md` that could not be fetched (a rate-limited anonymous request
+  answers 403, and `curl -s` exits 0) is reported as unknown instead of as "No
+  release notes were published"; `finalizeChangelog` rewrites only the
+  footer's `[Unreleased]:` link and refuses a second one; `publish.yml` passes
+  the release notes behind a random delimiter; `CONTRIBUTING.md` names the bot
+  branches the signing ruleset leaves out; and `verify_release_artifacts.py`
+  refuses an Apple library with less than 1,024 characters of install-name
+  room. One conflict, in `CONTRIBUTING.md`: the template places its
+  *Releasing* and *Repository rulesets* sections elsewhere than this file
+  does, so this file's layout was kept with the template's one changed line.
+
+## [3.2.2] - 2026-10-26
+
+### For Users
+
+#### ✨ Highlights
+
+- **A peer can no longer crash the application with nested extensions** —
+  GHSA-gc79-23g3-8g52, fixed upstream in openmls 0.9.1; every earlier release
+  of this package is affected.
+- **A member an external commit removes no longer stays in the group** —
+  GHSA-94v4-rg25-x625, fixed upstream in openmls 0.9.2; every earlier release
+  of this package is affected, and upgrading does not repair a group it
+  already damaged; see *Security*.
+- **A malformed X-Wing key from a peer no longer panics** — RUSTSEC-2026-0331,
+  on the 0x004D suite only.
+- **The P-256 and P-384 suites carry an open constant-time advisory** —
+  RUSTSEC-2026-0387 (`crypto-bigint` 0.5.5), accepted until OpenMLS moves to
+  `p256`/`p384` 0.14; the other ten suites are unaffected. See *Security*.
+- **Async calls no longer stop answering when another isolate shuts down** —
+  native platforms, also when an application initializes several
+  flutter_rust_bridge packages, in any order; see *Fixed*.
+- **On the web, `Openmls.init()` throws when the WASM module is not served** —
+  instead of waiting forever; see *Fixed*.
+- **`hooks` and `code_assets` 2.x are admitted beside 1.x** — each Flutter
+  resolves the major it supports; see *Changed*.
+- **openmls v0.9.2** — two patch releases: 0.9.1 with the
+  GHSA-gc79-23g3-8g52 fix, 0.9.2 with the GHSA-94v4-rg25-x625 and
+  GHSA-p276-g3f3-wwgh fixes, and nothing else this package's API exposes.
+- **openmls_frb v2.3.2** — Rust FFI bindings
+
+#### Changed
+
+- **The build hook uses a local build only when `make build` made it from the
+  current crate version and lock file** (`hook/build.dart`, `Makefile`) — a
+  library in `rust/target/release/` or `rust/target/debug/` took priority over
+  the released one on the sole condition that it existed, so one left over
+  from an earlier crate loaded silently, and `rustContentHash`, which hashes
+  only the names of the bridged functions, could not notice a moved wire
+  format. `make build` now writes `rust/target/release/.crate-version`, as
+  `make build-web` already did beside the WASM module, and both leave
+  `.cargo-lock` beside the stamp, a copy of the `rust/Cargo.lock` the build
+  was made from: an upstream update moves the dependencies but not the crate
+  version, so a build from before it passed the version check and ran the
+  previous upstream code. The hook refuses a missing or stale stamp, and a
+  copy that differs from `rust/Cargo.lock`, with a `HookException`, and no
+  longer reads `rust/target/debug/`. `make build` also drops the hook's cached
+  result for this package (`.dart_tool/hooks_runner/openmls/`), which kept
+  `dart test` on a downloaded library after a host build. Only a local build
+  is affected — the published package carries no `rust/target/` — and one
+  built before this change is refused until `make build` (or
+  `make build-web`) runs again.
+- **`hooks` and `code_assets` admit 2.x as well as 1.x** (`pubspec.yaml`) —
+  `^1.0.0` held every application on 1.x, and pub.dev took 10 of its 160
+  points for it on 3.2.1 ("Support up-to-date dependencies"). The range is
+  now `>=1.0.0 <3.0.0`, so each Flutter resolves the major it supports:
+  Flutter 3.38 to 3.44 pin `meta` below the 1.19.0 that `hooks` 2.1 needs, and
+  an application on 3.38.4 resolves `hooks` 2.0.2 with `code_assets` 1.2.1
+  (measured on `example/`), while this package resolved on its own takes
+  `hooks` 2.2.0 with `code_assets` 2.1.0. `hook/build.dart` needs no change:
+  it analyzes clean and its tests pass with 2.2.0/2.1.0, 2.0.2/1.2.1 and
+  1.0.1/1.0.0, and the whole suite passes with 2.2.0/2.1.0 and with
+  1.0.1/1.0.0. A 3.x is a migration again, and Dependabot holds it back.
+
+#### Security
+
+- **A peer can no longer crash the application with nested extensions
+  (GHSA-gc79-23g3-8g52)** — fixed in openmls 0.9.1 (`rust/Cargo.toml`,
+  `rust/Cargo.lock`). openmls 0.9.0 decoded an extension's body before
+  checking that its type is allowed where it appears, so a `ratchet_tree`
+  extension inside a leaf node was decoded in full, its leaf nodes and their
+  extensions included, one stack frame deeper per level of nesting. Input
+  nested deeply enough ran the stack out, which is not a panic, so no
+  `PanicException` stands in for it. In most environments the process ends;
+  through a C FFI, as here, or in WebAssembly, the advisory says the outcome
+  depends on the environment and linker configuration, at worst memory
+  corruption. Neither was measured here. Every call that decodes
+  a message, `Welcome`, `GroupInfo`, ratchet tree or key package from a peer
+  was exposed, whatever the ciphersuite: incoming messages (`processMessage`,
+  `processMessageWithInspect` and the synchronous `mlsMessageExtractGroupId`,
+  `mlsMessageExtractEpoch` and `mlsMessageContentType`), the `Welcome`,
+  `GroupInfo` and ratchet tree of a join, a `Welcome` that is only inspected
+  (`inspectWelcome`, `exportWelcomeSecret`), and key packages (`addMembers`,
+  `proposeAdd`, `keyPackageLifetime` and the rest). 0.9.1 checks the type
+  first, so the same input fails with an ordinary error. Where that error
+  carries the decoder's message (ratchet trees, key packages, the `GroupInfo`
+  of an external join, unencrypted handshake messages), it now names the
+  extension type that is out of place, where 0.9.0 said "Found duplicate
+  extensions". The fix is upstream's
+  ([advisory](https://github.com/openmls/openmls/security/advisories/GHSA-gc79-23g3-8g52):
+  high, CVSS 4.0 8.7, CWE-674). Every native library released before this
+  one carries an affected openmls, `openmls_frb` 2.3.1 (package 3.2.1)
+  included; `SECURITY.md` (Known Limitations #14) covers them.
+- **A member an external commit removes no longer stays in the group
+  (GHSA-94v4-rg25-x625)** — fixed in openmls 0.9.2 (`rust/Cargo.toml`,
+  `rust/Cargo.lock`). When an external commit removed a member and the
+  removal truncated the ratchet tree, adding the joiner's own leaf extended
+  the tree again with the removed leaf, and some parent nodes, restored from
+  before the commit. The committer and every member processing the commit
+  computed the same tree, so nothing diverged, but the removed leaf kept its
+  encryption key and later commits kept encrypting path secrets to it: a
+  party that holds the removed client's state and keeps processing the
+  group's handshake messages can derive the secrets of every later epoch
+  until the leaf is removed again. In this package the commit is a resync —
+  `joinGroupExternalCommit` and `joinGroupExternalCommitV2` remove any member
+  that has the joiner's signature key — or another client's external commit
+  that includes a SelfRemove (`leaveGroupViaSelfRemove`) by reference, and
+  every member that processes either with `processMessage` or
+  `processMessageWithInspect` computes the same tree. Measured on 0.9.1, with
+  members at leaves 0 to 3, leaf 2 removed and the member at leaf 3 rejoining
+  by either call: `groupMembers` still listed index 3, which
+  `processMessageWithInspect` had reported in `removeIndices`, and while two
+  leaves shared a signature key no new member could join, by Welcome or by
+  external commit. 0.9.2 leaves the regrown part of the tree blank, as RFC
+  9420 requires; the same steps list three members. Only groups that accept
+  external commits are affected, and upgrading does not repair a tree the bug
+  already wrote: a group stays affected until a member removes the restored
+  leaf with `removeMembers`, an ordinary commit every version accepts
+  (`SECURITY.md`, Known Limitations #16). Per the advisory, an external commit
+  that meets the bug is rejected between clients on 0.9.2 and clients on an
+  affected openmls, this package up to 3.2.1 included, with a path length or
+  confirmation tag mismatch, rather than leaving them on different trees
+  ([advisory](https://github.com/openmls/openmls/security/advisories/GHSA-94v4-rg25-x625):
+  medium, CWE-459).
+- **A malformed X-Wing key from a peer no longer panics (RUSTSEC-2026-0331)**
+  — up to `openmls_frb` 2.3.1, an X-Wing (0x004D) public key shorter than
+  1184 bytes made the next encryption to it panic inside `libcrux-kem` (0.0.9
+  from `openmls_frb` 2.1.0, 0.0.7 before it, with the same defect): a
+  `PanicException` on native, and on the web an abort that left the database
+  unusable until the page was reloaded. The key is peer data — the init key
+  of a key package being added, another member's tree node, the `GroupInfo`
+  of an external join. The native library now checks its length
+  before libcrux sees it, and the operation fails with the ordinary error the
+  fixed `libcrux-kem` 0.0.10 returns. Nothing leaked and nothing could be
+  forged (CVSS `VC:N/VI:N/VA:H`), and no other suite touches libcrux. The
+  crate itself stays at 0.0.9: OpenMLS pins it — 0.9.2 too — and the fix
+  needs an OpenMLS release that does not exist yet. It is recorded in
+  `.cargo/audit.toml` and `rust/deny.toml` together with RUSTSEC-2026-0329
+  (`libcrux-hmac-drbg`) and RUSTSEC-2026-0330 (`libcrux-kem`), which nothing
+  in the dependency graph can reach; `SECURITY.md` (Known Limitations #13)
+  covers the releases that still panic.
+- **The post-quantum suites' constant-time helper is fixed
+  (RUSTSEC-2026-0385)** — `ctutils` 0.4.2 → 0.4.5 (`rust/Cargo.lock`).
+  RustCrypto's ML-KEM decapsulation selects its result with it, and ML-DSA's
+  signing arithmetic compares and selects with it, on secret values, so every
+  post-quantum suite except X-Wing (0x004D, which runs on libcrux) relies on
+  it. Before 0.4.4 its masks could compile to a branch on commonly used
+  platforms, and its `u128` comparisons did on 32-bit targets; a branch on a
+  secret value can leak it through a side channel. 0.4.4 fixes both, and
+  0.4.5 also hardens `Choice` composition and Thumb-1 comparisons.
+  `openmls_frb` 2.1.0 to 2.3.1 carry 0.4.2; nothing was measured here
+  ([advisory](https://rustsec.org/advisories/RUSTSEC-2026-0385)).
+- **The P-256 and P-384 suites carry an open constant-time advisory
+  (RUSTSEC-2026-0387)** — `crypto-bigint` 0.5.5, in every release since
+  1.0.0, has operations meant to be constant-time that could compile to
+  branches on secret values, depending on the compiler and CPU. Its fix,
+  0.7.6, cannot be taken: `elliptic-curve` 0.13 requires 0.5, and only an
+  OpenMLS release on `p256`/`p384` 0.14 lifts that. Reviewed before it was
+  accepted: P-256's scalar arithmetic is crypto-bigint's, so every signature
+  on `mls128DhkemP256Aes128GcmSha256P256` (0x0002) and
+  `mls128Mlkem768Aes256GcmSha384P256` computes with the private key and the
+  nonce through its modular addition and subtraction, which turn a borrow
+  into a mask with no optimization barrier — the construct the fixed release
+  guards. On `mls192Mlkem1024Aes256GcmSha384P384` the arithmetic is
+  fiat-crypto, and crypto-bigint only range-checks, zero-checks and encodes
+  the secrets; the other ten suites do not run it on secret data. Whether
+  the compiled code branches was not measured. The advisory is accepted in
+  `.cargo/audit.toml` and `rust/deny.toml`, and `SECURITY.md` (Known
+  Limitations #15) says which suites to prefer
+  ([advisory](https://rustsec.org/advisories/RUSTSEC-2026-0387)).
+- **GHSA-p276-g3f3-wwgh did not reach this package** — every openmls this
+  package has shipped advanced the claimed sender's ratchet before decrypting
+  a message's content and verifying its signature, and stored it before the
+  signature check, so a member could send a message in another member's name
+  that every receiver rejected and that still made the genuine sender's
+  messages — commits included — fail for the rest of the epoch. Here a failed
+  call writes nothing back: every operation works on a snapshot of the stored
+  state, which `processMessage` and `processMessageWithInspect` have dropped
+  on any error since 1.0.0. Measured on 0.9.1 through both calls: after a
+  message at generation 6 that decrypted and then failed signature
+  verification, the sender's messages 0 to 5 all decrypted; with
+  `processMessage` patched to write the snapshot back on error, messages 0
+  and 1 were lost as too old. 0.9.2 fixes it upstream by applying the ratchet
+  step only once a message is processed successfully
+  ([advisory](https://github.com/openmls/openmls/security/advisories/GHSA-p276-g3f3-wwgh):
+  low, CVSS 3.1 3.7, CWE-460).
+
+#### Fixed
+
+- **Async calls no longer stop answering when another isolate shuts down**
+  (`lib/src/openmls.dart`, `lib/src/platform/platform_io.dart`,
+  `lib/src/platform/platform_web.dart`) — flutter_rust_bridge sends every
+  Rust-to-Dart message (an async call's result, a store callback) through one
+  process-wide `Dart_PostCObject` pointer per native library, and replaces it
+  with a no-op when that library's count of live isolates drops to zero. An
+  isolate missing from the count kept its sync calls, while every async call
+  waited for an answer that had been dropped, and flutter_rust_bridge 2.13.0
+  leaves one out in two ways. `RustLib.init()` installs the pointer *before*
+  it counts the new isolate, so the last other counted isolate shutting down
+  in between left the no-op behind. And the watcher that counts an isolate is
+  one per isolate for every flutter_rust_bridge library, so an isolate is
+  counted only by the first library it initializes: when the main isolate had
+  initialized another flutter_rust_bridge package first, a worker that used
+  openmls alone — a `compute()` or `Isolate.run` worker included — took
+  openmls's count to zero for the whole process, once the exited worker's
+  watcher was garbage-collected. `Openmls.init()` now counts its isolate in
+  openmls's own library before `RustLib.init()`, through flutter_rust_bridge's
+  `frb_create_shutdown_callback`, which closes both; the order in which an
+  application initializes its flutter_rust_bridge packages no longer matters
+  for this one. Measured with a copy of the library initialized first in the
+  other package's place: once a worker that used only openmls had exited and
+  been collected, the main isolate's next async call went unanswered for 15 s
+  with the previous code and was answered with this one; openmls alone, five
+  workers in a row, was answered with both. The symbol is internal to
+  flutter_rust_bridge, which this package pins to 2.13.0; a version that
+  renamed it would make `init()` fail rather than hang. Two things stay open:
+  a finalizer on another thread that has counted to zero and not yet written
+  the no-op, which only flutter_rust_bridge can close, and another
+  flutter_rust_bridge package without this change, which still needs the same
+  initialization order in every isolate for itself. The web has neither the
+  pointer nor the count.
+- **On the web, `Openmls.init()` throws when the WASM module is not served,
+  instead of waiting forever** (`lib/src/openmls.dart`,
+  `lib/src/platform/platform_web.dart`) — flutter_rust_bridge loads
+  `pkg/openmls_frb.js` through a `<script>` tag and waits for its `load` event
+  with no error path or timeout, so a missing module — a 404, or the app's own
+  HTML page that a development server sends in its place with a 200 — left
+  `init()` pending with nothing reported. `init()` now fetches the script
+  first and throws a `StateError` naming it, its HTTP status and content type,
+  and the ways out, when the answer is not a success or is HTML. A request
+  that fails outright, under a Content Security Policy that forbids `fetch`
+  say, throws nothing, and the loader runs as before. Measured in headless
+  Chrome: with no module served, `init()` threw at once with
+  `pkg/openmls_frb.js is not served (HTTP 404, text/plain; charset=utf-8)`;
+  with it served, `init()` completed, and a sync call
+  (`supportedCiphersuites()`) and an async one (`MlsEngine.create`) answered.
+
+#### Documentation
+
+- **The README says when `web/pkg/` can be left empty, and what `init()` then
+  does** (`README.md`, *Known Limitations*) — a `flutter run -d chrome` that
+  skips the build hook after a run for another platform is Flutter 3.38 to
+  3.41's: 3.38.4 runs the hooks through the `dart_build` target, whose stamp
+  does not include the target platform, while 3.44.8 and 3.47.4 call them
+  directly with the target platform (3.41 not checked here). Where it still
+  happens, `init()` throws the `StateError` above; the README no longer says
+  the call stays pending.
+- **`SECURITY.md` no longer says the tag ruleset stops a `write`
+  collaborator** — it reserved tags to "Admins/Maintainers", but the
+  ruleset's bypass list also held role 4, which GitHub names `write`. The list
+  now holds Admin only (`.github/rulesets/protect-release-tags.json`), and the
+  text says that Admins bypass the ruleset's signature rule as well; the
+  release scripts sign their tags.
+- **`THIRD_PARTY_NOTICES.txt` gives the openmls crates the canonical MIT
+  text** — the file ships in every native archive and in the package. With
+  openmls taken from crates.io (see *For Contributors*), its seven openmls
+  crates carry the MIT text with `Copyright (c) OpenMLS Authors`, composed
+  from the crate metadata, because a published `.crate` has no LICENSE file;
+  until now it quoted the repository's LICENSE, which names the year 2020.
+  The licence terms are unchanged.
+
+### For Contributors
+
+#### Added
+
+- **A regression test for GHSA-94v4-rg25-x625**
+  (`test/group_lifecycle_test.dart`) — a resync by `joinGroupExternalCommit`
+  and by `joinGroupExternalCommitV2`, in a group where the removal it carries
+  truncates the tree, must leave three members and no signature key twice.
+  Both cases fail on openmls 0.9.1, which still lists the removed leaf.
+
+#### Changed
+
+- **copier template adopted: v4.15.1 -> v4.15.2** — workflow fixes.
+
+  `.copier-answers.yml` records the new template revision.
+
+  **The agent workflows now use `anthropics/claude-code-action` v1.0.261**
+  (`.github/workflows/ai-review.yml`,
+  `.github/workflows/repair-build.yml`) — both pins move from v1.0.235: to
+  v1.0.236 with this adoption, to v1.0.240 in Dependabot's #54 and to
+  v1.0.261 with the v4.18.0 adoption below, bringing the generated workflows
+  onto the newer bundled Claude Code and Agent SDK versions.
+
+  **The notices refresh now supplies the repository to its signed commit**
+  (`.github/workflows/refresh-notices.yml`) — the `Commit and push` step's
+  `env:` gains `GH_REPO: ${{ github.repository }}`, so the GraphQL mutation and
+  its `verification.verified` read-back receive a repository instead of
+  failing when `$GH_REPO` is unset. The obsolete `APP_SLUG` setting is removed
+  because that step no longer uses it for the Git identity or bot lookup.
+
+  **Large notices inventories now reach `jq` without exceeding Linux's
+  argument limit** (`.github/workflows/refresh-notices.yml`) — the base64
+  content is written to `$RUNNER_TEMP/notices.b64` and passed with `--rawfile`
+  instead of being expanded into one `--arg` argument. This lets the signed
+  commit payload handle inventories whose base64 representation is larger than
+  the per-argument limit.
+
+- **The App token is kept out of the update-checker checkouts**
+  (`.github/workflows/check-openmls-updates.yml`,
+  `.github/workflows/check-template-updates.yml`) — both jobs mint a
+  write-scoped GitHub App token and then run repository code and third-party
+  tooling (`make`, `pip install copier`) in the same job. The
+  `actions/checkout` step no longer receives that token; it uses the job's
+  default, read-scoped `GITHUB_TOKEN` (the jobs grant `contents: read`), and
+  `persist-credentials: false` keeps even that out of `.git/config`, so nothing
+  in the worktree can read a write-scoped credential. `GITHUB_TOKEN` is enough
+  to check the repository out whether it is public or private. The pull request
+  is still pushed by `peter-evans/create-pull-request` via its App-token input,
+  and the `gh` steps read the App token from `GH_TOKEN`. Mirrors
+  `refresh-notices.yml`.
+
+- **The update checkers can regenerate their own pull requests**
+  (`.github/rulesets/signing-commit.json`, `.github/rulesets/README.md`) —
+  `peter-evans/create-pull-request` refreshes an existing branch by
+  force-pushing it, and `Signing commit` forbids that on `~ALL` branches with
+  no bypass actors, so `force_update` could not regenerate an open update pull
+  request: measured on 2026-10-20 (run `39450303118`), the App's signed API
+  commit was created and the ref update refused with "Cannot force-push to
+  this branch". A scheduled run fails the same way when a version's branch
+  outlives its pull request. `refs/heads/update-openmls-*` and
+  `refs/heads/update-template-v*` are now excluded from that ruleset, as
+  `refs/heads/dependabot/**/*` already is: a push there may rewrite history
+  and need not be signed, and the App signs regardless. `main` keeps its
+  pull-request gate, its signatures and its no-bypass ban on force-pushes,
+  and the branches stay under `Delete branches`.
+
+- **copier template adopted: v4.15.2 -> v4.17.0** — by hand, superseding the
+  update bot's #55 (v4.16.1). `.copier-answers.yml` records the new revision
+  and the new question's answer, `upstream_source: git_tag`; switching the
+  source is a change of its own.
+
+  **pub.dev's upload limits are measured** (`make verify-pub-limits`) —
+  pub.dev refuses a README.md, CHANGELOG.md, LICENSE or example over 256 KiB,
+  or a pubspec.yaml over 128 KiB, at upload, after the tag, and the dry-run
+  checks none of them. CI runs it on the Linux x86_64 leg and warns from
+  200 KiB, `make publish-dry-run` runs it first, and `make release` measures
+  the finalized CHANGELOG before committing.
+
+  **iOS is type-checked on every push and pull request**
+  (`make rust-check-ios`, the `Type-check (iOS)` job) — the three iOS targets
+  were compiled only by a release tag, so an iOS-only compile error first
+  showed up there.
+
+  **`make release` refuses a stage-1 release whose native sources moved since
+  its tag** — `rust/` (except `rust/fuzz` and `rust/deny.toml`) and
+  `lib/src/rust/` are compared with the `openmls_frb-*` tag, so any commit
+  there after stage 1 needs a new crate.
+
+  **Every Ubuntu job names its image, `ubuntu-26.04`** — the Linux release
+  builds move from `ubuntu-latest` (x86_64) and `ubuntu-24.04-arm` (arm64) to
+  `ubuntu-26.04` and `ubuntu-26.04-arm`; a Linux library records the glibc
+  symbol versions of the image that built it.
+
+  **An upstream bump moves only what the new release requires** —
+  `make rust-update` is `cargo update --workspace`, and the rest of the graph
+  moves in Dependabot's weekly cargo pull request, which now takes transitive
+  crates too (`allow: dependency-type: all`).
+
+  **Only an Admin can create, move or delete a tag** — see *Documentation*
+  above; on GitHub the ruleset changes when
+  `make setup-repo-protections ARGS="--update"` applies it.
+
+  **The agent workflows** — OpenCode is pinned at 1.18.35 and makes no
+  session-title call unless `AGENT_OPENCODE_TITLE_MODEL` names a model; the AI
+  reviewer is told where each file's hunks start and who wrote each commit;
+  the build repair leaves drafts alone, re-runs a first failure once, leaves a
+  commit to a person after two runs that ended without a verdict, and can run
+  the wasm32 half of `make rust-doc`; the update bot's CHANGELOG entry is
+  written from the lockfile diff and the bound upstream files' patches.
+
+  **`make get` passes `ARGS` on**, so
+  `make get ARGS="--directory=example_cli"` resolves that package.
+
+  The App-token checkout hardening and the update checkers' branch exclusion,
+  both above, now come from the template.
+
+- **openmls comes from crates.io instead of a git tag** (`rust/Cargo.toml`,
+  `rust/Cargo.lock`, `rust/deny.toml`, `.github/dependabot.yml`,
+  `.copier-answers.yml` and the files the `upstream_source: crates_io` answer
+  renders) — the update check found upstream releases through GitHub's latest
+  release and accepted only an `openmls-vX.Y.Z` tag, so openmls 0.9.1,
+  published on 2026-10-07 under the tag `v0.9.1` and with no GitHub release,
+  was invisible to it. `openmls` is now pinned exactly (`"=X.Y.Z"`) on both of
+  its declarations, the four other openmls crates sit at the requirements that
+  release declares, and the check reads crates.io. The switch, made on 0.9.0
+  before the bump in *Security*, moved no code: all nine openmls packages in
+  the lockfile were published from the commit the `openmls-v0.9.0` tag names
+  (`3a3e35de`), and only their `source` and `checksum` lines moved.
+  `rust/deny.toml` no longer allows the openmls git repository, and Dependabot
+  ignores the four openmls crates that arrive only through the others, so they
+  move with the openmls release that requires them.
+
+- **copier template adopted: v4.17.0 -> v4.18.0** — by hand.
+  `.copier-answers.yml` records the new revision and the new question's
+  answer, `enable_upstream_advisories: true`. Three files conflicted, each
+  resolved to the template's side: the `claude-code-action` pin in both agent
+  workflows and a comment in `.github/dependabot.yml`. What a consumer
+  observes is under *For Users*: the isolate count in `init()`, the web module
+  check, the `hooks`/`code_assets` range and the build hook's lock-file check.
+
+  **openmls/openmls's own security advisories are checked every day**
+  (`make check-upstream-advisories`, a job of `check-openmls-updates.yml`) —
+  `make rust-audit` and `make rust-deny` read RustSec and Dependabot reads
+  GitHub's global database, and GHSA-gc79-23g3-8g52 reached none of them. The
+  check reads the repository's published advisories and holds them against
+  every version `rust/Cargo.lock` resolves; on this tree none of the seven
+  covers one.
+
+  **`make setup-repo-protections` configures both release environments** —
+  `native-build` and `pub.dev` get the owner as the one required reviewer, no
+  admin bypass, and a deployment policy that admits only `openmls_frb-*` and
+  `v*` tags; `publish.yml`'s `publish` job now runs on a tag only. GitHub
+  changes when the command runs: `--dry-run` on this repository shows
+  `native-build` letting an Admin skip the review and both environments
+  admitting any ref.
+
+  **The minimum Rust version is checked against the dependency graph**
+  (`make check-msrv`, on the Linux x86_64 leg) — 1.91 everywhere it is stated,
+  the floor openmls 0.9.2 declares.
+
+  **cargo-deny fails on a yanked crate version and on a wildcard dependency**
+  (`rust/deny.toml`) — `yanked = "deny"`, and with every crate from crates.io
+  `wildcards = "deny"`, path dependencies allowed; `make rust-deny` passes.
+
+  **The update tooling** — `make update-template ARGS="--version vX.Y.Z --data
+  key=value"` answers a question a new version adds, and from the next
+  adoption on reports text a merge put in twice (none in this one: every
+  merged file was compared with a fresh render of both versions); and
+  `make update-evidence` writes down what an upstream update changed, attached
+  to the update pull request, which now also says whether it could be merged
+  unread, as a report only. The build repair reads the openmls crates' source
+  from crates.io, takes the update it repairs from the compare API, may write
+  `CHANGELOG.md`, `README.md` and `SECURITY.md`, and asks what moved behind a
+  changed signature; the AI reviewer holds a bot entry's upstream claims
+  against the upstream range; the update bot replaces the upstream Highlights
+  line whoever last wrote it.
+
+  **The macOS and Windows jobs name their images, `macos-26` and
+  `windows-2025-vs2026`** — the release builds included, and the images
+  `-latest` already gave them: `openmls_frb` 2.3.1 was built on
+  `macos-26-arm64` and `windows-2025-vs2026`.
+
+  **`Swatinem/rust-cache` moves to v2.9.3** — and `claude-code-action` to
+  v1.0.261 (see the v4.15.2 entry above); both upstream tags dereferenced to
+  the pinned commits. This supersedes Dependabot's #71.
+
+  **Dependabot** — the `coverage >= 1.16.0` and `ffigen`-major ignores now come
+  from the template, which took them from this repository: its text replaces
+  ours and gives `ffigen` a reason of its own, flutter_rust_bridge's
+  `frb_dart` pinning `^20.1.1`, where ours named hooks 2. The
+  `hooks`/`code_assets` ignore now holds back 3.x.
+
+  Smaller: `compareVersions` orders prereleases and build metadata as SemVer
+  does; the update-openmls skill no longer describes a crate bump the update
+  never makes; README and CONTRIBUTING say what the update pull request
+  changes; `protect-main.json` names
+  `require_extra_approval_for_unattributed_changes: true`, which the live
+  ruleset already holds.
 
 ## [3.2.1] - 2026-09-29
 
@@ -2106,932 +2740,19 @@
 
   The bump was worth little here in any case: setup-dart exists in that action solely to provide a `dart` binary for `dart pub global activate fvm` on the next line, and everything that builds and tests this package comes from the FVM-pinned SDK.
 
-## [2.0.1] - 2026-08-03
+## Older releases
 
-### For Users
-
-#### ✨ Highlights
-
-- **openmls_frb v2.0.1** — Rust FFI bindings
-
-#### Security
-
-- **Ratchet trees and key packages now decode on the panic-free path** —
-  joining from a Welcome or an external commit decodes the sender's
-  `ratchetTreeBytes`, and every add-member entry point decodes peer key
-  packages. Both went through openmls' `tls_deserialize_exact_bytes`, whose
-  hand-written `DeserializeBytes` impls slice the input at the *re-serialized*
-  length and index out of bounds when that exceeds the bytes actually consumed.
-  `RatchetTreeIn` and `KeyPackageIn` reach those impls through the `Extension`
-  and `UnmergedLeaves` fields nested in their leaf and parent nodes — the same
-  shape behind the `MlsMessageIn` parsing fix in 2.0.0, which covered MLS
-  messages but not these two types. They now use the same `Read`-based decoder.
-  Defense in depth: no input is known that reaches the panic through these
-  types. Both decoders run the same validation and differ only in the cursor
-  arithmetic that follows, so on anything a conforming implementation emits they
-  agree exactly. They can diverge only where that arithmetic was already wrong:
-  openmls does not require an extension's payload to be fully consumed, so a
-  payload carrying trailing bytes left the old path resuming from the wrong
-  offset. Such input now parses correctly instead of being misread, and still
-  has to pass the usual key-package and leaf-node validation afterwards.
-
-### For Contributors
-
-#### Fixed
-
-- **Template update notifications had stopped working, silently and
-  invisibly** (`.github/workflows/check-template-updates.yml`) — the workflow
-  opened a pull request whose payload was its *description*: the version table,
-  the template's changelog for the range, and manual update instructions. Its
-  diff was meant to be empty. But `create-pull-request` opens nothing when
-  there is no diff and exits silently — stated in its README and guarded by
-  `if (result.hasDiffWithBase)` in the SHA this project pins — so those pull
-  requests only ever existed because something made the tree dirty. That
-  was `.fvmrc`, rewritten by `fvm install` on every run: every notification
-  ever opened here (#1, #7, #8, #10) carried exactly one file, `.fvmrc`, at
-  +3/-3, and nothing else. Fixing that drift in template v4.2.0 removed the
-  accidental payload, so the very next template release would have produced a
-  green job, a step summary reading "a notification PR has been created", and
-  no pull request — detectable only as the absence of something nobody was
-  watching for, which is the same shape that hid the FVM cache bug for months.
-  The workflow now has a real payload, and the absence is checked rather than
-  assumed: a run that found an update and did not open a pull request fails and
-  says not to read it as "nothing to do".
-
-- **A mistyped signing passphrase no longer aborts a release**
-  (`scripts/src/release_common.dart`, `scripts/src/release.dart`,
-  `scripts/src/release_frb.dart`) — git signs a commit or a tag by shelling out
-  to `ssh-keygen -Y sign` (or `gpg`), and both give up after a *single* wrong
-  passphrase rather than re-prompting. One typo therefore aborted the release
-  wherever it happened, and the position that hurts is between the commit and
-  the tag: the version bump is committed, no tag exists, and re-running the
-  command fails its own "must be greater than the current version" precondition
-  — leaving reverting the commit or tagging and pushing by hand as the only ways
-  out. Both stages now route every signing and push step through
-  `runInheritRetry`, which prints the failure and runs the step again, so the
-  passphrase prompt simply comes back the way `ssh` and `sudo` behave — no
-  question to answer. **Ctrl-C is the way out**, and it works: with
-  `inheritStdio` the interrupt reaches the whole foreground group, verified at
-  the passphrase prompt itself. The loop is uncapped, because a cap would
-  reinstate the very failure it exists to prevent, so the two things bounding it
-  carry the weight. **A non-interactive stdin throws on the first failure**, CI
-  behaviour unchanged: nobody is there to retype anything or to interrupt, so a
-  structurally broken step would otherwise spin forever. That test is
-  `stdin.echoMode` and not `stdin.hasTerminal`, which reports `terminal` for any
-  character device and so calls a run redirected from `/dev/null` interactive.
-  **From the third consecutive failure the loop paces itself** at 2s and says
-  so; the first retries stay immediate, so a typo is never slowed, while a step
-  failing in milliseconds cannot scroll past faster than it can be read.
-
-- **An interrupted release is resumed by re-running the same command**
-  (`scripts/src/release_common.dart`, `scripts/src/release.dart`,
-  `scripts/src/release_frb.dart`) — the retry above covers a typo, but not a
-  Ctrl-C or a closed terminal, both of which strand the release in the same
-  half-finished state. Both stages now recognise it and continue
-  from the tag (or push) step, skipping the bump and the CHANGELOG edit so
-  nothing is applied twice. Because a false positive would tag and push a commit
-  that is not the release commit, detection requires *all* of: a clean working
-  tree, the version file already reading exactly the requested version, and
-  `HEAD`'s subject equal to the exact subject the release writes — built from
-  the same expression that builds the commit message, so the two cannot drift.
-  A leftover tag is accepted only when it is this release's tag *and* points at
-  `HEAD`; the same name on any other commit is refused, as is a tag already on
-  origin. Declining the confirmation prompt on a fresh run still reverts the
-  edits; on a resumed run it leaves the commit in place and says so. Interrupting
-  *before* the commit is the one case nothing can report at the time — Ctrl-C
-  kills the script mid-step — so the next run's "working tree is not clean"
-  recognises when the only modified paths are the release's own files and names
-  the single `git restore` that discards them.
-
-#### Added
-
-- **Template updates are applied automatically, not just announced**
-  (`scripts/update_template.dart`, `scripts/src/update_template.dart`,
-  `make update-template`, `.github/workflows/check-template-updates.yml`) — the
-  scheduled check now runs `copier update` itself and opens a pull request
-  carrying the result, the way the dependency update workflow already does.
-  Everything it needs comes from `.copier-answers.yml`, so the new scripts name
-  neither this project nor its upstream library and can move into the template
-  unchanged. Copier is pinned (9.11.1) for the reason the actions are pinned by
-  SHA: this runs unattended, and a release that changed how copier merges would
-  arrive as a conflict-shaped diff rather than a clean failure.
-  Two outcomes are reported separately, because they are independent and both
-  are quiet. A **conflict** leaves both sides in the file; the pull request
-  becomes a draft, lists the files and says why nothing else caught it — the
-  format, Rust and analysis gates read only Dart and Rust, and every conflict
-  copier has produced in this project so far has been in Markdown, which passes
-  all three intact. **`_commit` failing to land** is the other: copier can
-  apply every file and still leave `.copier-answers.yml` on the old version,
-  which merges as an un-updated project and re-opens the same pull request
-  forever. That one fails the job — after the pull request exists, so the work
-  is kept. They do not imply each other: this release's own update landed
-  `_commit` while `CONTRIBUTING.md` was still conflicted.
-  The three checks the pre-commit hook runs are executed and reported in the
-  body, never enforced — a template update that breaks a gate is precisely the
-  one a human most needs to see. The CHANGELOG entry is written by AI from the
-  template's changelog *and* the diff that actually landed, since a template
-  release describes changes for every project generated from it and most of it
-  can arrive here as a no-op. It is filed under `### For Contributors` →
-  `#### Changed`, where every prior adoption lives, and the pull request asks a
-  reviewer to move it if the release changes shipped behaviour.
-  One dependency is worth naming: copier refuses to update a dirty destination,
-  untracked files included, so the `.fvmrc` drift fix is not merely related to
-  this automation — without it, `fvm install` would leave the tree dirty and
-  every automated update would refuse to run.
-
-- **`test/scripts/update_template_test.dart`** — covers the two pure decisions
-  the automation makes. `parseUnmergedPaths` collapses the three conflict
-  stages `git ls-files -u` prints into one path and keeps paths containing
-  spaces intact; `hasConflictMarkers` is anchored at line start so this
-  repository's own documentation of how to grep for conflicts does not register
-  as one. `insertContributorChangelogEntry` is covered over every shape the
-  file can be in: an existing subsection, a missing one, `#### Changed
-  (Breaking)` which must never receive the entry, a missing `### For
-  Contributors`, a missing `## [Unreleased]` — and, in every case, that nothing
-  is written into the released section above.
-
-- **`test/scripts/release_common_test.dart`** — covers `isResumableRelease`,
-  the one predicate in the release scripts whose false positive is
-  unrecoverable, over each condition that must individually block a resume; and
-  `onlyTheseFilesDirty`, which decides whether the not-clean message may name a
-  `git restore` — it declines on an untracked path and on a rename rather than
-  suggest a command that would not work, or would discard something else.
-
-- **`wire_decode` fuzz target** — fuzzes the decoder the group-join and
-  add-member APIs use, over `MlsMessageIn`, `RatchetTreeIn` and `KeyPackageIn`.
-  The ratchet-tree and key-package paths were not covered by any target before.
-
-#### Changed
-
-- **copier template adopted: v4.2.0 → v4.3.0** — a single change, and it repairs
-  something 4.2.0 shipped broken. Interrupting a release before its commit
-  leaves only the release's own files modified, and 4.2.0 added a message that
-  recognises that state and names the one `git restore` which discards them. It
-  never fired. The status was read through `git()`, which trims its output;
-  `git status --porcelain` has two positional status columns, so an unstaged
-  modification is `' M path'`, and trimming ate the leading space of the *first*
-  line and shifted that path by one character. `onlyTheseFilesDirty` then
-  matched nothing and rejected the whole status, so every interrupted release
-  got the generic "working tree is not clean" instead — in exactly the case the
-  hint was written for, since a release edits its files without staging them.
-  Both stages now read the status through a `gitStatus()` that strips only
-  trailing newlines, and a test pins the raw and trimmed shapes against each
-  other so a future trim cannot pass unnoticed. Found while writing a release
-  script for the template repository itself, which had inherited the same shape.
-  This is also the first update applied by the automation added above rather
-  than by hand.
-
-- **The panic-free decoder moved out of `api/engine.rs`** — `from_exact_bytes`
-  now lives in `rust/src/wire_decode.rs` and is generic over the decoded type,
-  so one helper covers all four call-site types and the fuzz crate can drive the
-  real decoder. The alternative, giving `rust/fuzz` its own `openmls`
-  dependency, would have left a second upstream tag that
-  `make check-new-openmls-version` does not bump.
-
-- **copier template adopted: v4.1.0 → v4.2.0** — the release-script half of this
-  version was written here and upstreamed, so it arrives byte-identical and
-  lands as a no-op; it is the retry and resume work documented above. What the
-  adoption actually changes is the development environment.
-  **The pre-commit hook is executable at last** — it was committed mode 644, and
-  git skips a non-executable hook without saying anything, so nothing it checks
-  ever ran. It is 755 now, and copier carries the bit through on an update, not
-  only on a fresh render. Its content carried a second failure that could only
-  surface once it started running: it announced every step-1 failure as a
-  formatting problem, so a hook invoked from an IDE or GUI git client — which
-  inherits a minimal PATH where `make`, `fvm` and `cargo` are all missing — told
-  you to run `make format` when the real problem was PATH. It now appends the
-  usual install locations and names the missing tool instead of blaming
-  whichever check ran first.
-  **`.fvmrc` and `.vscode/settings.json` no longer drift on every
-  `make codegen`** — `flutter_rust_bridge_codegen` shells out to `fvm install`
-  twice per run, and `fvm install` rewrites both files unless they already match
-  its own output byte for byte, so every codegen left two modified files
-  unrelated to the generated bindings, and in CI they rode along into the
-  automated update PRs. `.fvmrc` is now committed in fvm's own serialization —
-  its key order and no trailing newline — with `"updateVscodeSettings": false`,
-  which is what stops the second file being touched; `.gitattributes` marks it
-  `-text`, because a Windows checkout under the default `core.autocrlf=true`
-  would otherwise land CRLF and break the byte-match invariant while git still
-  reported the tree clean; and `.vscode/settings.json` is now committed rather
-  than generated, since with fvm no longer writing it a machine that lacks the
-  privileges for fvm's own symlink would leave `dart.flutterSdkPath` unset. It
-  points at `.fvm/flutter_sdk`, the version-agnostic symlink, so a Flutter bump
-  does not need to edit it. Verified here: `fvm install` now leaves both files
-  byte-identical.
-  **`setup_repo_protections.dart` also sets `delete_branch_on_merge`** — the
-  script applied rulesets and the `native-build` environment but never touched
-  repo settings, so every merged branch stayed forever, and the dependency and
-  template update workflows open one per upstream version several times a week.
-  Adopting the script does not change the setting; it takes effect the next time
-  `make setup-repo-protections` runs against GitHub.
-
-## [2.0.0] - 2026-07-30
-
-### For Users
-
-#### ✨ Highlights
-
-- **Concurrent work on one group no longer loses writes** — every engine
-  operation runs under an engine-wide lock, and a database file admits a single
-  engine at a time **(breaking)**. Overlapping calls used to load the same
-  snapshot and the later write-back dropped the other's changes: a merged
-  commit, an epoch advance or a ratchet step could disappear, desynchronizing
-  the group and leaving messages undecryptable.
-- **The storage layer stops leaving MLS plaintext behind** — undefined behavior
-  removed from the snapshot provider, SQLCipher wipes its own working buffers,
-  and the copies the wrapper itself kept (the write-back diff, the hex
-  encryption key, overwritten and deleted entries) are zeroized. Database files
-  are created owner-only and `deleteGroup` is atomic.
-- **The package ships `THIRD_PARTY_NOTICES.txt`** — the licence texts the
-  statically linked native library must carry with it, generated from the
-  resolved dependency graph across all released targets and verified
-  byte-for-byte in CI.
-- **openmls** — unchanged this release (openmls-v0.8.1)
-- **openmls_frb v2.0.0** — Rust FFI bindings
-
-#### Changed (Breaking)
-
-- **Only one engine may hold a database file** — the SQLCipher connection now
-  takes an exclusive lock at open. A second `MlsEngine` on the same path —
-  another instance, isolate, or process — fails with *"Database is already open
-  by another connection or process"* instead of quietly running its own
-  load → operate → save cycle over the same rows and overwriting the first
-  engine's group state. `close()` releases the lock, and an overlapping opener
-  waits out a five-second timeout first, so handing the file over during
-  teardown still works.
-  On Unix the lock is held partly by a new file next to the database,
-  `<db_path>.lock`, because SQLite's own locks are POSIX advisory locks and
-  POSIX drops every one a process holds on a file as soon as that process
-  closes *any* descriptor for it — so one unrelated read of the database from
-  elsewhere in an app (a backup copy, an integrity check, a crash reporter)
-  silently released the exclusive lock while the engine was still running, with
-  no error, letting another process in. The lock file is created empty and
-  `0600` and is never deleted; it holds no data, so it needs no special
-  handling in backups, but deleting it while an engine is running lets a second
-  engine open the same database. `":memory:"` databases and Windows do not get
-  one.
-  **Action required — only if your app opens the MLS database from more than
-  one place** (a background isolate, a share extension, a second engine
-  instance): route them through a single engine, or give each its own file.
-  One engine kept open for the lifetime of the app needs no changes and no
-  lifecycle handling. `close()` is what hands the file from one engine to the
-  next; a hot restart during development or a killed process releases the lock
-  on its own, so the engine that follows opens without waiting out that
-  timeout.
-- **A `file:` URI as `dbPath` is now rejected** — `create()` fails instead of
-  opening a database that silently gets neither owner-only permissions nor the
-  single-writer lock file above, because the path a URI resolves to cannot be
-  recovered without parsing its query parameters.
-  **Action required — only if you pass a `file:` URI:** pass the plain path
-  instead. Plain paths and `":memory:"` are unaffected.
-
-#### Changed
-
-- **The package ships `THIRD_PARTY_NOTICES.txt`** — the prebuilt native library
-  is statically linked against its Rust dependency tree, and MIT, BSD and
-  Apache-2.0 all require those notices to travel with a binary distribution,
-  including an application that embeds the library. Flutter's `LicenseRegistry`
-  does not cover them: it aggregates `LICENSE` files of pub packages, and Rust
-  crates are not pub packages. The file sits at the package root and inside
-  every native release archive, and is generated from the resolved dependency
-  graph across all released targets — build edges included, because that is how
-  vendored native code reaches the binary: the bundled OpenSSL arrives as a
-  build-dependency of `openssl-sys` and would otherwise go unattributed
-  (264 crates, 152 shipped licence texts). Licences a crate keeps beside
-  vendored code are collected too — SQLCipher's, the Dart SDK headers', the
-  Unicode tables' — as are those a git dependency keeps at its repository root
-  rather than in the member directory, which is where every upstream MLS crate
-  keeps its own. Where a crate ships no licence file at all, the canonical text
-  of the licence it declares is supplied in its place, so the file delivers the
-  licences rather than merely naming them. It is deliberately **not** declared
-  under `flutter: assets:` — a package-declared asset is bundled into every
-  consuming application whether or not it is used. README documents the two
-  lines needed to surface the notices at runtime for apps that want them.
-
-- **Durability settings are explicit** — connections are opened with
-  `journal_mode = DELETE`, verified, so a database left in WAL mode is
-  converted instead of silently keeping a side file that a crash or a
-  file-level backup can drop, and with `synchronous = FULL`. `fullfsync` is
-  deliberately left off: on Apple platforms it also flushes the drive's own
-  write cache, measured at 16 ms per MLS operation against 318 µs without it —
-  paid on every message sent and received. SECURITY.md records the trade-off.
-
-#### Security
-
-- **Serialized concurrent operations on an engine** — every engine method loads
-  a snapshot of the stored group state, lets OpenMLS mutate it, then writes the
-  diff back, but nothing held that span together: two overlapping calls loaded
-  the same base snapshot and the later write-back dropped the other's changes.
-  A merged commit, an epoch advance, a stored proposal or a ratchet step could
-  silently disappear, desynchronizing the group and leaving messages
-  undecryptable. Each operation now runs under an engine-wide async lock —
-  async because the span contains `.await` points, and because the same
-  interleaving happens on WASM's single thread with no threads involved at all.
-  This was a lost update, not key reuse: MLS gives every message a fresh random
-  `reuse_guard`, so two sends off one snapshot still got different nonces.
-- **SQLCipher now wipes its own memory** — connections set
-  `cipher_memory_security = ON`, verified on open, so SQLCipher zeroes its
-  working buffers when freeing them and asks the OS to keep them out of swap.
-  Those buffers hold MLS plaintext while it is being encrypted — the residue
-  the wrapper's own zeroization cannot reach. Measured cost: +20% per operation
-  (~62 µs).
-- **Wiped the storage layer's remaining plaintext copies** — the diff handed to
-  the database cloned every changed value out of the snapshot and dropped those
-  clones unwiped; they are zeroized once written. The encryption key's hex form
-  was built with a `format!` per byte, leaving 32 small allocations of key
-  material behind; it is now built into a single `Zeroizing` buffer and wiped
-  as soon as the key pragma has run.
-- **`deleteGroup` is atomic** — it wrote the group's final state and then
-  purged the group's rows in two transactions; a crash in between left rows of
-  a deleted group behind. Both happen in one transaction now, on native and on
-  WASM.
-- **Database files are created owner-only** — on Unix the file is pre-created
-  with mode `0600` rather than inheriting the process umask (typically
-  world-readable `0644` on desktops), and an existing file is tightened on
-  open. SQLite gives the journal file the same mode.
-- **Documented the anti-rollback requirement** — encryption at rest does not
-  protect freshness: restoring an older copy of the database replays MLS state
-  that was already spent, and the 32-bit `reuse_guard` that makes a single
-  rollback merely a rejected message erodes across a large or repeated one.
-  SECURITY.md now asks deployments to place the database on rollback-protected
-  storage (hardware monotonic counter, TPM 2.0 NV, Android StrongBox), notes
-  that sealing the key in hardware protects confidentiality rather than
-  freshness, and records that iOS exposes no such counter to apps.
-- **Removed undefined behavior from the snapshot storage provider** — the
-  `StorageProvider` implementation reached its snapshot through 35 `&self` →
-  `&mut self` pointer casts guarded by `#[allow(invalid_reference_casting)]`.
-  That cast is undefined behavior regardless of threading: `&self` carries LLVM's
-  `noalias`, so a release build (`lto = true`, `opt-level = "z"`) is entitled to
-  cache or reorder reads across those writes. Replaced with proper interior
-  mutability (`parking_lot::Mutex`), which lets the module drop its
-  `#![allow(unsafe_code)]` escape hatch — the crate now denies `unsafe_code`
-  everywhere except the generated FRB bridge.
-- **Zeroize storage values on overwrite and delete** — replacing or removing a
-  snapshot entry previously dropped the old value without wiping it, leaving
-  plaintext MLS secrets in freed heap memory for the rest of the operation.
-
-#### Fixed
-
-- **Stopped leaking snapshot allocations on every MLS operation** —
-  `into_updates()` ended with `std::mem::forget(self)`, so both `HashMap`
-  backing tables were never freed. The `forget` was unnecessary: after both maps
-  are drained, the `Drop` impl is a no-op.
-- **Build hook no longer re-runs on every build** — the hook declared the
-  `.skip_openmls_hook` marker as a build dependency unconditionally, including
-  when the marker does not exist (the normal case for every consumer).
-  `hooks_runner` treats a declared-but-missing file as modified during the
-  build, forcing a redundant second hook pass on each build. The marker is now
-  declared only while it exists, which still invalidates the skipped result once
-  the marker is removed.
-
-### For Contributors
-
-#### Fixed
-
-- **Repaired the scheduled openmls update check** — the upstream tag guard
-  adopted with copier template v3.0.0 hardcoded `^v?\d+\.\d+\.\d+$`, which
-  rejects this repo's own `openmls-v` tag prefix, so every run failed with
-  `Refusing unexpected upstream tag_name format`. The workflow's blanket
-  `|| true` hid that behind a green run. The pattern is now derived from the
-  configured tag prefix. No upstream release was actually missed —
-  `openmls-v0.8.1` is still the latest — but the next one would have been.
-- **The CI Flutter cache never saved anything** — `setup-fvm` cached `~/.fvm`,
-  but fvm keeps installed SDKs in `~/fvm/versions`; `~/.fvm` is the per-project
-  directory it symlinks inside a checkout, not the global cache. That path
-  exists on no runner, and a missing path is not an error to `actions/cache` —
-  it warns in the post step and reports success — so every job on all four
-  platforms reinstalled the SDK from scratch (`fvm install` measured at 71 s on
-  Linux, inside a 163 s setup step on Windows) while the step stayed green and
-  the repository held no `fvm-*` cache entry at all. The key now also carries
-  `runner.arch`, because Linux x86_64 and Linux ARM64 both report
-  `runner.os == 'Linux'` and were producing one byte-identical key: with saving
-  repaired but the key unchanged, one leg would have restored the other
-  architecture's `bin/cache/dart-sdk`, which Flutter keeps rather than
-  redownloads — its revision stamp matches — and then fails to execute.
-  `restore-keys` is gone, since a near-miss restored the previous SDK and then
-  installed the new one beside it, growing the entry by a full SDK on every
-  Flutter bump. Three changes keep it from drifting again. fvm itself is pinned
-  (`dart pub global activate fvm 4.1.2` instead of whatever is latest that day),
-  since this action hardcodes where fvm stores SDKs and an unannounced major
-  that relocated them would break every job at once. `FVM_CACHE_PATH` is set
-  explicitly rather than inherited, so the cached path is a contract instead of
-  a guess. And a step after `fvm install` asserts the directory is populated —
-  a failing job pointing at the action, rather than another silent warning;
-  annotate-and-continue is precisely the mode that hid this for months, and
-  nothing irreversible sits behind the check, which runs before the release
-  archives, the tag and the pub.dev publish. It also prints the SDK size
-  (2.5 GB per version uncompressed), because the 10 GB repository cache limit is
-  shared with the Rust caches and evicted LRU across all of them.
-- **CI was blind to changes in its own workflows and actions** — the path
-  filters named `test.yml` and `test-reusable.yml` but not
-  `.github/actions/**`, so a PR touching a composite action ran no tests at
-  all, and the job additionally skipped every PR opened by a bot. Dependabot's
-  grouped action bumps were therefore merged unverified — run `30289222353`
-  completed as `skipped` in one second — which is precisely the class of PR
-  that changes what CI executes. The filters now carry `.github/**` on both
-  push and pull_request, and the skip is narrowed to `update-openmls-*`
-  branches, the update PRs that move `native_version` ahead of the released
-  binaries. A `pull_request` run resolves reusable workflows and composite
-  actions from the merge ref, so the PR's own versions are what execute.
-- **A native-update entry lands at the top of `[Unreleased]`, not below
-  `### For Contributors`** — `insertChangelogEntry` created its `### For Users`
-  block at the point where the `[Unreleased]` section *ends*, so whenever the
-  accumulated changes were CI or tooling only — the section then holds
-  `### For Contributors` and nothing else, which is its normal shape between
-  feature work — the user-facing highlight was filed underneath them, the
-  reverse of the order every released section uses. It also emitted a second
-  `### For Users` heading when the section already had one that ran to the end
-  of `[Unreleased]` with no `#### ✨ Highlights` / `#### Changed` under it. The
-  insertion point is now the top of the section, and an existing
-  `### For Users` is extended rather than duplicated.
-- **The notice inventory no longer depends on the machine that generated it** —
-  `cargo tree --target <triple>` filters *normal* dependencies by that triple
-  but resolves *build*-dependencies for the **host**, so the inventory recorded
-  the build graph of whoever ran the generator. It surfaced in libsignal_dart,
-  where `prost-build` → `tempfile` → `rustix` picks `errno` on a macOS host and
-  `linux-raw-sys` on a Linux one: one crate swapped for the other, the crate
-  count unchanged, and CI rejected a file that was correct on the machine that
-  wrote it. This package was not affected between macOS and Linux, but it is the
-  same latent bug — a host-independent sweep records crates no macOS or Linux
-  run ever saw, among them `winapi`, which reaches the graph through `ansi_term`
-  inside a **proc-macro** crate. Proc-macro subtrees are host-compiled just like
-  build scripts, so the host dependence is not confined to build edges and no
-  per-target query escapes it. The crate set is therefore taken from
-  `cargo tree --target all`, the only query cargo offers that applies no
-  platform filtering at all; the per-target sweep is kept because it is the one
-  thing that fails when a declared release target stops resolving. The result
-  over-attributes deliberately: the extra entries are build tooling and
-  platform-gated crates a given build never links — `winapi` here arrives only
-  through a host-compiled proc-macro — but a file that lists them on every
-  machine is worth more than a narrower one that changes with the machine, since
-  the byte-exact CI check is only viable if the output is reproducible. The
-  inventory grows from 237 to 264 crates. `--check` also prints the
-  first differing line and the lines unique to each side now: the failure it
-  reports is normally read from a CI log, and "the contents differ" left the
-  reader to bisect a 400 KB file by hand
-- **`make check-new-openmls-version ARGS="--update"` now moves the
-  `openmls_libcrux_crypto` pin** — the tag-rewrite list in the generated checker
-  is built from the `upstream_crates` template answer, and that answer named
-  `openmls_memory_storage`, a crate this package has never depended on (upstream
-  dropped it along with the blob-based storage API), while omitting
-  `openmls_libcrux_crypto`, which the experimental X-Wing suite does depend on.
-  Its rewrite pattern therefore matched nothing and libcrux kept its old tag: the
-  next upstream bump would have pinned four MLS crates to the new tag and one to
-  the previous one. That resolves rather than fails — cargo will build two
-  revisions of the same git repository side by side — so it would have surfaced
-  as an X-Wing-only breakage or a silently doubled dependency tree rather than as
-  a build error. Corrected in `.copier-answers.yml` rather than in the generated
-  file, so the next `copier update` keeps it.
-
-#### Added
-
-- **CI verifies the declared MSRV** — `rust-version = "1.89"` in
-  `rust/Cargo.toml` is a promise to anyone building the native library from
-  source, and nothing checked it: the first dependency or language feature to
-  raise the real floor would have broken that build silently, with the failure
-  landing on a contributor instead of here. A new `msrv` job reads the version
-  out of the manifest — rather than repeating it, so the job cannot drift from
-  the claim it checks — installs exactly that toolchain and runs `make
-  rust-check`. Verified locally against 1.89.0 before the job was added; the
-  reusable `setup-rust` action gained a `toolchain` input (default `stable`) to
-  make it possible.
-- **`make rust-test` and a CI step that runs it** — the crate's unit tests were
-  never executed in CI, including `classical_ops_do_not_init_libcrux`, which
-  several advisory ignores in `.cargo/audit.toml` and `rust/deny.toml` cite as
-  their justification.
-- **Third-party notice generator** (`make third-party-notices`,
-  `make verify-third-party-notices`) — unions `cargo tree --locked --edges
-  normal,build` across all twelve released targets, resolves each crate's SPDX
-  expression and licence texts via `cargo metadata`, and pools identical texts
-  by reference (the Apache-2.0 text alone appears in over a hundred crates;
-  pooling takes the file from 1.9 MB to under 500 KB). `--locked` is what keeps
-  the output machine-independent: without it a stale `Cargo.lock` lets cargo
-  silently re-resolve the graph, so the same commit could generate different
-  inventories. Output is otherwise deterministic — crates sorted, texts sorted,
-  no timestamps — so CI can diff it byte-for-byte and fail when a dependency
-  change leaves the committed file stale. The check also runs in
-  `build-openmls.yml` before the build matrix starts, since a hand-pushed tag
-  skips the release script's own gate and the archives it produces embed the
-  file.
-- **Regression tests for upstream tag validation** —
-  `test/scripts/check_updates_test.dart` covers the configured prefix, shell
-  metacharacters, newline injection (including a bare trailing newline), path
-  traversal and non-canonical version segments.
-- **Storage hardening tests** — `test/concurrency_test.dart` drives overlapping
-  calls on one engine (they fail against the pre-fix build with a consumed
-  ratchet secret and a dropped proposal), `test/security/encrypted_db_test.dart`
-  covers encryption at rest, wrong-key fail-closed and the single-writer
-  refusal, and `encrypted_db.rs` gained unit tests pinning the raw-key pragma
-  shape, the connection pragmas that must be in force, and the `0600` file mode.
-
-#### Changed
-
-- **Minimum supported Rust version is now 1.89** (was 1.88) — `std::fs::File::try_lock`,
-  which stabilised there, holds the single-writer lock file. The alternative,
-  `libc::flock`, is an `unsafe fn`, and the crate denies unsafe code outside the
-  two modules that cannot avoid it. This affects only building from source: the
-  published package downloads a prebuilt native library, so nothing changes for
-  an app that consumes it.
-- **Update workflows detect a crashed checker by what it wrote, not by its exit
-  code** — the checkers exit 0 when up to date, 1 when an update is available
-  and 2 on failure, but the workflows ran them under `|| true`, making a crashed
-  checker indistinguishable from "no updates available". Discriminating on the
-  exit code cannot work here, and an earlier revision of this change assumed it
-  could: the checkers are invoked through `make`, and GNU make collapses any
-  non-zero recipe status into its own exit 2 (verified: a recipe exiting 1 makes
-  `make` exit 2), so an `exit_code > 1` guard fires on the ordinary "update
-  available" path and would have failed both workflows on exactly the event they
-  exist to serve — no update PR and no template notification would ever be
-  opened again. It stayed green only because no update came up while it was in
-  place. The gate is the artefact instead: the checker writes `needs_update=` to
-  its outputs file *before* signalling, and writes nothing at all when it
-  throws, so a missing `needs_update=` line means it failed, and the step fails
-  with an `::error::` that tells the reader not to interpret it as "up to date".
-  Manual `target_version` input is also validated in the workflow shell, before
-  it is interpolated into `ARGS`.
-- **Test workflow now triggers on `scripts/`, `hook/` and `Makefile` changes** —
-  edits to the build hook, tooling scripts and the Makefile previously ran no
-  tests at all. Workflow-file paths are now also watched on pull requests, not
-  only on pushes. `THIRD_PARTY_NOTICES.txt` and `.gitattributes` are watched
-  too: `make verify-third-party-notices` runs in this workflow, so the notices
-  file is the artefact being checked and `.gitattributes` decides which bytes a
-  checkout materialises for it. Without them the one commit that can break — or
-  fix — that check was also the one commit that did not run it, letting a stale
-  inventory reach `main` unverified and surface only in the release preflight.
-- **GitHub Actions moved to their current majors** — `actions/checkout` v4→v7,
-  `actions/upload-artifact` v4→v7, `actions/download-artifact` v4→v8,
-  `actions/cache` v4→v6, `actions/create-github-app-token` v2→v3,
-  `android-actions/setup-android` v3.2.2→v4.0.1 and
-  `schneegans/dynamic-badges-action` v1.7.0→v1.9.0. Mostly the Node 20→24
-  runtime migration, which needs no change on GitHub-hosted runners. Two are
-  worth knowing about: `download-artifact` v8 now *fails* a run on an artifact
-  digest mismatch instead of logging a warning, which is a welcome hardening of
-  the job that packages the native archives consumers download; and
-  `checkout` v7 refuses to check out a fork PR under `pull_request_target` /
-  `workflow_run`, which does not affect this repo because no checkout passes an
-  explicit `ref`.
-- **Dependabot branches are exempt from the branch rulesets** — `Signing commit`
-  applies `non_fast_forward` to `~ALL` branches with no bypass actors, so
-  Dependabot, which refreshes an open PR by force-pushing a rewritten commit,
-  could never rebase one onto a moved `main`; its first scheduled run gave up
-  with "because the branch … is protected it was unable to do so", leaving the
-  PR frozen at the day it was opened. `refs/heads/dependabot/**/*` is now
-  excluded from that ruleset and from `Delete branches` (which blocked
-  `@dependabot recreate` and branch cleanup for the same reason). Nothing is
-  weakened: Dependabot signs its commits regardless of the rule, and `main`
-  keeps both its pull-request gate and `required_signatures`. The trailing `/*`
-  is load-bearing — these are `fnmatch` patterns in pathname mode, so a bare
-  `**` stops at the first `/` and would miss the two- and three-segment names
-  Dependabot actually generates.
-- **copier template adopted: v3.0.3 → v4.0.0** — the major carries a single
-  contract change, that every project generate and commit
-  `THIRD_PARTY_NOTICES.txt` before its next CI run, and this package already
-  satisfies it: the notice tooling was written here and upstreamed into the
-  template, so it arrives byte-identical and most of the release lands as a
-  no-op. What does change: `validateUpstreamTag` names the input it rejected,
-  because an API `tag_name`, a `--version` argument and the pin recorded in
-  `rust/Cargo.toml` fail for different reasons and want different fixes;
-  `insertChangelogEntry` matches `#### Changed` exactly, where a prefix match
-  previously filed the native-library bump under `#### Changed (Breaking)` as
-  well, and it creates a missing subsection in the documented order rather than
-  at the end of the block; the fuzz workflow reads its targets from the
-  `[[bin]]` entries of `rust/fuzz/Cargo.toml` and fans them out one job per
-  target, so a crash in one target no longer skips the rest; the build hook
-  declares a local native build as a dependency, so `make clean` no longer
-  leaves `dart test` pointed at a cached asset that is gone; and the LICENSE
-  copyright year is a stored answer (`copyright_year: 2026`) instead of the year
-  the file happens to be rendered in, so the notice keeps naming the year of
-  first publication.
-  Two parts of v4.0.0 are deliberately not adopted. The `freezed_annotation` /
-  `freezed` / `build_runner` dependencies exist so that a *freshly generated*
-  project's first codegen succeeds against an unknown API surface; this
-  package's FRB surface has no data-carrying enums — no generated `sealed class`,
-  no `@freezed` — and `freezed_annotation` sits in `dependencies`, so every
-  consumer would download a package that nothing here imports. And the
-  `frb-patterns` skill's new sections on write durability and non-failable
-  `DartFn` callbacks describe the callback-storage architecture this package left
-  behind: it has no Dart callbacks at all, storage is Rust-owned in
-  `SnapshotStorageProvider` over `EncryptedDb`, so adopting them would document a
-  pattern that does not exist here.
-
-## [1.4.2] - 2026-07-21
-
-### For Users
-
-#### ✨ Highlights
-
-- **openmls** — unchanged this release (openmls-v0.8.1)
-- **openmls_frb v1.5.2** — Rust FFI bindings
-
-#### Security
-
-- **Hardened MLS message parsing against malformed input** — incoming MLS
-  messages (`mlsMessageExtractGroupId` / `mlsMessageExtractEpoch` /
-  `mlsMessageContentType`, plus Welcome / GroupInfo / process-message decoding)
-  are now decoded via the `Read`-based path and reject trailing bytes
-  explicitly, so a malformed message returns an error instead of aborting the
-  process. Reported upstream; this local guard will be removed once we depend on
-  a fixed openmls release.
-- **Triaged new libcrux advisories in the X-Wing PQ dependency tree
-  (RUSTSEC-2026-0207/-0208/-0209/-0210/-0211/-0212)** — these advisories were
-  published against libcrux crates that reach our tree only transitively via the
-  experimental X-Wing ciphersuite (pinned by openmls-v0.8.1, so not fixable via
-  `cargo update`). Five are structurally unreachable (the SHA3 ones explicitly
-  exclude ML-KEM; the AES-GCM ones are dead code — the only X-Wing suite is
-  ChaCha20Poly1305); the sixth (-0212, libcrux-secrets constant-time swap on
-  aarch64) is an accepted availability-only risk (CVSS `VC:N/VI:N/VA:H` — a wrong
-  ML-KEM result makes an X-Wing operation fail, never a key leak). Per-advisory
-  reachability analysis is documented inline in `.cargo/audit.toml` /
-  `rust/deny.toml`; all clear on the next upstream OpenMLS bump. Classical
-  (non-PQ) ciphersuites are unaffected.
-
-#### Fixed
-
-- **Web build hook now refreshes stale WASM on upgrade** — the web build hook
-  records the provisioned crate version in `web/pkg/.wasm-version` and
-  re-downloads when it changes, instead of skipping whenever the two WASM files
-  merely exist. Previously, upgrading the package kept the prior version's WASM
-  in the app's `web/pkg/` (it survives `flutter clean`), so on web any FRB entry
-  calling Dart store callbacks could panic with an argument-count mismatch
-  (`called Option::unwrap() on a None value`) once the wire signature changed
-  between versions. The download cache is now version-keyed (`web/<version>/`),
-  WASM files are copied unconditionally (the old mtime guard skipped a
-  fresh-but-older source on downgrade), and `rust/Cargo.toml` is a declared
-  web-build dependency so a version bump re-runs the hook. Native platforms were
-  unaffected.
-
-### For Contributors
-
-#### Changed
-
-- **Adopt copier template v2.5.1 → v2.5.2** — source of the web build hook fix
-  above.
-- **Adopt copier template v2.5.2 → v3.0.3** — release-process and dev-tooling
-  changes only; no change to the published package's runtime behavior.
-  - **Two-stage release flow** (v3.0.0) — the native `openmls_frb` crate and the
-    Dart package now release independently: `make release-frb` bumps, tags
-    (`openmls_frb-X.Y.Z`) and builds the native binary, then `make release`
-    verifies that binary exists and publishes the Dart package (`vX.Y.Z`). Adds
-    `scripts/release.dart` / `scripts/release_frb.dart` and the
-    `release-frb-crate` skill; the flow is documented in CLAUDE.md.
-  - **Repository protections** (v3.0.0) — GitHub rulesets (`.github/rulesets/`)
-    restricting who may push `main` and create release tags, a signed-commit
-    rule, a `setup_repo_protections.dart` helper, and a Dependabot config.
-  - **Removed vestigial Windows Flutter-plugin scaffolding** (v3.0.0) —
-    `windows/CMakeLists.txt` and the generated plugin registrant; this is a
-    pure-Dart FRB package (native libraries load via the build hook), so the
-    scaffolding was unused.
-  - **Release-tooling fixes** (v3.0.1 → v3.0.3) — the pub.dev dry-run now runs on
-    the clean pre-bump tree (a bumped-but-uncommitted tree tripped
-    `pub publish --dry-run`'s exit-65-on-warning), and `make release` no longer
-    leaves an empty `## [Unreleased]` heading behind.
-
-## [1.4.1] - 2026-07-14
-
-### For Users
-
-#### Highlights
-
-- **Hardened release binary & fail-closed supply chain** — the shipped native
-  library is now compiled with `overflow-checks` and `unsafe_code = "deny"`, and
-  the download hook refuses to load a binary whose SHA256 checksum cannot be
-  verified.
-- **openmls** — unchanged this release (openmls-v0.8.1)
-- **openmls_frb v1.5.0 → v1.5.1** — Rust FFI bindings (release binary rebuilt
-  with `overflow-checks`; no API or behavior change in normal use)
-
-#### Security
-
-- **Hardened release binary** — the wrapper crate is now compiled with
-  `overflow-checks` (integer overflow panics instead of wrapping silently) and
-  `unsafe_code = "deny"` on all hand-written Rust. The few modules that
-  legitimately need `unsafe` (the interior-mutability storage shim and the WASM
-  `WasmCryptoKey` `Send + Sync` impl) opt in explicitly; the FRB-generated
-  bridge is exempt.
-- **Fail-closed download verification** — the native-library build hook now
-  **aborts** if the SHA256 checksums cannot be fetched or lack an entry for the
-  archive, instead of loading an unverified binary. An
-  `OPENMLS_ALLOW_UNVERIFIED_DOWNLOAD=1` escape hatch is provided for older
-  releases published without a checksums file.
-
-### For Contributors
-
-#### Added
-
-- **cargo-deny** (`rust/deny.toml`, `make rust-deny`, CI `deny` job) — enforces
-  RustSec advisories, an allowed-license list, and a source allow-list.
-  Remediated RUSTSEC-2026-0204 (`crossbeam-epoch` 0.9.18 → 0.9.20); six
-  unremediable/inapplicable advisories are ignored with inline justifications
-  (the three libcrux crypto advisories mirror `.cargo/audit.toml`).
-- **cargo-fuzz harness** (`rust/fuzz/`, `Fuzz` workflow, `make fuzz*`) with two
-  targets over untrusted wire bytes — `mls_message` (MLS protocol-message
-  parsers) and `credential` (`MlsCredential::deserialize`) — plus a seed-corpus
-  generator (`make fuzz-seed`).
-- **Rust clippy in CI** (`make rust-clippy`, `-D warnings`) and a pinned FRB
-  codegen installer (`make setup-frb-codegen`) so CI and local codegen produce
-  identical bindings.
-- Download-cache tests (`test/hook/build_hook_test.dart`).
-
-#### Changed
-
-- Adopt copier template v2.4.0 → v2.5.1
-  - Fixed the download cache key (crate version + full platform variant) so iOS
-    device and simulator builds no longer poison each other's cache on
-    Apple-silicon hosts
-  - Update scripts: `check_updates.dart --update` now bumps the wrapper crate
-    version, `update_changelog.dart` classifies update severity and accepts
-    `--from`, and the update workflow skips regeneration when an open PR for the
-    same version already exists
-  - Fixed pre-existing clippy findings (`CryptoError` Copy deref;
-    `too_many_arguments` on external-commit APIs)
-
-## [1.4.0] - 2026-06-06
-
-### For Users
-
-#### Highlights
-
-- **openmls_frb v1.4.0 → v1.5.0** — experimental X-Wing post-quantum ciphersuite (hybrid ML-KEM-768 + X25519)
-
-#### Added
-
-- **Experimental post-quantum ciphersuite**: `MlsCiphersuite.mls256XwingChacha20Poly1305Sha256Ed25519` —
-  hybrid X-Wing KEM (ML-KEM-768 + X25519, draft-connolly-cfrg-xwing-kem-06) for
-  harvest-now-decrypt-later protection. HPKE operations for this suite are delegated
-  to the formally verified libcrux ML-KEM implementation (`openmls_libcrux_crypto`,
-  same upstream `openmls-v0.8.1` pin); all classical ciphersuites continue to run
-  unchanged on RustCrypto. The libcrux provider is initialized lazily — classical
-  suites never depend on it. See the README "Post-Quantum Support (Experimental)"
-  section for important limitations (no IANA codepoint, limited interoperability,
-  future migration to the official IETF suite).
-
-#### Security
-
-- `cargo audit` reports three RustSec advisories introduced into the dependency
-  tree by `openmls_libcrux_crypto` (RUSTSEC-2026-0124, RUSTSEC-2026-0075,
-  RUSTSEC-2026-0073). Analysis: all are DoS-class (panic) or structurally
-  unreachable through this library's call paths — signatures always run on
-  RustCrypto (0075 path never invoked; libcrux's KEM/HPKE code does not link
-  ed25519), HPKE buffers are exact-size library-allocated (0124 trigger
-  impossible), and the standalone `mac()` (0073) is never called. Fixes are
-  blocked on upstream semver pins; tracked until the next upstream OpenMLS
-  release. Each advisory is ignored in `.cargo/audit.toml` with its
-  reachability justification inline — remove those entries when bumping the
-  upstream pin. The non-libcrux routing these justifications depend on is
-  enforced by the `classical_ops_do_not_init_libcrux` Rust test.
-
-#### Documentation
-
-- Document `flutter build web --wasm` (dart2wasm) limitation in README — Rust returns fail with `Type 'JSValue' is not a subtype of type 'List<dynamic>'` under dart2wasm. Upstream limitation in `flutter_rust_bridge` ([#2575](https://github.com/fzyzcjy/flutter_rust_bridge/issues/2575)), affects every FRB-based Dart package. Standard `flutter build web` (dart2js) target continues to work. ([#5](https://github.com/djx-y-z/openmls_dart/issues/5))
-
-## [1.3.0] - 2026-04-01
-
-### For Users
-
-#### Highlights
-
-- **openmls_frb v1.3.0 → v1.4.0** — update flutter_rust_bridge to v2.12.0
-
-#### Changed
-
-- Update `flutter_rust_bridge` from v2.11.1 to v2.12.0 — fixes codegen/runtime version mismatch when consumers resolve FRB 2.12.x ([#4](https://github.com/djx-y-z/openmls_dart/issues/4))
-
-## [1.2.0] - 2026-02-18
-
-### For Users
-
-#### Highlights
-
-- **openmls_frb v1.2.0 → v1.3.0** — database migration system with schema versioning
-
-#### Added
-
-- `MlsEngine.schemaVersion()` — returns the current database schema version (useful for diagnostics and debugging)
-
-### For Contributors
-
-#### Added
-
-- Database migration system with automatic schema versioning and downgrade detection
-  - Native (SQLCipher): each migration runs in its own SQL transaction with version written atomically
-  - WASM (IndexedDB): two-phase approach — structural changes via IDB versioning, data migrations via encrypted metadata key
-  - Downgrade detection: clear error if DB was created by a newer library version
-  - Separate version counters: `LATEST_SCHEMA_VERSION` (data format, both platforms) and `IDB_STRUCTURAL_VERSION` (IDB object stores, WASM only)
-- `/add-db-migration` Claude skill — step-by-step guide for adding new migrations
-- Storage Architecture section in CLAUDE.md — snapshot pattern, scalability, security properties, Wire comparison
-- DB migration reminder in openmls update workflow PR checklist
-
-#### Fixed
-
-- Fix WASM build failure caused by `idb` 0.6.5 API changes in `encrypted_db.rs` (`VersionChangeEvent::old_version()` now returns `Result<u32>`, `Uint8Array::into()` requires explicit type)
-
-#### Changed
-
-- Adopt copier template v2.3.1 → v2.4.0
-  - Added coverage badge support in README (shields.io endpoint via GitHub Gist)
-  - Added Rust dependency caching (`Swatinem/rust-cache@v2`) in CI setup-rust action — dramatically speeds up Windows builds (~10 min OpenSSL compile cached)
-  - Added Strawberry Perl configuration for Windows CI to fix OpenSSL build (MSYS2 Perl from Git Bash is incompatible)
-  - Added `IPHONEOS_DEPLOYMENT_TARGET` env var for iOS CI builds — fixes linker errors when vendored C code is compiled with newer Xcode
-  - Added `make check-targets` command and `scripts/check_deployment_targets.dart` for checking deployment target consistency (iOS/macOS/Android) across all project files
-  - Added "Setting up Coverage Badge" and "Setting up pub.dev Publishing" sections to CONTRIBUTING.md
-  - Replaced `dart run scripts/` with `dart scripts/` in Makefile commands, removing `.skip_openmls_hook` workaround (scripts only use `dart:` imports, so `dart run` build hooks are unnecessary)
-  - Fixed WASM build hook: local builds now take priority over cached/downloaded files, avoiding stale content hash mismatches
-  - Removed `flutter:` version constraint from `pubspec.yaml` environment (pure Dart packages don't need it)
-  - README: compact horizontal platform table, added "Developing Rust API", "Building Native Libraries", and "CI / Version Management" sections
-
-## [1.1.0] - 2026-02-15
-
-### For Users
-
-#### Highlights
-
-- **openmls_frb v1.0.0 → v1.2.0** — Rust FFI bindings with engine close/reopen support and openmls v0.8.1
-
-#### Added
-
-- `MlsEngine.close()` and `MlsEngine.isClosed()` — allow closing the engine (wiping the encryption key from RAM and closing the DB connection) when the app goes to background or the screen is locked. After close, all operations fail with "MlsEngine is closed". Close is idempotent
-
-#### Changed
-
-- Update openmls native library to v0.8.1 ([release notes](https://github.com/openmls/openmls/releases/tag/openmls-v0.8.1))
-  - Relaxed WASM size limit to improve compatibility
-  - Exposed `full_leaves` and `parents` in TreeSync for tree traversal
-  - Updated libcrux and hpke-rs dependencies
-
-#### Fixed
-
-- README: Correct iOS minimum version from 12.0 to 13.0 and macOS from 10.14 to 10.15 in platform support table
-
-### For Contributors
-
-#### Added
-
-- `make check-targets`: Unified deployment target consistency checker for iOS, macOS, and Android — verifies all project files (podspec, CI workflow, Xcode project, plist, build.gradle, README) match `.copier-answers.yml`. Supports `--update` to fix mismatches and `--set <version>` to change a platform target everywhere in one command
-
-#### Changed
-
-- CI: Add Rust dependency caching (`Swatinem/rust-cache`) to speed up builds, especially Windows where vendored OpenSSL compilation took ~10 minutes
-
-## [1.0.1] - 2026-02-11
-
-### Added
-
-- Coverage badge
-
-## [1.0.0] - 2026-02-11
-
-### Added
-
-- **MLS Protocol (RFC 9420)**: Full group key agreement with forward secrecy and post-compromise security
-- **MlsEngine**: Rust-owned encrypted database with 61 API functions (58 async + 3 sync):
-  - Group creation, join (Welcome, external commit), leave
-  - Member management (add, remove, swap)
-  - Encrypted messaging with additional authenticated data (AAD)
-  - Proposals (add, remove, self-update with custom leaf node parameters, PSK, custom, group context extensions)
-  - Commit handling (pending, flexible, merge/clear)
-  - State queries (members, epoch, extensions, configuration, epoch authenticator, ratchet tree, group info, secrets)
-  - Key package creation with options (lifetime, last-resort)
-  - Storage cleanup (delete group, delete key package, remove pending proposal)
-  - Basic and X.509 credential support (optional credential bytes on all creation functions)
-  - 3 sync message utilities (extract group ID, epoch, content type)
-- **Encrypted storage**: All MLS state encrypted at rest
-  - Native: SQLCipher (AES-256 transparent full-database encryption)
-  - Web: IndexedDB + AES-256-GCM per-value encryption via Web Crypto API
-- **SecureBytes**: Wrapper for sensitive byte data with automatic zeroing on disposal
-- **SecureUint8List**: Extension with `zeroize()` method for manual zeroing of `Uint8List`
-- Cross-platform support: Android, iOS, macOS, Linux, Windows, Web (WASM)
-- Automatic native library download via Dart Build Hooks
-- SHA256 checksum verification for supply chain security
-- Based on [OpenMLS](https://github.com/openmls/openmls) v0.8.0
-
-### Security
-
-- All cryptographic operations run in Rust (OpenMLS with RustCrypto backend)
-- Memory safety via Rust's ownership model
-- No `unsafe` code in the wrapper layer
-- **Web Crypto API on WASM**: Encryption key imported as non-extractable `CryptoKey` via `crypto.subtle.importKey()` — raw key bytes zeroized from WASM memory immediately after import. Defensive error handling (no `unwrap()`) in encrypt/decrypt paths
-- `SerializableSigner` derives `ZeroizeOnDrop` — private key bytes zeroed on drop
-- Eliminated clone-then-zeroize pattern in `from_raw()` and `serialize_signer()` — private keys moved, not copied
-- `signer_from_bytes()` zeroizes input bytes on all code paths, including deserialization errors
-- X.509 `x509()` documents that application layer must validate certificate chains
-- SECURITY.md: sensitive API table, known limitations, web deployment recommendations, vulnerability reporting via GitHub Security Advisories
+2.0.1 and everything before it are in
+[CHANGELOG-ARCHIVE.md](https://github.com/djx-y-z/openmls_dart/blob/main/CHANGELOG-ARCHIVE.md).
 
 [gh-rrmv]: https://github.com/openmls/openmls/security/advisories/GHSA-rrmv-c79f-cf5r
 [om-2116]: https://github.com/openmls/openmls/issues/2116
 [frb2575]: https://github.com/fzyzcjy/flutter_rust_bridge/issues/2575
 [frb3182]: https://github.com/fzyzcjy/flutter_rust_bridge/pull/3182
-[Unreleased]: https://github.com/djx-y-z/openmls_dart/compare/v3.2.1...HEAD
+[Unreleased]: https://github.com/djx-y-z/openmls_dart/compare/v3.3.0...HEAD
+[3.3.0]: https://github.com/djx-y-z/openmls_dart/compare/v3.2.2...v3.3.0
+[3.2.2]: https://github.com/djx-y-z/openmls_dart/compare/v3.2.1...v3.2.2
 [3.2.1]: https://github.com/djx-y-z/openmls_dart/compare/v3.2.0...v3.2.1
 [3.2.0]: https://github.com/djx-y-z/openmls_dart/compare/v3.1.0...v3.2.0
 [3.1.0]: https://github.com/djx-y-z/openmls_dart/compare/v3.0.0...v3.1.0
 [3.0.0]: https://github.com/djx-y-z/openmls_dart/compare/v2.0.1...v3.0.0
-[2.0.1]: https://github.com/djx-y-z/openmls_dart/compare/v2.0.0...v2.0.1
-[2.0.0]: https://github.com/djx-y-z/openmls_dart/compare/v1.4.2...v2.0.0
-[1.4.2]: https://github.com/djx-y-z/openmls_dart/compare/v1.4.1...v1.4.2
-[1.4.1]: https://github.com/djx-y-z/openmls_dart/compare/v1.4.0...v1.4.1
-[1.4.0]: https://github.com/djx-y-z/openmls_dart/compare/v1.3.0...v1.4.0
-[1.3.0]: https://github.com/djx-y-z/openmls_dart/compare/v1.2.0...v1.3.0
-[1.2.0]: https://github.com/djx-y-z/openmls_dart/compare/v1.1.0...v1.2.0
-[1.1.0]: https://github.com/djx-y-z/openmls_dart/compare/v1.0.1...v1.1.0
-[1.0.1]: https://github.com/djx-y-z/openmls_dart/compare/v1.0.0...v1.0.1
-[1.0.0]: https://github.com/djx-y-z/openmls_dart/releases/tag/v1.0.0

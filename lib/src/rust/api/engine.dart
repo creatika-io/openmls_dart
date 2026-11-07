@@ -8,7 +8,7 @@ import 'config.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'types.dart';
 
-// These functions are ignored because they are not marked as `pub`: `acquire_locks`, `apply_past_epoch_deletion`, `apply_past_epoch_policy`, `build_credential_with_key`, `commit`, `db`, `load_for_group`, `load_global`, `load_group`, `load_stored_group`, `max_epochs_to_native`, `native_to_past_epoch_policy`, `unix_seconds_to_system_time`, `with_cap`
+// These functions are ignored because they are not marked as `pub`: `acquire_locks`, `apply_past_epoch_deletion`, `apply_past_epoch_policy`, `build_credential_with_key`, `commit`, `db`, `leaf_node_info`, `load_for_group`, `load_global`, `load_group`, `load_stored_group`, `max_epochs_to_native`, `member_info`, `native_to_past_epoch_policy`, `own_private_message_error`, `proposal_info`, `proposal_type_of`, `sender_info`, `staged_commit_info`, `unix_seconds_to_system_time`, `with_cap`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `AddMembersResult`, `CreateMessageResult`, `GroupConfigurationResult`, `JoinGroupResult`, `KeyPackageLifetime`, `KeyPackageResult`, `LeaveGroupResult`, `LifetimeVerdict`, `OpLocks`, `OpSession`, `PastEpochDeletionPolicyResult`, `ProcessedMessageInspectResult`, `ProposalResult`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `crypto`, `rand`, `storage`
 
@@ -158,7 +158,22 @@ abstract class MlsEngine implements RustOpaqueInterface {
 
 class CommitResult {
   final Uint8List commit;
+
+  /// The Welcome for the members the commit adds, if any.
+  ///
+  /// Send it only once the delivery service has accepted `commit`. A
+  /// Welcome sent earlier admits its recipients into an epoch that never
+  /// happens if another commit wins the race — they join a group nobody
+  /// else is in. With `FlexibleCommitOptions.keepPending` the order is:
+  /// send the commit, wait for the delivery service to accept it,
+  /// `mergePendingCommit`, then send the Welcome.
   final Uint8List? welcome;
+
+  /// The GroupInfo of the epoch the commit creates, when it was asked for.
+  ///
+  /// Publish it, like the Welcome, only once the delivery service has
+  /// accepted `commit`: a party joining by external commit from it would
+  /// otherwise enter an epoch that may never happen.
   final Uint8List? groupInfo;
 
   const CommitResult({required this.commit, this.welcome, this.groupInfo});

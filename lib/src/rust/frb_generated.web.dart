@@ -515,6 +515,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       cst_encode_opt_list_prim_u_8_strict(raw.aad),
       cst_encode_bool(raw.createGroupInfo),
       cst_encode_bool(raw.useRatchetTreeExtension),
+      cst_encode_bool(raw.keepPending),
     ].jsify()!;
   }
 

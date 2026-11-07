@@ -15,6 +15,17 @@ all-features = false
 
 [advisories]
 version = 2
+# A yanked version is one its own publisher withdrew. cargo-deny only warns
+# about one by default, and a warning in a job that passes reaches nobody:
+# `inout` 0.2.3, yanked for losing a buffer check its unsafe code relies on,
+# sat in a generated project's lockfile for six days with this job green. As
+# an error it fails the job until the lockfile moves past it, through the next
+# Dependabot cargo pull request or by hand with the `cargo update -p` its
+# message names. `make rust-update` does not do it: it re-resolves the
+# workspace's own requirements and leaves such a crate where it is. A version
+# with no fixed release yet can be accepted under `ignore` below, as
+# `{ crate = "name@version", reason = "..." }`.
+yanked = "deny"
 # Add advisory IDs here (each with a justification comment) only to consciously
 # accept a risk that cannot yet be remediated, e.g. an unmaintained build-time
 # dependency pulled transitively by an upstream crate with no available upgrade.
@@ -42,7 +53,7 @@ ignore = [
     # Both crates reach the graph only through openmls_libcrux_crypto 0.4.0,
     # the X-Wing provider, and only an upstream OpenMLS release can move them:
     # the fixes need hpke-rs-libcrux 0.8, which openmls main adopted (#2261)
-    # and has not released. openmls 0.9.1 does not carry it.
+    # and has not released. Neither openmls 0.9.1 nor 0.9.2 carries it.
     # libcrux-hmac-drbg `HmacDrbgRng::fill_bytes` panic on lengths that are a
     # multiple of 65,536. Unreachable: nothing in the graph calls it —
     # openmls_libcrux_crypto uses the raw `HmacDrbgSha256::generate`.
@@ -58,6 +69,14 @@ ignore = [
     # From the next release HybridCrypto refuses such keys before libcrux sees
     # them (`XWING_PUBLIC_KEY_LEN`). Listed regardless: it is in the lockfile.
     "RUSTSEC-2026-0331",
+
+    # --- crypto-bigint (see .cargo/audit.toml for the full notes) ---
+    # crypto-bigint 0.5.5: constant-time operations could compile to secret-
+    # dependent branches. REACHABLE on secret data in the three P-curve suites
+    # (every P-256 ECDSA signature runs its add_mod/sub_mod on the key and the
+    # nonce); not measured; accepted 2026-10-24. Patched only in 0.7.6, which
+    # needs the openmls release that moves p256/p384 to 0.14 — delete with it.
+    "RUSTSEC-2026-0387",
 
     # --- Unmaintained transitive build dependencies (informational) ---
     # cargo-deny flags unmaintained advisories that `cargo audit` does not fail
@@ -100,10 +119,13 @@ exceptions = []
 [bans]
 # Diamond dependencies are common in crypto/WASM trees, so duplicates warn.
 multiple-versions = "warn"
-# Git dependencies pinned by tag (with no version requirement) are reported as
-# wildcards, so wildcards warn rather than fail; a genuinely sloppy `"*"`
-# crates.io dependency still shows up in the log.
-wildcards = "warn"
+# Every upstream crate comes from crates.io with a version requirement, and so
+# does everything it pulls in — crates.io accepts no dependency that is only a
+# git one — so a wildcard here is a mistake rather than a pin, and it fails. A
+# path dependency of this unpublished crate is not one; a git dependency you add
+# needs a `version` beside its `git`, as well as an `allow-git` entry below.
+wildcards = "deny"
+allow-wildcard-paths = true
 allow = []
 deny = []
 
