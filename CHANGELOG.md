@@ -8,9 +8,10 @@
   0.9.2, ctutils 0.4.5 and upstream's #72 lockfile updates; FRB stays at
   2.14.0-beta.2, default ciphersuite 0x0001, SQLCipher on CommonCrypto on
   Apple, and the existing package/crate versions remain unchanged.
-- **Commit inspection and deferred own commits are available with `full-api`** —
-  `inspectMessage`, `FlexibleCommitOptions.keepPending` and
-  `decodeExternalSenders` are not called by the current Creatika app.
+- **Commit inspection requires `full-api`; `keepPending` follows its type** —
+  `inspectMessage` and `decodeExternalSenders` stay behind `full-api`;
+  `FlexibleCommitOptions.keepPending` is available by default (default `false`).
+  The current Creatika app calls none of these additions.
   New staged-commit and inspected-message fields follow their existing types.
   Adopting deferred commits also requires `mergePendingCommit` and
   `clearPendingCommit`, and changing the app's submit/recovery flow.
@@ -162,23 +163,11 @@
 #### Fixed
 
 - **An async call could wait forever when another isolate shut down during
-  `Openmls.init()`** (`lib/src/openmls.dart`,
-  `lib/src/platform/platform_io.dart`, `lib/src/platform/platform_web.dart`) —
-  flutter_rust_bridge sends every Rust-to-Dart message (an async call's
-  result, a store callback) through one process-wide `Dart_PostCObject`
-  pointer and replaces it with a no-op when its count of initialized isolates
-  drops to zero. `RustLib.init()` installs the real pointer *before* it counts
-  the new isolate, so when the last other counted isolate group shut down in
-  that window, the new isolate kept the no-op: sync calls worked, and every
-  async call waited for an answer that had been dropped. `Openmls.init()` now
-  installs the real pointer again once the isolate is counted, on native
-  platforms; the web has neither the pointer nor the count. ⚠ **Not fixed by
-  this: several flutter_rust_bridge libraries in one application.** An
-  isolate is counted only by the *first* such library it initializes, so when
-  the main isolate initialized a library second, a worker isolate that
-  initializes that library alone and exits switches its channel off for the
-  whole process. Initialize them in the same order in every isolate, workers
-  included; the fix belongs in flutter_rust_bridge.
+  `Openmls.init()`** — takes upstream's fix: count the isolate in openmls's
+  own native library through `frb_create_shutdown_callback` *before*
+  `RustLib.init()`, and keep it counted for its lifetime. This also covers
+  applications initializing several flutter_rust_bridge libraries in any
+  order; another library still needs its own fix. Web has no isolate count.
 
 - **Calls into Rust no longer fail under dart2wasm** (`lib/src/rust/`,
   `pubspec.yaml`, `rust/Cargo.toml`) — `flutter_rust_bridge` 2.13's decoder
@@ -207,12 +196,11 @@
 
 #### Documentation
 
-- **A missing `web/pkg/` leaves `RustLib.init()` pending; it does not fail on
-  a 404** (`README.md`, *Known Limitations*) — flutter_rust_bridge 2.13.0
-  injects the module as a `<script>` and awaits its `load` event with no error
-  path or timeout, and under `flutter run` the dev server answers the missing
-  `pkg/openmls_frb.js` with the app's own page and a 200, so the call neither
-  returns nor throws.
+- **The README explains missing `web/pkg/` and the recovery** (*Known
+  Limitations*) — `Openmls.init()` now checks `pkg/openmls_frb.js` before
+  loading: a failed HTTP response or HTML in its place throws a `StateError`
+  naming the missing module and how to provision it. This takes upstream's
+  check, so a missing module no longer leaves initialization pending.
 - **`SECURITY.md` no longer says the tag ruleset stops a `write`
   collaborator** — it reserved tags to "Admins/Maintainers", but the
   ruleset's bypass list also held role 4, which GitHub names `write`. The list

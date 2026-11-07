@@ -395,7 +395,6 @@ pub struct FlexibleCommitOptions {
     /// Send the result's Welcome, and publish its GroupInfo, only after
     /// `mergePendingCommit`, once the delivery service accepted the commit;
     /// see `CommitResult.welcome`.
-    #[cfg(feature = "full-api")]
     #[frb(default = false)]
     pub keep_pending: bool,
 }

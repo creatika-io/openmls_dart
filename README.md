@@ -126,9 +126,10 @@ crate behind the `full-api` Cargo feature: `make codegen ARGS="--rust-features
 full-api"`, then `make build ARGS="--features full-api"`; its Dart tests live in
 `test_full_api/` (`make test ARGS="test test_full_api"`).
 
-The new `inspectMessage`, `FlexibleCommitOptions.keepPending` and
-`decodeExternalSenders` also require `full-api`: the current Creatika app does
-not call them. Inspection's new result fields follow their existing result
+The new `inspectMessage` and `decodeExternalSenders` require `full-api`;
+`FlexibleCommitOptions.keepPending` follows its already-exported type and is
+available by default (default `false`). The current Creatika app calls none of
+these additions. Inspection's new result fields follow their existing result
 types. To adopt roster checks, inspect before `processMessage` and validate each
 proposal and the committer's credential against the authorised roster. To adopt
 pending own commits, also change submission/recovery to merge on acceptance,

@@ -2167,11 +2167,7 @@ impl MlsEngine {
         let commit_builder = commit_builder.create_group_info(options.create_group_info).use_ratchet_tree_extension(options.use_ratchet_tree_extension);
         let commit_builder = commit_builder.build(provider.rand(), provider.crypto(), &signer, |_| true).map_err(|e| format!("Failed to build commit: {}", e))?;
         let bundle = commit_builder.stage_commit(&provider).map_err(|e| format!("Failed to stage commit: {}", e))?;
-        #[cfg(feature = "full-api")]
-        let keep_pending = options.keep_pending;
-        #[cfg(not(feature = "full-api"))]
-        let keep_pending = false;
-        if !keep_pending {
+        if !options.keep_pending {
             group.merge_pending_commit(&provider).map_err(|e| format!("Failed to merge pending commit: {}", e))?;
         }
 
@@ -3388,7 +3384,6 @@ mod executed_ciphersuite_tests {
                 aad: None,
                 create_group_info: false,
                 use_ratchet_tree_extension: true,
-                #[cfg(feature = "full-api")]
                 keep_pending: false,
             },
         ))

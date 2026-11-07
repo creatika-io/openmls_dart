@@ -45,6 +45,25 @@ class FlexibleCommitOptions {
   /// Whether to include the ratchet tree extension in GroupInfo.
   final bool useRatchetTreeExtension;
 
+  /// Leave the commit pending instead of merging it (default: false).
+  ///
+  /// With a delivery service that orders commits, a commit only becomes the
+  /// next epoch once the service accepts it: another member's commit to the
+  /// same epoch may win. Kept pending, the group stays in its current epoch
+  /// until the application calls `mergePendingCommit` (accepted) or
+  /// `clearPendingCommit` (lost), so a lost race leaves nothing to repair.
+  /// Another member's commit processed meanwhile replaces it.
+  ///
+  /// While a commit is pending, `flexibleCommit` refuses to create another
+  /// one — with or without this option. Replacing a commit that may already
+  /// have reached other members would fork the group: they would apply one
+  /// commit, this member another. Resolve the pending one first.
+  ///
+  /// Send the result's Welcome, and publish its GroupInfo, only after
+  /// `mergePendingCommit`, once the delivery service accepted the commit;
+  /// see `CommitResult.welcome`.
+  final bool keepPending;
+
   const FlexibleCommitOptions({
     required this.addKeyPackages,
     required this.removeIndices,
@@ -54,6 +73,7 @@ class FlexibleCommitOptions {
     this.aad,
     required this.createGroupInfo,
     required this.useRatchetTreeExtension,
+    this.keepPending = false,
   });
 
   @override
@@ -65,7 +85,8 @@ class FlexibleCommitOptions {
       groupContextExtensions.hashCode ^
       aad.hashCode ^
       createGroupInfo.hashCode ^
-      useRatchetTreeExtension.hashCode;
+      useRatchetTreeExtension.hashCode ^
+      keepPending.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -79,7 +100,8 @@ class FlexibleCommitOptions {
           groupContextExtensions == other.groupContextExtensions &&
           aad == other.aad &&
           createGroupInfo == other.createGroupInfo &&
-          useRatchetTreeExtension == other.useRatchetTreeExtension;
+          useRatchetTreeExtension == other.useRatchetTreeExtension &&
+          keepPending == other.keepPending;
 }
 
 /// Capabilities advertised by a leaf node.
