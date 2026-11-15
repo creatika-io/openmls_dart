@@ -202,6 +202,11 @@ pub struct KeyPackageOptions {
     /// Lifetime in seconds. None = default (84 days).
     pub lifetime_seconds: Option<u64>,
     /// Mark as last-resort key package.
+    ///
+    /// The key package then carries the last_resort extension (`0x000a`), and
+    /// RFC 9420 (§10) requires every extension of a key package to be listed
+    /// among its leaf's capabilities: that type is added to `capabilities`, or
+    /// to the defaults when none are given.
     pub last_resort: bool,
     /// Custom capabilities. None = defaults.
     pub capabilities: Option<MlsCapabilities>,
@@ -221,6 +226,25 @@ pub struct WelcomeInspectResult {
     pub psk_count: u32,
     /// The group epoch at time of Welcome.
     pub epoch: u64,
+}
+
+/// What `welcomeGroupInfoExtensions` read from a Welcome.
+pub struct WelcomeGroupInfoExtensions {
+    /// The extensions in the Welcome's GroupInfo, the ratchet tree and
+    /// external public key extensions aside.
+    pub extensions: Vec<MlsExtension>,
+    /// The member that signed the GroupInfo, as the ratchet tree that came
+    /// with the Welcome has it: its leaf index, credential and signature key.
+    ///
+    /// The signature proves the extensions are what this member wrote, not
+    /// who the member is. Usually it is the committer. But any member of the
+    /// new epoch can sign a Welcome that passes, and anyone holding one of
+    /// this client's key packages can invite it into a group of their own.
+    ///
+    /// Authenticate the member by `signatureKey`, which the signature binds,
+    /// before acting on the extensions. A basic credential's identity is
+    /// whatever its owner claims.
+    pub signer: MlsMemberInfo,
 }
 
 /// Full information about the own leaf node.
@@ -375,8 +399,14 @@ pub struct FlexibleCommitOptions {
     /// Additional authenticated data.
     pub aad: Option<Vec<u8>>,
     /// Whether to create a GroupInfo message (default: true).
+    ///
+    /// With `groupInfoExtensions`, this alone decides whether that GroupInfo
+    /// — which carries them unencrypted — is created.
     pub create_group_info: bool,
     /// Whether to include the ratchet tree extension in GroupInfo.
+    ///
+    /// On its own this also turns the exported GroupInfo on. Not with
+    /// `groupInfoExtensions`: see there.
     pub use_ratchet_tree_extension: bool,
     /// Leave the commit pending instead of merging it (default: false).
     ///
@@ -397,6 +427,30 @@ pub struct FlexibleCommitOptions {
     /// see `CommitResult.welcome`.
     #[frb(default = false)]
     pub keep_pending: bool,
+    /// Extensions of the application's own for the GroupInfo this commit
+    /// creates (default: none; an empty list is the same).
+    ///
+    /// The members the commit adds read them before they join, with
+    /// `welcomeGroupInfoExtensions`, from the GroupInfo inside the Welcome:
+    /// signed by the committer and encrypted under the welcome secret.
+    ///
+    /// That secret is not the newcomers' alone. Every member that processes
+    /// the commit derives it too (RFC 9420 §12.4.2), and all the members one
+    /// commit adds get the same copy. So these are for what the whole new
+    /// epoch may know, never for one invitee only. A party outside the group,
+    /// such as a delivery service that is not a member, cannot read the
+    /// Welcome's copy.
+    ///
+    /// They also go into the exported GroupInfo (`CommitResult.groupInfo`),
+    /// which is not encrypted. Whoever it is published to reads them in the
+    /// clear, including a delivery service that serves external joins. With
+    /// extensions given, that GroupInfo is created only when
+    /// `createGroupInfo` asks for it, even when `useRatchetTreeExtension` is
+    /// set. A commit that adds no member has no
+    /// Welcome: without `createGroupInfo` it is refused, rather than the
+    /// extensions dropped. Extension types a GroupInfo may not carry are
+    /// refused too, the ratchet tree and external public key among them.
+    pub group_info_extensions: Option<Vec<MlsExtension>>,
 }
 
 // ═══════════════════════════════════════════════════════════════

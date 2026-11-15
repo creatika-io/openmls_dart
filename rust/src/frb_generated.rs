@@ -677,6 +677,7 @@ fn wire__crate__api__engine__MlsEngine_join_group_external_commit_v2_impl(
     aad: impl CstDecode<Option<Vec<u8>>>,
     skip_lifetime_validation: impl CstDecode<bool>,
     credential_bytes: impl CstDecode<Option<Vec<u8>>>,
+    replace_stored_group: impl CstDecode<Option<bool>>,
 ) {
     FLUTTER_RUST_BRIDGE_HANDLER.wrap_async::<flutter_rust_bridge::for_generated::DcoCodec, _, _, _>(
         flutter_rust_bridge::for_generated::TaskInfo {
@@ -695,6 +696,7 @@ fn wire__crate__api__engine__MlsEngine_join_group_external_commit_v2_impl(
             let api_aad = aad.cst_decode();
             let api_skip_lifetime_validation = skip_lifetime_validation.cst_decode();
             let api_credential_bytes = credential_bytes.cst_decode();
+            let api_replace_stored_group = replace_stored_group.cst_decode();
             move |context| async move {
                 transform_result_dco::<_, _, String>(
                     (move || async move {
@@ -727,6 +729,7 @@ fn wire__crate__api__engine__MlsEngine_join_group_external_commit_v2_impl(
                                 api_aad,
                                 api_skip_lifetime_validation,
                                 api_credential_bytes,
+                                api_replace_stored_group,
                             )
                             .await?;
                         std::result::Result::Ok(output_ok)
@@ -1291,6 +1294,8 @@ impl SseDecode for crate::api::types::FlexibleCommitOptions {
         let mut var_createGroupInfo = <bool>::sse_decode(deserializer);
         let mut var_useRatchetTreeExtension = <bool>::sse_decode(deserializer);
         let mut var_keepPending = <bool>::sse_decode(deserializer);
+        let mut var_groupInfoExtensions =
+            <Option<Vec<crate::api::types::MlsExtension>>>::sse_decode(deserializer);
         return crate::api::types::FlexibleCommitOptions {
             add_key_packages: var_addKeyPackages,
             remove_indices: var_removeIndices,
@@ -1301,6 +1306,7 @@ impl SseDecode for crate::api::types::FlexibleCommitOptions {
             create_group_info: var_createGroupInfo,
             use_ratchet_tree_extension: var_useRatchetTreeExtension,
             keep_pending: var_keepPending,
+            group_info_extensions: var_groupInfoExtensions,
         };
     }
 }
@@ -1519,6 +1525,17 @@ impl SseDecode for crate::api::types::MlsWireFormatPolicy {
             1 => crate::api::types::MlsWireFormatPolicy::Ciphertext,
             _ => unreachable!("Invalid variant for MlsWireFormatPolicy: {}", inner),
         };
+    }
+}
+
+impl SseDecode for Option<bool> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_decode(deserializer: &mut flutter_rust_bridge::for_generated::SseDeserializer) -> Self {
+        if (<bool>::sse_decode(deserializer)) {
+            return Some(<bool>::sse_decode(deserializer));
+        } else {
+            return None;
+        }
     }
 }
 
@@ -1820,6 +1837,7 @@ impl flutter_rust_bridge::IntoDart for crate::api::types::FlexibleCommitOptions 
             self.create_group_info.into_into_dart().into_dart(),
             self.use_ratchet_tree_extension.into_into_dart().into_dart(),
             self.keep_pending.into_into_dart().into_dart(),
+            self.group_info_extensions.into_into_dart().into_dart(),
         ]
         .into_dart()
     }
@@ -2170,6 +2188,10 @@ impl SseEncode for crate::api::types::FlexibleCommitOptions {
         <bool>::sse_encode(self.create_group_info, serializer);
         <bool>::sse_encode(self.use_ratchet_tree_extension, serializer);
         <bool>::sse_encode(self.keep_pending, serializer);
+        <Option<Vec<crate::api::types::MlsExtension>>>::sse_encode(
+            self.group_info_extensions,
+            serializer,
+        );
     }
 }
 
@@ -2347,6 +2369,16 @@ impl SseEncode for crate::api::types::MlsWireFormatPolicy {
             },
             serializer,
         );
+    }
+}
+
+impl SseEncode for Option<bool> {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    fn sse_encode(self, serializer: &mut flutter_rust_bridge::for_generated::SseSerializer) {
+        <bool>::sse_encode(self.is_some(), serializer);
+        if let Some(value) = self {
+            <bool>::sse_encode(value, serializer);
+        }
     }
 }
 
@@ -2588,6 +2620,12 @@ mod io {
             String::from_utf8(vec).unwrap()
         }
     }
+    impl CstDecode<bool> for *mut bool {
+        // Codec=Cst (C-struct based), see doc to use other codecs
+        fn cst_decode(self) -> bool {
+            unsafe { *flutter_rust_bridge::for_generated::box_from_leak_ptr(self) }
+        }
+    }
     impl CstDecode<crate::api::types::FlexibleCommitOptions> for *mut wire_cst_flexible_commit_options {
         // Codec=Cst (C-struct based), see doc to use other codecs
         fn cst_decode(self) -> crate::api::types::FlexibleCommitOptions {
@@ -2669,6 +2707,7 @@ mod io {
                 create_group_info: self.create_group_info.cst_decode(),
                 use_ratchet_tree_extension: self.use_ratchet_tree_extension.cst_decode(),
                 keep_pending: self.keep_pending.cst_decode(),
+                group_info_extensions: self.group_info_extensions.cst_decode(),
             }
         }
     }
@@ -2862,6 +2901,7 @@ mod io {
                 create_group_info: Default::default(),
                 use_ratchet_tree_extension: Default::default(),
                 keep_pending: Default::default(),
+                group_info_extensions: core::ptr::null_mut(),
             }
         }
     }
@@ -3127,6 +3167,7 @@ mod io {
         aad: *mut wire_cst_list_prim_u_8_strict,
         skip_lifetime_validation: bool,
         credential_bytes: *mut wire_cst_list_prim_u_8_strict,
+        replace_stored_group: *mut bool,
     ) {
         wire__crate__api__engine__MlsEngine_join_group_external_commit_v2_impl(
             port_,
@@ -3140,6 +3181,7 @@ mod io {
             aad,
             skip_lifetime_validation,
             credential_bytes,
+            replace_stored_group,
         )
     }
 
@@ -3289,6 +3331,11 @@ mod io {
         unsafe {
             StdArc::<flutter_rust_bridge::for_generated::RustAutoOpaqueInner<MlsSignatureKeyPair>>::decrement_strong_count(ptr as _);
         }
+    }
+
+    #[unsafe(no_mangle)]
+    pub extern "C" fn frbgen_openmls_cst_new_box_autoadd_bool(value: bool) -> *mut bool {
+        flutter_rust_bridge::for_generated::new_leak_box_ptr(value)
     }
 
     #[unsafe(no_mangle)]
@@ -3458,6 +3505,7 @@ mod io {
         create_group_info: bool,
         use_ratchet_tree_extension: bool,
         keep_pending: bool,
+        group_info_extensions: *mut wire_cst_list_mls_extension,
     }
     #[repr(C)]
     #[derive(Clone, Copy)]
@@ -3659,8 +3707,8 @@ mod web {
                 .unwrap();
             assert_eq!(
                 self_.length(),
-                9,
-                "Expected 9 elements, got {}",
+                10,
+                "Expected 10 elements, got {}",
                 self_.length()
             );
             crate::api::types::FlexibleCommitOptions {
@@ -3673,6 +3721,7 @@ mod web {
                 create_group_info: self_.get(6).cst_decode(),
                 use_ratchet_tree_extension: self_.get(7).cst_decode(),
                 keep_pending: self_.get(8).cst_decode(),
+                group_info_extensions: self_.get(9).cst_decode(),
             }
         }
     }
@@ -4229,6 +4278,7 @@ mod web {
         aad: Option<Box<[u8]>>,
         skip_lifetime_validation: bool,
         credential_bytes: Option<Box<[u8]>>,
+        replace_stored_group: flutter_rust_bridge::for_generated::wasm_bindgen::JsValue,
     ) {
         wire__crate__api__engine__MlsEngine_join_group_external_commit_v2_impl(
             port_,
@@ -4242,6 +4292,7 @@ mod web {
             aad,
             skip_lifetime_validation,
             credential_bytes,
+            replace_stored_group,
         )
     }
 
