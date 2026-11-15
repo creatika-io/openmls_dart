@@ -170,6 +170,7 @@ abstract class RustLibApi extends BaseApi {
     Uint8List? aad,
     required bool skipLifetimeValidation,
     Uint8List? credentialBytes,
+    bool? replaceStoredGroup,
   });
 
   Future<void> crateApiEngineMlsEngineMergePendingCommit({
@@ -803,6 +804,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     Uint8List? aad,
     required bool skipLifetimeValidation,
     Uint8List? credentialBytes,
+    bool? replaceStoredGroup,
   }) {
     return handler.executeNormal(
       NormalTask(
@@ -820,6 +822,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           var arg7 = cst_encode_opt_list_prim_u_8_strict(aad);
           var arg8 = cst_encode_bool(skipLifetimeValidation);
           var arg9 = cst_encode_opt_list_prim_u_8_strict(credentialBytes);
+          var arg10 = cst_encode_opt_box_autoadd_bool(replaceStoredGroup);
           return wire
               .wire__crate__api__engine__MlsEngine_join_group_external_commit_v2(
                 port_,
@@ -833,6 +836,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
                 arg7,
                 arg8,
                 arg9,
+                arg10,
               );
         },
         codec: DcoCodec(
@@ -851,6 +855,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           aad,
           skipLifetimeValidation,
           credentialBytes,
+          replaceStoredGroup,
         ],
         apiImpl: this,
       ),
@@ -872,6 +877,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
           "aad",
           "skipLifetimeValidation",
           "credentialBytes",
+          "replaceStoredGroup",
         ],
       );
 
@@ -1344,6 +1350,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  bool dco_decode_box_autoadd_bool(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw as bool;
+  }
+
+  @protected
   FlexibleCommitOptions dco_decode_box_autoadd_flexible_commit_options(
     dynamic raw,
   ) {
@@ -1420,8 +1432,8 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   FlexibleCommitOptions dco_decode_flexible_commit_options(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     final arr = dcoDecodeList(raw);
-    if (arr.length != 9)
-      throw Exception('unexpected arr length: expect 9 but see ${arr.length}');
+    if (arr.length != 10)
+      throw Exception('unexpected arr length: expect 10 but see ${arr.length}');
     return FlexibleCommitOptions(
       addKeyPackages: dco_decode_list_list_prim_u_8_strict(arr[0]),
       removeIndices: dco_decode_list_prim_u_32_strict(arr[1]),
@@ -1432,6 +1444,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       createGroupInfo: dco_decode_bool(arr[6]),
       useRatchetTreeExtension: dco_decode_bool(arr[7]),
       keepPending: dco_decode_bool(arr[8]),
+      groupInfoExtensions: dco_decode_opt_list_mls_extension(arr[9]),
     );
   }
 
@@ -1563,6 +1576,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   MlsWireFormatPolicy dco_decode_mls_wire_format_policy(dynamic raw) {
     // Codec=Dco (DartCObject based), see doc to use other codecs
     return MlsWireFormatPolicy.values[dcoDecodePrimitiveInt(raw)];
+  }
+
+  @protected
+  bool? dco_decode_opt_box_autoadd_bool(dynamic raw) {
+    // Codec=Dco (DartCObject based), see doc to use other codecs
+    return raw == null ? null : dco_decode_box_autoadd_bool(raw);
   }
 
   @protected
@@ -1782,6 +1801,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  bool sse_decode_box_autoadd_bool(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    return (sse_decode_bool(deserializer));
+  }
+
+  @protected
   FlexibleCommitOptions sse_decode_box_autoadd_flexible_commit_options(
     SseDeserializer deserializer,
   ) {
@@ -1878,6 +1903,9 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     var var_createGroupInfo = sse_decode_bool(deserializer);
     var var_useRatchetTreeExtension = sse_decode_bool(deserializer);
     var var_keepPending = sse_decode_bool(deserializer);
+    var var_groupInfoExtensions = sse_decode_opt_list_mls_extension(
+      deserializer,
+    );
     return FlexibleCommitOptions(
       addKeyPackages: var_addKeyPackages,
       removeIndices: var_removeIndices,
@@ -1888,6 +1916,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
       createGroupInfo: var_createGroupInfo,
       useRatchetTreeExtension: var_useRatchetTreeExtension,
       keepPending: var_keepPending,
+      groupInfoExtensions: var_groupInfoExtensions,
     );
   }
 
@@ -2063,6 +2092,17 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     // Codec=Sse (Serialization based), see doc to use other codecs
     var inner = sse_decode_i_32(deserializer);
     return MlsWireFormatPolicy.values[inner];
+  }
+
+  @protected
+  bool? sse_decode_opt_box_autoadd_bool(SseDeserializer deserializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    if (sse_decode_bool(deserializer)) {
+      return (sse_decode_box_autoadd_bool(deserializer));
+    } else {
+      return null;
+    }
   }
 
   @protected
@@ -2488,6 +2528,12 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   }
 
   @protected
+  void sse_encode_box_autoadd_bool(bool self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+    sse_encode_bool(self, serializer);
+  }
+
+  @protected
   void sse_encode_box_autoadd_flexible_commit_options(
     FlexibleCommitOptions self,
     SseSerializer serializer,
@@ -2578,6 +2624,7 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
     sse_encode_bool(self.createGroupInfo, serializer);
     sse_encode_bool(self.useRatchetTreeExtension, serializer);
     sse_encode_bool(self.keepPending, serializer);
+    sse_encode_opt_list_mls_extension(self.groupInfoExtensions, serializer);
   }
 
   @protected
@@ -2748,6 +2795,16 @@ class RustLibApiImpl extends RustLibApiImplPlatform implements RustLibApi {
   ) {
     // Codec=Sse (Serialization based), see doc to use other codecs
     sse_encode_i_32(self.index, serializer);
+  }
+
+  @protected
+  void sse_encode_opt_box_autoadd_bool(bool? self, SseSerializer serializer) {
+    // Codec=Sse (Serialization based), see doc to use other codecs
+
+    sse_encode_bool(self != null, serializer);
+    if (self != null) {
+      sse_encode_box_autoadd_bool(self, serializer);
+    }
   }
 
   @protected
@@ -2938,6 +2995,11 @@ class MlsEngineImpl extends RustOpaque implements MlsEngine {
   Future<void> close() =>
       RustLib.instance.api.crateApiEngineMlsEngineClose(that: this);
 
+  /// `createGroup` with the rest of OpenMLS's group builder: lifetime,
+  /// extensions and capabilities.
+  ///
+  /// Fails when this engine already stores a group under `groupId`, as
+  /// `createGroup` does.
   Future<CreateGroupResult> createGroupWithBuilder({
     required MlsGroupConfig config,
     required List<int> signerBytes,
@@ -3020,6 +3082,17 @@ class MlsEngineImpl extends RustOpaque implements MlsEngine {
         groupIdBytes: groupIdBytes,
       );
 
+  /// Joins the group a GroupInfo describes by an external commit, as
+  /// `joinGroupExternalCommit` does, with additional authenticated data for
+  /// the commit and the option to skip the GroupInfo's lifetime checks.
+  ///
+  /// A group this engine already stores under the GroupInfo's group ID is
+  /// refused and replaced exactly as there: refused, with nothing written,
+  /// unless `replaceStoredGroup` is true, and then every entry stored under
+  /// that group ID is deleted in the write that stores the new group. The
+  /// engine cannot tell a later epoch of the stored group from another group
+  /// under the same ID: replace only from a GroupInfo whose source the
+  /// application trusts to speak for that group.
   Future<ExternalJoinResult> joinGroupExternalCommitV2({
     required MlsGroupConfig config,
     required List<int> groupInfoBytes,
@@ -3030,6 +3103,7 @@ class MlsEngineImpl extends RustOpaque implements MlsEngine {
     Uint8List? aad,
     required bool skipLifetimeValidation,
     Uint8List? credentialBytes,
+    bool? replaceStoredGroup,
   }) => RustLib.instance.api.crateApiEngineMlsEngineJoinGroupExternalCommitV2(
     that: this,
     config: config,
@@ -3041,6 +3115,7 @@ class MlsEngineImpl extends RustOpaque implements MlsEngine {
     aad: aad,
     skipLifetimeValidation: skipLifetimeValidation,
     credentialBytes: credentialBytes,
+    replaceStoredGroup: replaceStoredGroup,
   );
 
   Future<void> mergePendingCommit({required List<int> groupIdBytes}) =>

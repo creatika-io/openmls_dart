@@ -373,6 +373,45 @@ impl EncryptedDb {
         Ok(result)
     }
 
+    /// The key of every entry whose key starts with `prefix`, in key order.
+    /// Values are not read.
+    pub async fn keys_with_prefix(&self, prefix: &[u8]) -> Result<Vec<Vec<u8>>, String> {
+        let conn = self.conn.lock().unwrap();
+        // Keys are BLOBs, which SQLite orders bytewise: every key that starts
+        // with `prefix` sorts at or after it, and the run ends at the first
+        // key that does not. The primary-key index answers this without
+        // touching a value.
+        let mut stmt = conn
+            .prepare("SELECT key FROM mls_storage WHERE key >= ?1 ORDER BY key")
+            .map_err(|e| format!("Failed to prepare keys_with_prefix: {e}"))?;
+        let mut rows = stmt
+            .query(rusqlite::params![prefix])
+            .map_err(|e| format!("Failed to query keys_with_prefix: {e}"))?;
+        let mut keys = Vec::new();
+        while let Some(row) = rows.next().map_err(|e| format!("Row error: {e}"))? {
+            let key: Vec<u8> = row.get(0).map_err(|e| format!("Row error: {e}"))?;
+            if !key.starts_with(prefix) {
+                break;
+            }
+            keys.push(key);
+        }
+        Ok(keys)
+    }
+
+    /// Every row's key with the group it is stored under — for tests that
+    /// hold the Web build's key-based grouping against this column.
+    #[cfg(test)]
+    pub(crate) fn rows_with_group_column(&self) -> Vec<(Vec<u8>, Option<Vec<u8>>)> {
+        let conn = self.conn.lock().unwrap();
+        let mut stmt = conn
+            .prepare("SELECT key, group_id FROM mls_storage")
+            .expect("rows query prepares");
+        let rows = stmt
+            .query_map([], |row| Ok((row.get(0)?, row.get(1)?)))
+            .expect("rows query runs");
+        rows.map(|row| row.expect("row reads")).collect()
+    }
+
     /// Save updates (upserts + deletes) in a transaction.
     pub async fn save_updates(
         &self,
@@ -889,6 +928,17 @@ impl EncryptedDb {
         Ok(result)
     }
 
+    /// The key of every entry whose key starts with `prefix`. Values are not
+    /// read, so none is decrypted: IDB keys are stored in the clear.
+    pub async fn keys_with_prefix(&self, prefix: &[u8]) -> Result<Vec<Vec<u8>>, String> {
+        Ok(self
+            .idb_get_all_keys()
+            .await?
+            .into_iter()
+            .filter(|key| key.starts_with(prefix))
+            .collect())
+    }
+
     /// Save updates (upserts + deletes).
     pub async fn save_updates(
         &self,
@@ -901,12 +951,14 @@ impl EncryptedDb {
     /// Save updates *and* drop every remaining row of the group, in one
     /// transaction — a crash cannot leave a deleted group half-purged.
     ///
-    /// As in `delete_group`, "the group's rows" means every non-global entry:
-    /// IDB keys carry no group column to filter on.
+    /// IDB keys carry no group column to filter on, so the group's rows are
+    /// found by key: `key_belongs_to_group` recognises the group ID inside
+    /// every key this crate writes for a group. Every other group's rows,
+    /// and the global ones, stay.
     pub async fn save_updates_and_purge_group(
         &self,
         updates: StorageUpdates,
-        _group_id: &[u8],
+        group_id: &[u8],
     ) -> Result<(), String> {
         // Collected before the write transaction opens: an IDB transaction
         // auto-commits as soon as the event loop goes idle, so no await may
@@ -915,7 +967,10 @@ impl EncryptedDb {
             .idb_get_all_keys()
             .await?
             .into_iter()
-            .filter(|key| !is_global_key(key))
+            .filter(|key| {
+                !is_global_key(key)
+                    && crate::snapshot_storage::key_belongs_to_group(key, group_id)
+            })
             .collect();
         self.write_all(updates, purge).await
     }
@@ -1214,6 +1269,14 @@ mod tests {
                 "{}-journal",
                 self.path.display()
             )));
+            // Only the planted-WAL test leaves these: the database never runs
+            // in WAL mode.
+            for suffix in ["-wal", "-shm"] {
+                let _ = std::fs::remove_file(std::path::PathBuf::from(format!(
+                    "{}{suffix}",
+                    self.path.display()
+                )));
+            }
             // The sidecar lock file is never unlinked in production — see
             // `acquire_single_writer_lock` — so a test has to clean it up.
             let _ = std::fs::remove_file(std::path::PathBuf::from(format!(
@@ -1600,6 +1663,93 @@ mod tests {
             .mode()
             & 0o777;
         assert_eq!(mode, 0o600, "database file mode is {mode:o}");
+    }
+
+    /// Plant `<target>-wal`: the write-ahead log of a fresh database that
+    /// encrypts with the target's key *and* salt, `page_size` bytes a page.
+    /// Its frames hold one table, `planted`, with one row.
+    fn plant_wal(target: &TempDb, page_size: u32) {
+        let header = std::fs::read(&target.path).expect("read the target");
+        let donor = TempDb::new("wal_donor");
+        let conn = rusqlite::Connection::open(donor.as_str()).expect("open the donor");
+        // SQLCipher's raw key with an explicit salt: "x'<key><salt>'".
+        let mut key = raw_key_pragma(&[0x5a; 32]);
+        key.pop();
+        for byte in &header[..16] {
+            key.push_str(&format!("{byte:02x}"));
+        }
+        key.push('\'');
+        conn.pragma_update(None, "key", key.as_str())
+            .expect("set the key and salt");
+        conn.execute_batch(&format!(
+            "PRAGMA cipher_page_size = {page_size};
+             PRAGMA journal_mode = WAL;
+             PRAGMA wal_autocheckpoint = 0;
+             CREATE TABLE planted (x INTEGER);
+             INSERT INTO planted VALUES (1);"
+        ))
+        .expect("write the donor through its WAL");
+        // While the donor is open: closing it checkpoints the log and deletes it.
+        std::fs::copy(
+            format!("{}-wal", donor.as_str()),
+            format!("{}-wal", target.as_str()),
+        )
+        .expect("plant the WAL");
+    }
+
+    #[test]
+    fn a_planted_wal_with_smaller_pages_fails_authentication() {
+        // RUSTSEC-2026-0459 (CVE-2026-119375): before 3.54.0, SQLite read a WAL
+        // frame smaller than the database's page into the page buffer and left
+        // the rest of it uninitialized. The SQLCipher this crate bundles is on
+        // SQLite 3.46.1. A log next to the database is read whatever journal
+        // mode the file is in, from the first read on: the key check in `open`,
+        // before `apply_pragmas` leaves WAL mode.
+        //
+        // The control: a log with the database's own key, salt and page size is
+        // read, authenticated and applied. Without it, the refusal below could
+        // as well be a log nobody reads.
+        let control = TempDb::new("planted_wal_control");
+        let db = open_db(control.as_str()).expect("create the database");
+        store(&db, b"KeyPackage/original", b"value");
+        drop(db);
+        plant_wal(&control, 4096);
+        let db = open_db(control.as_str()).expect("a log of the same page size opens");
+        let planted: i64 = db
+            .conn
+            .lock()
+            .unwrap()
+            .query_row("SELECT count(*) FROM planted", [], |row| row.get(0))
+            .expect("the planted log was applied");
+        assert_eq!(planted, 1);
+        drop(db);
+
+        // The same key and salt with smaller pages. SQLCipher keeps each page's
+        // IV and HMAC at its end, so they lie in the part the frame leaves
+        // stale, and the page fails authentication before any of it reaches a
+        // query.
+        let target = TempDb::new("planted_wal_small_pages");
+        let db = open_db(target.as_str()).expect("create the database");
+        store(&db, b"KeyPackage/original", b"value");
+        drop(db);
+        plant_wal(&target, 1024);
+        let error = open_error(
+            open_db(target.as_str()),
+            "a log with smaller pages must not open",
+        );
+        assert!(
+            error.contains("Encryption key verification failed"),
+            "unexpected error: {error}"
+        );
+
+        // Availability only, and only while the file is there: without it the
+        // database opens as it was.
+        for suffix in ["-wal", "-shm"] {
+            let _ = std::fs::remove_file(format!("{}{suffix}", target.as_str()));
+        }
+        let db = open_db(target.as_str()).expect("the database itself is intact");
+        let entries = block_on(db.load_global()).expect("load_global");
+        assert_eq!(entries.len(), 1);
     }
 }
 

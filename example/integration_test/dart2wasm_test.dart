@@ -3,8 +3,9 @@ import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:integration_test/integration_test.dart';
 import 'package:openmls/openmls.dart';
+
+import 'support/harness.dart';
 
 const ciphersuite = MlsCiphersuite.mls128DhkemX25519Aes128GcmSha256Ed25519;
 
@@ -40,64 +41,69 @@ class Member {
   }
 }
 
-void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+void main() => declareCapabilities(
+  initialize: Openmls.init,
+  capabilities: () {
+    // `make test-example` runs every entry point here on a device as well.
+    if (kIsWeb) {
+      capability('runs as dart2wasm, not the dart2js fallback', () async {
+        expect(kIsWasm, isTrue);
+      });
+    }
+    capability(
+      'an external joiner and the creator agree on the epoch secret',
+      _externalJoinerAgreesOnTheEpochSecret,
+    );
+  },
+);
 
-  testWidgets('runs as dart2wasm, not the dart2js fallback', (tester) async {
-    expect(kIsWasm, isTrue);
-  });
+Future<void> _externalJoinerAgreesOnTheEpochSecret() async {
+  final alice = await Member.create('alice');
+  final bob = await Member.create('bob');
+  final defaults = MlsGroupConfig.defaultConfig(ciphersuite: ciphersuite);
+  final config = MlsGroupConfig(
+    ciphersuite: ciphersuite,
+    wireFormatPolicy: MlsWireFormatPolicy.plaintext,
+    useRatchetTreeExtension: true,
+    maxPastEpochs: defaults.maxPastEpochs,
+    paddingSize: defaults.paddingSize,
+    senderRatchetMaxOutOfOrder: defaults.senderRatchetMaxOutOfOrder,
+    senderRatchetMaxForwardDistance: defaults.senderRatchetMaxForwardDistance,
+    numberOfResumptionPsks: defaults.numberOfResumptionPsks,
+  );
 
-  testWidgets('an external joiner and the creator agree on the epoch secret', (
-    tester,
-  ) async {
-    await Openmls.init();
-    final alice = await Member.create('alice');
-    final bob = await Member.create('bob');
-    final defaults = MlsGroupConfig.defaultConfig(ciphersuite: ciphersuite);
-    final config = MlsGroupConfig(
-      ciphersuite: ciphersuite,
-      wireFormatPolicy: MlsWireFormatPolicy.plaintext,
-      useRatchetTreeExtension: true,
-      maxPastEpochs: defaults.maxPastEpochs,
-      paddingSize: defaults.paddingSize,
-      senderRatchetMaxOutOfOrder: defaults.senderRatchetMaxOutOfOrder,
-      senderRatchetMaxForwardDistance: defaults.senderRatchetMaxForwardDistance,
-      numberOfResumptionPsks: defaults.numberOfResumptionPsks,
-    );
+  final group = await alice.engine.createGroupWithBuilder(
+    config: config,
+    signerBytes: alice.signerBytes,
+    credentialIdentity: alice.identity,
+    signerPublicKey: alice.publicKey,
+  );
+  final groupInfo = await alice.engine.exportGroupInfo(
+    groupIdBytes: group.groupId,
+    signerBytes: alice.signerBytes,
+  );
+  final joined = await bob.engine.joinGroupExternalCommitV2(
+    config: config,
+    groupInfoBytes: groupInfo,
+    signerBytes: bob.signerBytes,
+    credentialIdentity: bob.identity,
+    signerPublicKey: bob.publicKey,
+    skipLifetimeValidation: false,
+  );
+  await alice.engine.processMessage(
+    groupIdBytes: group.groupId,
+    messageBytes: joined.commit,
+  );
 
-    final group = await alice.engine.createGroupWithBuilder(
-      config: config,
-      signerBytes: alice.signerBytes,
-      credentialIdentity: alice.identity,
-      signerPublicKey: alice.publicKey,
-    );
-    final groupInfo = await alice.engine.exportGroupInfo(
-      groupIdBytes: group.groupId,
-      signerBytes: alice.signerBytes,
-    );
-    final joined = await bob.engine.joinGroupExternalCommitV2(
-      config: config,
-      groupInfoBytes: groupInfo,
-      signerBytes: bob.signerBytes,
-      credentialIdentity: bob.identity,
-      signerPublicKey: bob.publicKey,
-      skipLifetimeValidation: false,
-    );
-    await alice.engine.processMessage(
-      groupIdBytes: group.groupId,
-      messageBytes: joined.commit,
-    );
-
-    Future<Uint8List> epochSecret(Member member) => member.engine.exportSecret(
-      groupIdBytes: group.groupId,
-      label: 'dart2wasm test',
-      context: group.groupId,
-      keyLength: 32,
-    );
-    final aliceSecret = await epochSecret(alice);
-    expect(aliceSecret, hasLength(32));
-    expect(await epochSecret(bob), equals(aliceSecret));
-    await alice.engine.close();
-    await bob.engine.close();
-  });
+  Future<Uint8List> epochSecret(Member member) => member.engine.exportSecret(
+    groupIdBytes: group.groupId,
+    label: 'dart2wasm test',
+    context: group.groupId,
+    keyLength: 32,
+  );
+  final aliceSecret = await epochSecret(alice);
+  expect(aliceSecret, hasLength(32));
+  expect(await epochSecret(bob), equals(aliceSecret));
+  await alice.engine.close();
+  await bob.engine.close();
 }

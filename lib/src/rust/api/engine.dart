@@ -8,7 +8,7 @@ import 'config.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 import 'types.dart';
 
-// These functions are ignored because they are not marked as `pub`: `acquire_locks`, `apply_past_epoch_deletion`, `apply_past_epoch_policy`, `build_credential_with_key`, `commit`, `db`, `leaf_node_info`, `load_for_group`, `load_global`, `load_group`, `load_stored_group`, `max_epochs_to_native`, `member_info`, `native_to_past_epoch_policy`, `own_private_message_error`, `proposal_info`, `proposal_type_of`, `sender_info`, `staged_commit_info`, `unix_seconds_to_system_time`, `with_cap`
+// These functions are ignored because they are not marked as `pub`: `acquire_locks`, `apply_past_epoch_deletion`, `apply_past_epoch_policy`, `build_credential_with_key`, `commit`, `db`, `hex`, `leaf_node_info`, `load_for_external_join`, `load_for_group`, `load_for_welcome`, `load_global`, `load_group`, `load_stored_group`, `max_epochs_to_native`, `member_info`, `native_to_past_epoch_policy`, `new_group_error`, `own_private_message_error`, `proposal_info`, `proposal_type_of`, `sender_info`, `staged_commit_info`, `unix_seconds_to_system_time`, `welcome_error`, `with_cap`
 // These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `AddMembersResult`, `CreateMessageResult`, `GroupConfigurationResult`, `JoinGroupResult`, `KeyPackageLifetime`, `KeyPackageResult`, `LeaveGroupResult`, `LifetimeVerdict`, `OpLocks`, `OpSession`, `PastEpochDeletionPolicyResult`, `ProcessedMessageInspectResult`, `ProposalResult`
 // These function are ignored because they are on traits that is not defined in current crate (put an empty `#[frb]` on it to unignore): `crypto`, `rand`, `storage`
 
@@ -97,6 +97,11 @@ abstract class MlsEngine implements RustOpaqueInterface {
     encryptionKey: encryptionKey,
   );
 
+  /// `createGroup` with the rest of OpenMLS's group builder: lifetime,
+  /// extensions and capabilities.
+  ///
+  /// Fails when this engine already stores a group under `groupId`, as
+  /// `createGroup` does.
   Future<CreateGroupResult> createGroupWithBuilder({
     required MlsGroupConfig config,
     required List<int> signerBytes,
@@ -136,6 +141,17 @@ abstract class MlsEngine implements RustOpaqueInterface {
 
   Future<List<MlsMemberInfo>> groupMembers({required List<int> groupIdBytes});
 
+  /// Joins the group a GroupInfo describes by an external commit, as
+  /// `joinGroupExternalCommit` does, with additional authenticated data for
+  /// the commit and the option to skip the GroupInfo's lifetime checks.
+  ///
+  /// A group this engine already stores under the GroupInfo's group ID is
+  /// refused and replaced exactly as there: refused, with nothing written,
+  /// unless `replaceStoredGroup` is true, and then every entry stored under
+  /// that group ID is deleted in the write that stores the new group. The
+  /// engine cannot tell a later epoch of the stored group from another group
+  /// under the same ID: replace only from a GroupInfo whose source the
+  /// application trusts to speak for that group.
   Future<ExternalJoinResult> joinGroupExternalCommitV2({
     required MlsGroupConfig config,
     required List<int> groupInfoBytes,
@@ -146,6 +162,7 @@ abstract class MlsEngine implements RustOpaqueInterface {
     Uint8List? aad,
     required bool skipLifetimeValidation,
     Uint8List? credentialBytes,
+    bool? replaceStoredGroup,
   });
 
   Future<void> mergePendingCommit({required List<int> groupIdBytes});
@@ -174,6 +191,10 @@ class CommitResult {
   /// Publish it, like the Welcome, only once the delivery service has
   /// accepted `commit`: a party joining by external commit from it would
   /// otherwise enter an epoch that may never happen.
+  ///
+  /// It is not encrypted. With `FlexibleCommitOptions.groupInfoExtensions`
+  /// it carries those extensions, and it is created only when
+  /// `createGroupInfo` asks for it.
   final Uint8List? groupInfo;
 
   const CommitResult({required this.commit, this.welcome, this.groupInfo});

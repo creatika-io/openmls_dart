@@ -7,7 +7,7 @@ import '../frb_generated.dart';
 import 'package:flutter_rust_bridge/flutter_rust_bridge_for_generated.dart';
 
 // These functions are ignored because they are not marked as `pub`: `capabilities_to_native`, `ciphersuite_code_point`, `ciphersuite_from_code_point`, `ciphersuite_to_native`, `executed_ciphersuites`, `extension_from_mls`, `extension_to_mls`, `extensions_from_mls`, `external_senders_to_mls`, `native_to_ciphersuite`, `require_executed_ciphersuite`, `require_executed_signature_scheme`, `unsupported_ciphersuite`, `wire_format_to_native`
-// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `KeyPackageOptions`, `MlsExternalSenderInfo`, `MlsGroupContextInfo`, `MlsLeafNodeInfo`, `MlsPendingProposalInfo`, `MlsSenderInfo`, `MlsSenderKind`, `StagedCommitInfo`, `StagedProposalInfo`, `WelcomeInspectResult`
+// These types are ignored because they are neither used by any `pub` functions nor (for structs and enums) marked `#[frb(unignore)]`: `KeyPackageOptions`, `MlsExternalSenderInfo`, `MlsGroupContextInfo`, `MlsLeafNodeInfo`, `MlsPendingProposalInfo`, `MlsSenderInfo`, `MlsSenderKind`, `StagedCommitInfo`, `StagedProposalInfo`, `WelcomeGroupInfoExtensions`, `WelcomeInspectResult`
 
 /// Returns every ciphersuite this build can execute.
 ///
@@ -40,9 +40,15 @@ class FlexibleCommitOptions {
   final Uint8List? aad;
 
   /// Whether to create a GroupInfo message (default: true).
+  ///
+  /// With `groupInfoExtensions`, this alone decides whether that GroupInfo
+  /// — which carries them unencrypted — is created.
   final bool createGroupInfo;
 
   /// Whether to include the ratchet tree extension in GroupInfo.
+  ///
+  /// On its own this also turns the exported GroupInfo on. Not with
+  /// `groupInfoExtensions`: see there.
   final bool useRatchetTreeExtension;
 
   /// Leave the commit pending instead of merging it (default: false).
@@ -64,6 +70,31 @@ class FlexibleCommitOptions {
   /// see `CommitResult.welcome`.
   final bool keepPending;
 
+  /// Extensions of the application's own for the GroupInfo this commit
+  /// creates (default: none; an empty list is the same).
+  ///
+  /// The members the commit adds read them before they join, with
+  /// `welcomeGroupInfoExtensions`, from the GroupInfo inside the Welcome:
+  /// signed by the committer and encrypted under the welcome secret.
+  ///
+  /// That secret is not the newcomers' alone. Every member that processes
+  /// the commit derives it too (RFC 9420 §12.4.2), and all the members one
+  /// commit adds get the same copy. So these are for what the whole new
+  /// epoch may know, never for one invitee only. A party outside the group,
+  /// such as a delivery service that is not a member, cannot read the
+  /// Welcome's copy.
+  ///
+  /// They also go into the exported GroupInfo (`CommitResult.groupInfo`),
+  /// which is not encrypted. Whoever it is published to reads them in the
+  /// clear, including a delivery service that serves external joins. With
+  /// extensions given, that GroupInfo is created only when
+  /// `createGroupInfo` asks for it, even when `useRatchetTreeExtension` is
+  /// set. A commit that adds no member has no
+  /// Welcome: without `createGroupInfo` it is refused, rather than the
+  /// extensions dropped. Extension types a GroupInfo may not carry are
+  /// refused too, the ratchet tree and external public key among them.
+  final List<MlsExtension>? groupInfoExtensions;
+
   const FlexibleCommitOptions({
     required this.addKeyPackages,
     required this.removeIndices,
@@ -74,6 +105,7 @@ class FlexibleCommitOptions {
     required this.createGroupInfo,
     required this.useRatchetTreeExtension,
     this.keepPending = false,
+    this.groupInfoExtensions,
   });
 
   @override
@@ -86,7 +118,8 @@ class FlexibleCommitOptions {
       aad.hashCode ^
       createGroupInfo.hashCode ^
       useRatchetTreeExtension.hashCode ^
-      keepPending.hashCode;
+      keepPending.hashCode ^
+      groupInfoExtensions.hashCode;
 
   @override
   bool operator ==(Object other) =>
@@ -101,7 +134,8 @@ class FlexibleCommitOptions {
           aad == other.aad &&
           createGroupInfo == other.createGroupInfo &&
           useRatchetTreeExtension == other.useRatchetTreeExtension &&
-          keepPending == other.keepPending;
+          keepPending == other.keepPending &&
+          groupInfoExtensions == other.groupInfoExtensions;
 }
 
 /// Capabilities advertised by a leaf node.

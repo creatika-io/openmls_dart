@@ -98,6 +98,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool dco_decode_bool(dynamic raw);
 
   @protected
+  bool dco_decode_box_autoadd_bool(dynamic raw);
+
+  @protected
   FlexibleCommitOptions dco_decode_box_autoadd_flexible_commit_options(
     dynamic raw,
   );
@@ -176,6 +179,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
 
   @protected
   MlsWireFormatPolicy dco_decode_mls_wire_format_policy(dynamic raw);
+
+  @protected
+  bool? dco_decode_opt_box_autoadd_bool(dynamic raw);
 
   @protected
   MlsCapabilities? dco_decode_opt_box_autoadd_mls_capabilities(dynamic raw);
@@ -280,6 +286,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   bool sse_decode_bool(SseDeserializer deserializer);
 
   @protected
+  bool sse_decode_box_autoadd_bool(SseDeserializer deserializer);
+
+  @protected
   FlexibleCommitOptions sse_decode_box_autoadd_flexible_commit_options(
     SseDeserializer deserializer,
   );
@@ -382,6 +391,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   );
 
   @protected
+  bool? sse_decode_opt_box_autoadd_bool(SseDeserializer deserializer);
+
+  @protected
   MlsCapabilities? sse_decode_opt_box_autoadd_mls_capabilities(
     SseDeserializer deserializer,
   );
@@ -437,6 +449,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   String cst_encode_String(String raw) {
     // Codec=Cst (C-struct based), see doc to use other codecs
     return raw;
+  }
+
+  @protected
+  bool cst_encode_box_autoadd_bool(bool raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return cst_encode_bool(raw);
   }
 
   @protected
@@ -516,6 +534,7 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       cst_encode_bool(raw.createGroupInfo),
       cst_encode_bool(raw.useRatchetTreeExtension),
       cst_encode_bool(raw.keepPending),
+      cst_encode_opt_list_mls_extension(raw.groupInfoExtensions),
     ].jsify()!;
   }
 
@@ -611,6 +630,12 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
       cst_encode_list_prim_u_8_strict(raw.credential),
       cst_encode_list_prim_u_8_strict(raw.signatureKey),
     ].jsify()!;
+  }
+
+  @protected
+  bool? cst_encode_opt_box_autoadd_bool(bool? raw) {
+    // Codec=Cst (C-struct based), see doc to use other codecs
+    return raw == null ? null : cst_encode_box_autoadd_bool(raw);
   }
 
   @protected
@@ -829,6 +854,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
   void sse_encode_bool(bool self, SseSerializer serializer);
 
   @protected
+  void sse_encode_box_autoadd_bool(bool self, SseSerializer serializer);
+
+  @protected
   void sse_encode_box_autoadd_flexible_commit_options(
     FlexibleCommitOptions self,
     SseSerializer serializer,
@@ -962,6 +990,9 @@ abstract class RustLibApiImplPlatform extends BaseApiImpl<RustLibWire> {
     MlsWireFormatPolicy self,
     SseSerializer serializer,
   );
+
+  @protected
+  void sse_encode_opt_box_autoadd_bool(bool? self, SseSerializer serializer);
 
   @protected
   void sse_encode_opt_box_autoadd_mls_capabilities(
@@ -1182,6 +1213,7 @@ class RustLibWire implements BaseWire {
     JSAny? aad,
     bool skip_lifetime_validation,
     JSAny? credential_bytes,
+    bool? replace_stored_group,
   ) => wasmModule
       .wire__crate__api__engine__MlsEngine_join_group_external_commit_v2(
         port_,
@@ -1195,6 +1227,7 @@ class RustLibWire implements BaseWire {
         aad,
         skip_lifetime_validation,
         credential_bytes,
+        replace_stored_group,
       );
 
   void wire__crate__api__engine__MlsEngine_merge_pending_commit(
@@ -1428,6 +1461,7 @@ extension type RustLibWasmModule._(JSObject _) implements JSObject {
     JSAny? aad,
     bool skip_lifetime_validation,
     JSAny? credential_bytes,
+    bool? replace_stored_group,
   );
 
   external void wire__crate__api__engine__MlsEngine_merge_pending_commit(

@@ -23,6 +23,7 @@ use openmls::prelude::tls_codec::{
 };
 #[cfg(feature = "full-api")]
 use openmls::{ciphersuite::hash_ref::ProposalRef, schedule::PreSharedKeyId};
+use openmls::messages::group_info::VerifiableGroupInfo;
 use openmls_traits::OpenMlsProvider;
 #[cfg(feature = "full-api")]
 use openmls_traits::storage::StorageProvider;
@@ -39,9 +40,11 @@ use super::types::{
 #[cfg(feature = "full-api")]
 use super::types::{
     native_to_ciphersuite, KeyPackageOptions, MlsGroupContextInfo,
-    MlsPendingProposalInfo, WelcomeInspectResult,
+    MlsPendingProposalInfo, WelcomeGroupInfoExtensions, WelcomeInspectResult,
 };
 use crate::snapshot_storage::{SnapshotOpenMlsProvider, SnapshotStorageProvider};
+#[cfg(feature = "full-api")]
+use crate::snapshot_storage::{stored_group_id, STORED_GROUP_KEY_PREFIX};
 
 // ═══════════════════════════════════════════════════════════════
 // HELPERS
@@ -81,6 +84,100 @@ fn load_stored_group<P: OpenMlsProvider>(
     MlsGroup::load(provider.storage(), &gid)
         .map_err(|e| format!("Failed to load group: {}", e))?
         .ok_or_else(|| "No group found in storage".to_string())
+}
+
+/// Why a group cannot be created or joined under an ID this engine already
+/// stores.
+///
+/// OpenMLS refuses it itself (`NewGroupError::GroupAlreadyExists`,
+/// `WelcomeError::GroupAlreadyExists`), provided the stored group is in the
+/// snapshot it looks in — which is why the create and join paths below load
+/// that group's rows. The message adds what the caller can do about it.
+const GROUP_ALREADY_EXISTS: &str = "A group with this ID already exists in this engine's \
+    storage. To replace it (for example one this client has left or been removed from), \
+    delete it with deleteGroup first";
+
+/// Why an external join into a group this engine already stores is refused:
+/// OpenMLS does not check, so the engine does (`load_for_external_join`).
+const EXTERNAL_JOIN_STORED_GROUP: &str = "A group with this ID already exists in this engine's \
+    storage. To rejoin it from this GroupInfo, replacing what is stored, pass \
+    replaceStoredGroup: true, and only for a GroupInfo whose source speaks for that group";
+
+/// A group ID as an error message shows it.
+fn hex(bytes: &[u8]) -> String {
+    bytes.iter().map(|byte| format!("{byte:02x}")).collect()
+}
+
+type StorageError = crate::snapshot_storage::SnapshotStorageError;
+
+fn new_group_error(error: NewGroupError<StorageError>) -> String {
+    match error {
+        NewGroupError::GroupAlreadyExists => {
+            format!("Failed to create group: {GROUP_ALREADY_EXISTS}")
+        }
+        other => format!("Failed to create group: {other}"),
+    }
+}
+
+fn welcome_error(context: &str, error: WelcomeError<StorageError>) -> String {
+    match error {
+        WelcomeError::GroupAlreadyExists => {
+            format!("Failed to join group from welcome: {GROUP_ALREADY_EXISTS}")
+        }
+        other => format!("{context}: {other}"),
+    }
+}
+
+/// The extension type of last_resort (draft-ietf-mls-extensions).
+const LAST_RESORT_EXTENSION_TYPE: u16 = 0x000a;
+
+/// The highest proposal type MLS keeps for itself: RFC 9420 reserves
+/// `0x0000` and registers `0x0001` to `0x0007`, and the MLS extensions draft
+/// (draft-ietf-mls-extensions) takes `0x0008` to `0x000a` for its own
+/// proposals. None of them is an application's own.
+const LAST_RESERVED_PROPOSAL_TYPE: u16 = 0x000a;
+
+/// The leaf capabilities a key package built from `options` advertises.
+///
+/// A last-resort key package carries a last_resort extension, and a key
+/// package's extensions have to be among its leaf's capabilities (RFC 9420
+/// §10). OpenMLS's default capabilities list no extension, so the type is
+/// added here, to the defaults or to the caller's list: without it, whoever
+/// adds the key package refuses it ("A key package extension is not supported
+/// in the leaf's capabilities").
+#[cfg(feature = "full-api")]
+fn key_package_capabilities(options: &KeyPackageOptions) -> Result<Capabilities, String> {
+    if !options.last_resort {
+        return capabilities_to_native(options.capabilities.as_ref());
+    }
+    let mut caps = match &options.capabilities {
+        Some(given) => MlsCapabilities {
+            versions: given.versions.clone(),
+            ciphersuites: given.ciphersuites.clone(),
+            extensions: given.extensions.clone(),
+            proposals: given.proposals.clone(),
+            credentials: given.credentials.clone(),
+        },
+        None => MlsCapabilities {
+            versions: Vec::new(),
+            ciphersuites: Vec::new(),
+            extensions: Vec::new(),
+            proposals: Vec::new(),
+            credentials: Vec::new(),
+        },
+    };
+    if !caps.extensions.contains(&LAST_RESORT_EXTENSION_TYPE) {
+        caps.extensions.push(LAST_RESORT_EXTENSION_TYPE);
+    }
+    capabilities_to_native(Some(&caps))
+}
+
+/// A proposal's reference as `removePendingProposal` reads it.
+#[cfg(feature = "full-api")]
+fn serialize_proposal_ref(proposal_ref: &ProposalRef) -> Result<Vec<u8>, String> {
+    proposal_ref
+        .tls_serialize_detached()
+        .map_err(|e| format!("Failed to serialize proposal ref: {e}"))
 }
 
 /// The binding's name for a proposal's type.
@@ -335,11 +432,24 @@ pub struct CommitResult {
     /// Publish it, like the Welcome, only once the delivery service has
     /// accepted `commit`: a party joining by external commit from it would
     /// otherwise enter an epoch that may never happen.
+    ///
+    /// It is not encrypted. With `FlexibleCommitOptions.groupInfoExtensions`
+    /// it carries those extensions, and it is created only when
+    /// `createGroupInfo` asks for it.
     pub group_info: Option<Vec<u8>>,
 }
 
 pub struct ProposalResult {
     pub proposal_message: Vec<u8>,
+    /// The proposal's reference (RFC 9420 §5.2), serialized: what
+    /// `removePendingProposal` takes to withdraw it from this member's store
+    /// before a commit carries it.
+    ///
+    /// Withdrawing is local. The other members keep the proposal they
+    /// received, a commit of theirs can still carry it by reference, and this
+    /// member then cannot process that commit. So withdraw only a proposal
+    /// whose message has not been sent.
+    pub proposal_ref: Vec<u8>,
 }
 
 pub struct CreateMessageResult {
@@ -666,6 +776,82 @@ impl MlsEngine {
         })
     }
 
+    /// Take the operation locks and load the snapshot a Welcome is joined
+    /// in: the global scope *and* the group the Welcome invites into.
+    ///
+    /// A Welcome names its group only inside the GroupInfo it encrypts, so
+    /// it is opened once in the global scope — where the key package it is
+    /// addressed to lives — to read the ID, and that snapshot is thrown away
+    /// unwritten. The join then runs on one that also holds the stored group
+    /// of that ID, if any, so OpenMLS's check that the ID is not already in
+    /// use (RFC 9420 §12.4.3.1) can see it. With the global scope alone it
+    /// sees nothing, and the join writes over the stored group.
+    ///
+    /// The locks are held from the first load to the end of the operation,
+    /// so nothing can change the group between the two.
+    async fn load_for_welcome(
+        &self,
+        join_config: &MlsGroupJoinConfig,
+        welcome: &Welcome,
+    ) -> Result<OpSession<'_>, String> {
+        let OpSession { locks, provider } = self.load_global().await?;
+        let group_id = ProcessedWelcome::new_from_welcome(&provider, join_config, welcome.clone())
+            .map_err(|e| format!("Failed to process welcome: {}", e))?
+            .unverified_group_info()
+            .group_id()
+            .clone();
+        drop(provider);
+        let entries = self.db()?.load_for_group(group_id.as_slice()).await?;
+        Ok(OpSession {
+            locks,
+            provider: SnapshotOpenMlsProvider::new(SnapshotStorageProvider::from_entries(entries)),
+        })
+    }
+
+    /// Take the operation locks and load the snapshot an external commit
+    /// joins in: the global scope and the group the GroupInfo names.
+    ///
+    /// OpenMLS does not check an external join's group ID against storage,
+    /// and an external join is how a client rejoins a group it lost track
+    /// of. So a group stored under that ID is refused here unless `replace`.
+    /// Then every entry under the ID is taken out of the snapshot before the
+    /// join writes the new group — the stored group's when told to replace
+    /// it, and otherwise entries no group loads from — and the write that
+    /// stores the new group deletes them with it: a join that fails keeps
+    /// them. On the global scope alone, as before, the join wrote over the
+    /// stored group and left its queued proposals and an earlier epoch's key
+    /// pairs behind under the new group's ID.
+    async fn load_for_external_join(
+        &self,
+        group_info: &VerifiableGroupInfo,
+        replace: bool,
+    ) -> Result<OpSession<'_>, String> {
+        let group_id = group_info.group_id().clone();
+        let session = self.load_for_group(group_id.as_slice()).await?;
+        // Replacing needs no load, so a stored group that no longer loads
+        // can be replaced too.
+        if !replace
+            && MlsGroup::load(session.storage(), &group_id)
+                .map_err(|e| {
+                    format!(
+                        "Failed to join group via external commit: the group stored under \
+                         this ID does not load ({e}). To replace it, pass \
+                         replaceStoredGroup: true (group ID {})",
+                        hex(group_id.as_slice())
+                    )
+                })?
+                .is_some()
+        {
+            return Err(format!(
+                "Failed to join group via external commit: {EXTERNAL_JOIN_STORED_GROUP} \
+                 (group ID {})",
+                hex(group_id.as_slice())
+            ));
+        }
+        session.storage().forget_group(group_id.as_slice());
+        Ok(session)
+    }
+
     /// Diff a session's snapshot, write it back, and release the operation
     /// lock.
     async fn commit(&self, session: OpSession<'_>, group_id: Option<&[u8]>) -> Result<(), String> {
@@ -756,7 +942,7 @@ impl MlsEngine {
 
         let provider = self.load_global().await?;
         let mut builder = KeyPackage::builder()
-            .leaf_node_capabilities(capabilities_to_native(options.capabilities.as_ref())?);
+            .leaf_node_capabilities(key_package_capabilities(&options)?);
 
         if let Some(lifetime_secs) = options.lifetime_seconds {
             builder = builder.key_package_lifetime(Lifetime::new(lifetime_secs));
@@ -795,6 +981,11 @@ impl MlsEngine {
     // GROUP CREATION
     // ═══════════════════════════════════════════════════════════
 
+    /// Creates a group with this client as its only member, under `groupId`
+    /// when one is given and a random ID otherwise.
+    ///
+    /// Fails when this engine already stores a group under `groupId`. To
+    /// reuse the ID, delete that group with `deleteGroup` first.
     #[cfg(feature = "full-api")]
     pub async fn create_group(
         &self,
@@ -810,7 +1001,14 @@ impl MlsEngine {
             &credential_identity, &signer_public_key, credential_bytes.as_deref(),
         )?;
 
-        let provider = self.load_global().await?;
+        // A group stored under the requested ID has to be in the snapshot:
+        // that is where OpenMLS looks before it creates one under the same
+        // ID, and with the global scope alone the commit below would write
+        // over it.
+        let provider = match &group_id {
+            Some(gid) => self.load_for_group(gid).await?,
+            None => self.load_global().await?,
+        };
         let create_config = config.to_create_config()?;
 
         signer
@@ -829,7 +1027,7 @@ impl MlsEngine {
             MlsGroup::new(&provider, &signer, &create_config, credential_with_key)
         };
 
-        let mls_group = mls_group.map_err(|e| format!("Failed to create group: {}", e))?;
+        let mls_group = mls_group.map_err(new_group_error)?;
         let gid = mls_group.group_id().as_slice().to_vec();
 
         self.commit(provider, Some(&gid)).await?;
@@ -837,6 +1035,11 @@ impl MlsEngine {
         Ok(CreateGroupResult { group_id: gid })
     }
 
+    /// `createGroup` with the rest of OpenMLS's group builder: lifetime,
+    /// extensions and capabilities.
+    ///
+    /// Fails when this engine already stores a group under `groupId`, as
+    /// `createGroup` does.
     #[allow(clippy::too_many_arguments)]
     pub async fn create_group_with_builder(
         &self,
@@ -856,7 +1059,12 @@ impl MlsEngine {
             &credential_identity, &signer_public_key, credential_bytes.as_deref(),
         )?;
 
-        let provider = self.load_global().await?;
+        // See `create_group`: OpenMLS checks the requested ID against what
+        // the snapshot holds.
+        let provider = match &group_id {
+            Some(gid) => self.load_for_group(gid).await?,
+            None => self.load_global().await?,
+        };
 
         signer
             .store(provider.storage())
@@ -898,7 +1106,7 @@ impl MlsEngine {
         let mls_group = builder
             .with_capabilities(capabilities_to_native(capabilities.as_ref())?)
             .build(&provider, &signer, credential_with_key)
-            .map_err(|e| format!("Failed to create group: {}", e))?;
+            .map_err(new_group_error)?;
 
         let gid = mls_group.group_id().as_slice().to_vec();
 
@@ -911,6 +1119,15 @@ impl MlsEngine {
     // JOINING A GROUP
     // ═══════════════════════════════════════════════════════════
 
+    /// Joins the group a Welcome invites this client into.
+    ///
+    /// Fails when this engine already stores a group with the Welcome's
+    /// group ID. RFC 9420 has a joiner check that the ID is not one it is
+    /// already using, and accepting would replace the stored group with the
+    /// one the Welcome describes — whoever sent it. That includes a group
+    /// this client has left or been removed from: to accept a new invitation
+    /// into it, delete the old state with `deleteGroup` first.
+    /// `inspectWelcome` reads the group ID without joining.
     #[cfg(feature = "full-api")]
     pub async fn join_group_from_welcome(
         &self,
@@ -920,11 +1137,6 @@ impl MlsEngine {
         signer_bytes: Vec<u8>,
     ) -> Result<JoinGroupResult, String> {
         let signer = signer_from_bytes(signer_bytes)?;
-        let provider = self.load_global().await?;
-
-        signer
-            .store(provider.storage())
-            .map_err(|e| format!("Failed to store signer: {}", e))?;
 
         let welcome_msg = MlsMessageIn::tls_deserialize_exact_bytes(&welcome_bytes)
             .map_err(|e| format!("Failed to deserialize welcome: {}", e))?;
@@ -941,8 +1153,14 @@ impl MlsEngine {
             })
             .transpose()?;
 
+        let provider = self.load_for_welcome(&join_config, &welcome).await?;
+
+        signer
+            .store(provider.storage())
+            .map_err(|e| format!("Failed to store signer: {}", e))?;
+
         let staged = StagedWelcome::new_from_welcome(&provider, &join_config, welcome, ratchet_tree)
-            .map_err(|e| format!("Failed to process welcome: {}", e))?;
+            .map_err(|e| welcome_error("Failed to process welcome", e))?;
         let mls_group = staged
             .into_group(&provider)
             .map_err(|e| format!("Failed to join group from welcome: {}", e))?;
@@ -954,6 +1172,10 @@ impl MlsEngine {
         Ok(JoinGroupResult { group_id: gid })
     }
 
+    /// `joinGroupFromWelcome` with OpenMLS's join options.
+    ///
+    /// Fails when this engine already stores a group with the Welcome's
+    /// group ID, as `joinGroupFromWelcome` does.
     #[cfg(feature = "full-api")]
     pub async fn join_group_from_welcome_with_options(
         &self,
@@ -964,11 +1186,6 @@ impl MlsEngine {
         skip_lifetime_validation: bool,
     ) -> Result<JoinGroupResult, String> {
         let signer = signer_from_bytes(signer_bytes)?;
-        let provider = self.load_global().await?;
-
-        signer
-            .store(provider.storage())
-            .map_err(|e| format!("Failed to store signer: {}", e))?;
 
         let welcome_msg = MlsMessageIn::tls_deserialize_exact_bytes(&welcome_bytes)
             .map_err(|e| format!("Failed to deserialize welcome: {}", e))?;
@@ -978,6 +1195,12 @@ impl MlsEngine {
         };
 
         let join_config = config.to_join_config();
+        let provider = self.load_for_welcome(&join_config, &welcome).await?;
+
+        signer
+            .store(provider.storage())
+            .map_err(|e| format!("Failed to store signer: {}", e))?;
+
         let mut join_builder = StagedWelcome::build_from_welcome(&provider, &join_config, welcome)
             .map_err(|e| format!("Failed to process welcome: {}", e))?;
 
@@ -992,7 +1215,7 @@ impl MlsEngine {
 
         let staged = join_builder
             .build()
-            .map_err(|e| format!("Failed to build staged welcome: {}", e))?;
+            .map_err(|e| welcome_error("Failed to build staged welcome", e))?;
         let mls_group = staged
             .into_group(&provider)
             .map_err(|e| format!("Failed to join group from welcome: {}", e))?;
@@ -1054,12 +1277,13 @@ impl MlsEngine {
     /// confirmation tag is only checked when the Welcome is staged into a
     /// group, which happens in `joinGroupFromWelcome` and not here.
     ///
-    /// It sees exactly the storage the real join sees:
-    /// `joinGroupFromWelcome` loads the same global scope, and pre-shared keys
-    /// live in it (they are stored ungrouped, like key packages and signature
-    /// keys). So a Welcome that carries PSKs resolves them here or fails here
-    /// for the same reason it would there — this function is never the narrower
-    /// of the two.
+    /// It sees the storage the real join opens the Welcome in: the global
+    /// scope, where pre-shared keys live (they are stored ungrouped, like key
+    /// packages and signature keys). So a Welcome that carries PSKs resolves
+    /// them here or fails here for the same reason it would there — this
+    /// function is never the narrower of the two. The join loads one thing
+    /// more, the stored group of the Welcome's ID, and refuses a Welcome whose
+    /// ID is already stored; this function does not check that.
     #[cfg(feature = "full-api")]
     pub async fn export_welcome_secret(
         &self,
@@ -1087,6 +1311,117 @@ impl MlsEngine {
             .map_err(|e| format!("Failed to export secret from welcome: {}", e))
     }
 
+    /// The extensions in the GroupInfo of a Welcome
+    /// (`FlexibleCommitOptions.groupInfoExtensions`), and the member that
+    /// signed that GroupInfo, read **without joining the group**.
+    ///
+    /// They are returned only once the Welcome has been staged as
+    /// `joinGroupFromWelcome` stages it. Staging checks:
+    /// - the GroupInfo's signature, against the leaf the GroupInfo names as
+    ///   its signer, in the ratchet tree that came with the Welcome;
+    /// - that tree, against the GroupInfo;
+    /// - the confirmation tag, against the epoch's secrets.
+    ///
+    /// A Welcome that fails a check fails here.
+    ///
+    /// That proves the extensions are what `signer` wrote. It proves nothing
+    /// about who `signer` is. Usually it is the committer, but two other
+    /// parties can produce a Welcome that passes the same checks:
+    /// - any member of the new epoch, under its own signature;
+    /// - anyone who holds one of this client's key packages, from a group of
+    ///   their own.
+    ///
+    /// Before acting on the extensions, authenticate `signer` as before any
+    /// join: by its signature key, which is what the signature binds. A basic
+    /// credential's identity is whatever its owner claims.
+    ///
+    /// Nor are they a secret the newcomer alone holds: the welcome secret
+    /// that encrypts them is derived by every member that processes the
+    /// commit (RFC 9420 §12.4.2).
+    ///
+    /// Writes nothing, like `inspectWelcome` and `exportWelcomeSecret`: the
+    /// key package the Welcome is addressed to is still there for the join.
+    /// Unlike `joinGroupFromWelcomeWithOptions`, leaf lifetimes are always
+    /// checked. A Welcome without a ratchet tree extension needs
+    /// `ratchetTreeBytes`: the tree of the epoch the Welcome is for.
+    ///
+    /// Nor, since it joins nothing, does it check the Welcome's group ID
+    /// against the groups this engine stores: extensions are returned for a
+    /// Welcome under an ID that is already in use, and `joinGroupFromWelcome`
+    /// then refuses that Welcome.
+    ///
+    /// The ratchet tree extension is left out, since it is the group's tree
+    /// rather than something a committer adds. So is the external public key,
+    /// which a Welcome's GroupInfo does not carry.
+    #[cfg(feature = "full-api")]
+    pub async fn welcome_group_info_extensions(
+        &self,
+        config: MlsGroupConfig,
+        welcome_bytes: Vec<u8>,
+        ratchet_tree_bytes: Option<Vec<u8>>,
+    ) -> Result<WelcomeGroupInfoExtensions, String> {
+        let provider = self.load_global().await?;
+
+        let welcome_msg = MlsMessageIn::tls_deserialize_exact_bytes(&welcome_bytes)
+            .map_err(|e| format!("Failed to deserialize welcome: {}", e))?;
+        let welcome = match welcome_msg.extract() {
+            MlsMessageBodyIn::Welcome(w) => w,
+            _ => return Err("Message is not a Welcome".to_string()),
+        };
+
+        let join_config = config.to_join_config();
+        let processed = ProcessedWelcome::new_from_welcome(&provider, &join_config, welcome)
+            .map_err(|e| format!("Failed to process welcome: {}", e))?;
+        // Read before staging consumes it; staging below verifies this very
+        // GroupInfo, so they count only once it succeeds.
+        let extensions = processed.unverified_group_info().extensions().clone();
+
+        let ratchet_tree = ratchet_tree_bytes
+            .map(|bytes| {
+                RatchetTreeIn::tls_deserialize_exact_bytes(&bytes)
+                    .map_err(|e| format!("Failed to deserialize ratchet tree: {}", e))
+            })
+            .transpose()?;
+        let staged = processed
+            .into_staged_welcome(&provider, ratchet_tree)
+            .map_err(|e| format!("Failed to verify welcome: {}", e))?;
+
+        let signer_leaf = staged
+            .welcome_sender()
+            .map_err(|e| format!("Failed to read the welcome's signer: {}", e))?;
+        let signer = MlsMemberInfo {
+            index: staged.welcome_sender_index().u32(),
+            credential: signer_leaf
+                .credential()
+                .tls_serialize_detached()
+                .map_err(|e| format!("Failed to serialize the signer's credential: {}", e))?,
+            signature_key: signer_leaf.signature_key().as_slice().to_vec(),
+        };
+
+        let extensions = extensions
+            .iter()
+            .filter(|ext| {
+                !matches!(ext, Extension::RatchetTree(_) | Extension::ExternalPub(_))
+            })
+            .map(extension_to_mls)
+            .collect::<Result<Vec<_>, _>>()?;
+
+        Ok(WelcomeGroupInfoExtensions { extensions, signer })
+    }
+
+    /// Joins the group a GroupInfo describes by an external commit
+    /// (RFC 9420 §12.4.3.2), as the member `credentialIdentity` and
+    /// `signerPublicKey` name. `joinGroupExternalCommitV2` does the same with
+    /// more options.
+    ///
+    /// Refused, with nothing written, when this engine already stores a group
+    /// under the GroupInfo's group ID — unless `replaceStoredGroup` is true,
+    /// which is how a client rejoins a group whose state it lost track of.
+    /// Every entry stored under that group ID is then deleted, in the write
+    /// that stores the new group, so a join that fails keeps them all. The
+    /// engine cannot tell a later epoch of the stored group from another
+    /// group under the same ID, which anyone can create: replace only from a
+    /// GroupInfo whose source the application trusts to speak for that group.
     #[allow(deprecated)]
     #[allow(clippy::too_many_arguments)]
     #[cfg(feature = "full-api")]
@@ -1099,16 +1434,12 @@ impl MlsEngine {
         credential_identity: Vec<u8>,
         signer_public_key: Vec<u8>,
         credential_bytes: Option<Vec<u8>>,
+        replace_stored_group: Option<bool>,
     ) -> Result<ExternalJoinResult, String> {
         let signer = signer_from_bytes(signer_bytes)?;
         let credential_with_key = build_credential_with_key(
             &credential_identity, &signer_public_key, credential_bytes.as_deref(),
         )?;
-
-        let provider = self.load_global().await?;
-        signer
-            .store(provider.storage())
-            .map_err(|e| format!("Failed to store signer: {}", e))?;
 
         let gi_msg = MlsMessageIn::tls_deserialize_exact_bytes(&group_info_bytes)
             .map_err(|e| format!("Failed to deserialize group info: {}", e))?;
@@ -1116,6 +1447,13 @@ impl MlsEngine {
             MlsMessageBodyIn::GroupInfo(gi) => gi,
             _ => return Err("Not a GroupInfo message".to_string()),
         };
+
+        let provider = self
+            .load_for_external_join(&verifiable_group_info, replace_stored_group.unwrap_or(false))
+            .await?;
+        signer
+            .store(provider.storage())
+            .map_err(|e| format!("Failed to store signer: {}", e))?;
         let join_config = config.to_join_config();
 
         let ratchet_tree: Option<RatchetTreeIn> = ratchet_tree_bytes
@@ -1149,6 +1487,17 @@ impl MlsEngine {
         })
     }
 
+    /// Joins the group a GroupInfo describes by an external commit, as
+    /// `joinGroupExternalCommit` does, with additional authenticated data for
+    /// the commit and the option to skip the GroupInfo's lifetime checks.
+    ///
+    /// A group this engine already stores under the GroupInfo's group ID is
+    /// refused and replaced exactly as there: refused, with nothing written,
+    /// unless `replaceStoredGroup` is true, and then every entry stored under
+    /// that group ID is deleted in the write that stores the new group. The
+    /// engine cannot tell a later epoch of the stored group from another group
+    /// under the same ID: replace only from a GroupInfo whose source the
+    /// application trusts to speak for that group.
     #[allow(clippy::too_many_arguments)]
     pub async fn join_group_external_commit_v2(
         &self,
@@ -1161,16 +1510,12 @@ impl MlsEngine {
         aad: Option<Vec<u8>>,
         skip_lifetime_validation: bool,
         credential_bytes: Option<Vec<u8>>,
+        replace_stored_group: Option<bool>,
     ) -> Result<ExternalJoinResult, String> {
         let signer = signer_from_bytes(signer_bytes)?;
         let credential_with_key = build_credential_with_key(
             &credential_identity, &signer_public_key, credential_bytes.as_deref(),
         )?;
-
-        let provider = self.load_global().await?;
-        signer
-            .store(provider.storage())
-            .map_err(|e| format!("Failed to store signer: {}", e))?;
 
         let gi_msg = MlsMessageIn::tls_deserialize_exact_bytes(&group_info_bytes)
             .map_err(|e| format!("Failed to deserialize group info: {}", e))?;
@@ -1178,6 +1523,13 @@ impl MlsEngine {
             MlsMessageBodyIn::GroupInfo(gi) => gi,
             _ => return Err("Not a GroupInfo message".to_string()),
         };
+
+        let provider = self
+            .load_for_external_join(&verifiable_group_info, replace_stored_group.unwrap_or(false))
+            .await?;
+        signer
+            .store(provider.storage())
+            .map_err(|e| format!("Failed to store signer: {}", e))?;
         let join_config = config.to_join_config();
 
         let mut ext_builder = MlsGroup::external_commit_builder().with_config(join_config);
@@ -1233,6 +1585,29 @@ impl MlsEngine {
     // ═══════════════════════════════════════════════════════════
     // STATE QUERIES (read-only)
     // ═══════════════════════════════════════════════════════════
+
+    /// The ID of every group this engine stores, in no particular order.
+    ///
+    /// These are the groups the other methods can load, and the IDs that
+    /// `createGroup` and `joinGroupFromWelcome` refuse as already in use, as
+    /// do the external joins unless told to replace the group. A group this
+    /// client has left or been removed from stays listed until `deleteGroup`
+    /// removes it; `groupIsActive` tells the two apart.
+    ///
+    /// Only storage keys are read, never the group state behind them, so the
+    /// cost grows with the number of groups and not with their size. What an
+    /// application shows for a group — a title, the last message — is not
+    /// MLS state and is not stored here.
+    #[cfg(feature = "full-api")]
+    pub async fn group_ids(&self) -> Result<Vec<Vec<u8>>, String> {
+        // Under the operation locks like every other call, so the list
+        // reflects exactly the calls that took them before this one.
+        let _locks = self.acquire_locks().await?;
+        let keys = self.db()?.keys_with_prefix(STORED_GROUP_KEY_PREFIX).await?;
+        let mut group_ids: Vec<Vec<u8>> = keys.iter().filter_map(|key| stored_group_id(key)).collect();
+        group_ids.sort();
+        Ok(group_ids)
+    }
 
     #[cfg(feature = "full-api")]
     pub async fn group_id(
@@ -1728,6 +2103,22 @@ impl MlsEngine {
         Ok(LeaveGroupResult { message: msg_bytes })
     }
 
+    /// Leaves the group with a SelfRemove proposal (draft-ietf-mls-extensions),
+    /// which any member may commit without proposing the removal itself.
+    ///
+    /// Two things have to hold, or a step fails:
+    /// - The group sends its handshake messages in the clear
+    ///   (`MlsWireFormatPolicy.plaintext`): OpenMLS refuses to send a
+    ///   SelfRemove encrypted.
+    /// - Every member's leaf lists the proposal type `0x000a` in
+    ///   `MlsCapabilities.proposals`, through `createGroupWithBuilder` and
+    ///   `KeyPackageOptions.capabilities`; OpenMLS's default capabilities do
+    ///   not. Otherwise the proposal is sent, and the commit that would carry
+    ///   it is refused: "The proposal type is not supported by all group
+    ///   members".
+    ///
+    /// `leaveGroup` needs neither: it proposes an ordinary Remove of this
+    /// member.
     #[cfg(feature = "full-api")]
     pub async fn leave_group_via_self_remove(
         &self,
@@ -1766,13 +2157,17 @@ impl MlsEngine {
         let kp = kp_in.validate(provider.crypto(), ProtocolVersion::Mls10)
             .map_err(|e| format!("Failed to validate key package: {}", e))?;
 
-        let (proposal_out, _) = group.propose_add_member(&provider, &signer, &kp)
+        let (proposal_out, proposal_ref) = group.propose_add_member(&provider, &signer, &kp)
             .map_err(|e| format!("Failed to propose add: {}", e))?;
         let msg_bytes = proposal_out.tls_serialize_detached().map_err(|e| format!("Failed to serialize proposal: {}", e))?;
+        let proposal_ref = serialize_proposal_ref(&proposal_ref)?;
 
         self.commit(provider, Some(&group_id_bytes)).await?;
 
-        Ok(ProposalResult { proposal_message: msg_bytes })
+        Ok(ProposalResult {
+            proposal_message: msg_bytes,
+            proposal_ref,
+        })
     }
 
     #[cfg(feature = "full-api")]
@@ -1786,13 +2181,17 @@ impl MlsEngine {
         let provider = self.load_for_group(&group_id_bytes).await?;
         let mut group = load_group(&group_id_bytes, &provider)?;
 
-        let (proposal_out, _) = group.propose_remove_member(&provider, &signer, LeafNodeIndex::new(member_index))
+        let (proposal_out, proposal_ref) = group.propose_remove_member(&provider, &signer, LeafNodeIndex::new(member_index))
             .map_err(|e| format!("Failed to propose remove: {}", e))?;
         let msg_bytes = proposal_out.tls_serialize_detached().map_err(|e| format!("Failed to serialize proposal: {}", e))?;
+        let proposal_ref = serialize_proposal_ref(&proposal_ref)?;
 
         self.commit(provider, Some(&group_id_bytes)).await?;
 
-        Ok(ProposalResult { proposal_message: msg_bytes })
+        Ok(ProposalResult {
+            proposal_message: msg_bytes,
+            proposal_ref,
+        })
     }
 
     #[cfg(feature = "full-api")]
@@ -1818,13 +2217,17 @@ impl MlsEngine {
         }
         let leaf_node_params = ln_builder.build();
 
-        let (proposal_out, _) = group.propose_self_update(&provider, &signer, leaf_node_params)
+        let (proposal_out, proposal_ref) = group.propose_self_update(&provider, &signer, leaf_node_params)
             .map_err(|e| format!("Failed to propose self-update: {}", e))?;
         let msg_bytes = proposal_out.tls_serialize_detached().map_err(|e| format!("Failed to serialize proposal: {}", e))?;
+        let proposal_ref = serialize_proposal_ref(&proposal_ref)?;
 
         self.commit(provider, Some(&group_id_bytes)).await?;
 
-        Ok(ProposalResult { proposal_message: msg_bytes })
+        Ok(ProposalResult {
+            proposal_message: msg_bytes,
+            proposal_ref,
+        })
     }
 
     /// Proposes a self-update that also rotates this member's signature key.
@@ -1894,14 +2297,18 @@ impl MlsEngine {
         }
         let leaf_node_params = ln_builder.build();
 
-        let (proposal_out, _) = group
+        let (proposal_out, proposal_ref) = group
             .propose_self_update_with_new_signer(&provider, &old_signer, new_signer_bundle, leaf_node_params)
             .map_err(|e| format!("Failed to propose self-update with new signer: {}", e))?;
         let msg_bytes = proposal_out.tls_serialize_detached().map_err(|e| format!("Failed to serialize proposal: {}", e))?;
+        let proposal_ref = serialize_proposal_ref(&proposal_ref)?;
 
         self.commit(provider, Some(&group_id_bytes)).await?;
 
-        Ok(ProposalResult { proposal_message: msg_bytes })
+        Ok(ProposalResult {
+            proposal_message: msg_bytes,
+            proposal_ref,
+        })
     }
 
     #[cfg(feature = "full-api")]
@@ -1917,13 +2324,17 @@ impl MlsEngine {
         let mut group = load_group(&group_id_bytes, &provider)?;
 
         let psk = PreSharedKeyId::external(psk_id, psk_nonce);
-        let (proposal_out, _) = group.propose_pre_shared_key(&provider, &signer, psk)
+        let (proposal_out, proposal_ref) = group.propose_pre_shared_key(&provider, &signer, psk)
             .map_err(|e| format!("Failed to propose external PSK: {}", e))?;
         let msg_bytes = proposal_out.tls_serialize_detached().map_err(|e| format!("Failed to serialize proposal: {}", e))?;
+        let proposal_ref = serialize_proposal_ref(&proposal_ref)?;
 
         self.commit(provider, Some(&group_id_bytes)).await?;
 
-        Ok(ProposalResult { proposal_message: msg_bytes })
+        Ok(ProposalResult {
+            proposal_message: msg_bytes,
+            proposal_ref,
+        })
     }
 
     #[cfg(feature = "full-api")]
@@ -1940,15 +2351,34 @@ impl MlsEngine {
         let ext_vec = extensions_from_mls(&extensions)?;
         let gc_extensions = Extensions::from_vec(ext_vec).map_err(|e| format!("Failed to create extensions: {}", e))?;
 
-        let (proposal_out, _) = group.propose_group_context_extensions(&provider, gc_extensions, &signer)
+        let (proposal_out, proposal_ref) = group.propose_group_context_extensions(&provider, gc_extensions, &signer)
             .map_err(|e| format!("Failed to propose group context extensions: {}", e))?;
         let msg_bytes = proposal_out.tls_serialize_detached().map_err(|e| format!("Failed to serialize proposal: {}", e))?;
+        let proposal_ref = serialize_proposal_ref(&proposal_ref)?;
 
         self.commit(provider, Some(&group_id_bytes)).await?;
 
-        Ok(ProposalResult { proposal_message: msg_bytes })
+        Ok(ProposalResult {
+            proposal_message: msg_bytes,
+            proposal_ref,
+        })
     }
 
+    /// Proposes an application's own proposal: `payload` under `proposalType`.
+    ///
+    /// `proposalType` has to be the application's own, or the call is
+    /// refused: not `0x0000` to `0x0007`, which RFC 9420 reserves and
+    /// registers, not `0x0008` to `0x000a`, which the MLS extensions draft
+    /// takes, and not a GREASE value. OpenMLS reads most of those as proposals
+    /// of its own, so such a number would go out as that proposal with this
+    /// payload: the other members could not decode it ("The content is
+    /// malformed"), while this member kept it pending, and a commit of its
+    /// pending proposals would refer to a proposal no other member has.
+    /// `0x0008` and `0x0009` OpenMLS reads as custom unless it is built with
+    /// its draft extensions, but a member whose implementation has them would
+    /// not. The private-use range, `0xf000` to `0xffff`, is free for an
+    /// application's own types. A commit can carry a custom proposal only when
+    /// every member's leaf lists its type in `MlsCapabilities.proposals`.
     #[cfg(feature = "full-api")]
     pub async fn propose_custom_proposal(
         &self,
@@ -1957,18 +2387,41 @@ impl MlsEngine {
         proposal_type: u16,
         payload: Vec<u8>,
     ) -> Result<ProposalResult, String> {
+        // Only what OpenMLS reads as custom passes, so a type it comes to read
+        // as its own, in a later release or with a feature, is refused too.
+        match ProposalType::from(proposal_type) {
+            ProposalType::Custom(_) if proposal_type > LAST_RESERVED_PROPOSAL_TYPE => {}
+            ProposalType::Custom(_) => {
+                return Err(format!(
+                    "proposalType {proposal_type:#06x} is not a type of the application's \
+                     own: it is reserved for MLS (RFC 9420 and the MLS extensions draft). \
+                     Use a type from the private-use range 0xf000-0xffff."
+                ));
+            }
+            other => {
+                return Err(format!(
+                    "proposalType {proposal_type:#06x} is not a type of the application's \
+                     own: OpenMLS reads it as {other:?}. Use the method for that proposal, \
+                     or a type from the private-use range 0xf000-0xffff."
+                ));
+            }
+        }
         let signer = signer_from_bytes(signer_bytes)?;
         let provider = self.load_for_group(&group_id_bytes).await?;
         let mut group = load_group(&group_id_bytes, &provider)?;
 
         let custom = CustomProposal::new(proposal_type, payload);
-        let (proposal_out, _) = group.propose_custom_proposal_by_reference(&provider, &signer, custom)
+        let (proposal_out, proposal_ref) = group.propose_custom_proposal_by_reference(&provider, &signer, custom)
             .map_err(|e| format!("Failed to propose custom proposal: {}", e))?;
         let msg_bytes = proposal_out.tls_serialize_detached().map_err(|e| format!("Failed to serialize proposal: {}", e))?;
+        let proposal_ref = serialize_proposal_ref(&proposal_ref)?;
 
         self.commit(provider, Some(&group_id_bytes)).await?;
 
-        Ok(ProposalResult { proposal_message: msg_bytes })
+        Ok(ProposalResult {
+            proposal_message: msg_bytes,
+            proposal_ref,
+        })
     }
 
     #[cfg(feature = "full-api")]
@@ -1984,13 +2437,17 @@ impl MlsEngine {
 
         let credential = Credential::tls_deserialize_exact_bytes(&credential_bytes)
             .map_err(|e| format!("Failed to deserialize credential: {}", e))?;
-        let (proposal_out, _) = group.propose_remove_member_by_credential(&provider, &signer, &credential)
+        let (proposal_out, proposal_ref) = group.propose_remove_member_by_credential(&provider, &signer, &credential)
             .map_err(|e| format!("Failed to propose remove by credential: {}", e))?;
         let msg_bytes = proposal_out.tls_serialize_detached().map_err(|e| format!("Failed to serialize proposal: {}", e))?;
+        let proposal_ref = serialize_proposal_ref(&proposal_ref)?;
 
         self.commit(provider, Some(&group_id_bytes)).await?;
 
-        Ok(ProposalResult { proposal_message: msg_bytes })
+        Ok(ProposalResult {
+            proposal_message: msg_bytes,
+            proposal_ref,
+        })
     }
 
     // ═══════════════════════════════════════════════════════════
@@ -2164,9 +2621,37 @@ impl MlsEngine {
         }
 
         let commit_builder = commit_builder.load_psks(provider.storage()).map_err(|e| format!("Failed to load PSKs: {}", e))?;
-        let commit_builder = commit_builder.create_group_info(options.create_group_info).use_ratchet_tree_extension(options.use_ratchet_tree_extension);
+        let mut commit_builder = commit_builder.create_group_info(options.create_group_info).use_ratchet_tree_extension(options.use_ratchet_tree_extension);
+        // An empty list is the same as none, so the exported GroupInfo is then
+        // created exactly as it is without the option.
+        let group_info_extensions = options
+            .group_info_extensions
+            .as_ref()
+            .filter(|extensions| !extensions.is_empty());
+        if let Some(gi_exts) = group_info_extensions {
+            let ext_vec = extensions_from_mls(gi_exts)?;
+            // Adding them turns the exported GroupInfo on, and so does the
+            // ratchet tree extension. It is not encrypted, so it is created
+            // only when asked for: the Welcome's own GroupInfo carries them
+            // either way.
+            commit_builder = commit_builder
+                .create_group_info_with_extensions(ext_vec)
+                .map_err(|e| format!("Failed to add group info extensions: {}", e))?
+                .create_group_info(options.create_group_info);
+        }
         let commit_builder = commit_builder.build(provider.rand(), provider.crypto(), &signer, |_| true).map_err(|e| format!("Failed to build commit: {}", e))?;
         let bundle = commit_builder.stage_commit(&provider).map_err(|e| format!("Failed to stage commit: {}", e))?;
+        // A commit that adds no member has no Welcome, and without
+        // createGroupInfo no exported GroupInfo either: nothing would carry the
+        // extensions. Refused here, before anything is merged or written,
+        // rather than dropping them in silence.
+        if group_info_extensions.is_some() && bundle.welcome().is_none() && bundle.group_info().is_none() {
+            return Err(
+                "groupInfoExtensions have nothing to carry them: the commit adds \
+                 no member, so it has no Welcome, and createGroupInfo is off"
+                    .to_string(),
+            );
+        }
         if !options.keep_pending {
             group.merge_pending_commit(&provider).map_err(|e| format!("Failed to merge pending commit: {}", e))?;
         }
@@ -2480,6 +2965,18 @@ impl MlsEngine {
     // ADDITIONAL STATE QUERIES / MUTATING
     // ═══════════════════════════════════════════════════════════
 
+    /// Withdraws one pending proposal from this member's store: the one whose
+    /// reference is `proposalRefBytes`, as `ProposalResult.proposalRef`
+    /// returns it for a proposal of this member's.
+    ///
+    /// Only this member's copy goes. The other members keep a proposal they
+    /// received, a commit of theirs can still carry it by reference, and this
+    /// member then fails to process that commit, having nothing it refers to.
+    /// So withdraw only a proposal whose message has not been sent. The engine
+    /// reports no reference for a received proposal: to keep one out of this
+    /// member's next commit, inspect the message before processing it
+    /// (`inspectMessage`), or drop every pending proposal with
+    /// `clearPendingProposals`.
     #[cfg(feature = "full-api")]
     pub async fn remove_pending_proposal(
         &self,
@@ -3385,6 +3882,7 @@ mod executed_ciphersuite_tests {
                 create_group_info: false,
                 use_ratchet_tree_extension: true,
                 keep_pending: false,
+                group_info_extensions: None,
             },
         ))
         .expect("self update");
@@ -3414,6 +3912,7 @@ mod executed_ciphersuite_tests {
             bob.public_key.clone(),
             None,
             false,
+            None,
             None,
         ))
         .expect("bob joins");
@@ -3543,5 +4042,711 @@ mod executed_ciphersuite_tests {
         block_on(alice.engine.delete_group(group_id.clone())).expect("it can still be deleted");
         let gone = block_on(alice.engine.group_epoch(group_id)).expect_err("deleted");
         assert!(gone.contains("No group found"), "{gone}");
+    }
+}
+
+/// Every group an engine stores shares one database with the others, so two
+/// operations can trip over another group's rows: creating or joining a group
+/// under an ID that is already stored, and deleting one group out of several.
+///
+/// Each test runs on the host *and* in the browser, because the two scope a
+/// group's rows differently: SQLite by a `group_id` column the engine fills
+/// in, IndexedDB by nothing but the storage keys themselves.
+#[cfg(all(test, feature = "full-api"))]
+mod group_scope_tests {
+    use super::*;
+    use crate::api::keys::{serialize_signer, MlsSignatureKeyPair};
+
+    #[cfg(target_arch = "wasm32")]
+    use wasm_bindgen_test::{wasm_bindgen_test, wasm_bindgen_test_configure};
+
+    #[cfg(target_arch = "wasm32")]
+    wasm_bindgen_test_configure!(run_in_browser);
+
+    const SUITE: MlsCiphersuite = MlsCiphersuite::Mls128DhkemX25519Aes128gcmSha256Ed25519;
+
+    /// Runs each async body as a host test and as a browser test.
+    macro_rules! on_both_targets {
+        ($($name:ident => $body:ident;)*) => {$(
+            #[cfg(not(target_arch = "wasm32"))]
+            #[test]
+            fn $name() {
+                futures::executor::block_on($body());
+            }
+
+            #[cfg(target_arch = "wasm32")]
+            #[wasm_bindgen_test]
+            async fn $name() {
+                $body().await;
+            }
+        )*};
+    }
+
+    on_both_targets! {
+        a_welcome_into_a_stored_group_id_is_refused => welcome_into_a_stored_group_id;
+        creating_a_group_under_a_stored_id_is_refused => creating_under_a_stored_id;
+        deleting_a_group_leaves_every_other_group => deleting_leaves_the_other_groups;
+        an_external_join_replaces_a_stored_group_only_when_told_and_whole => external_join_into_a_stored_group_id;
+        an_external_join_replaces_a_stored_group_that_does_not_load => external_join_into_a_group_that_does_not_load;
+        group_ids_lists_exactly_the_stored_groups => group_ids_lists_the_stored_groups;
+    }
+
+    /// The Web build finds a group's rows by their keys alone; the host
+    /// stores, beside each row, which group wrote it. On the host the two
+    /// can be read side by side, so every row a varied run of operations
+    /// leaves behind has to be claimed by the key test for exactly the group
+    /// its column names — and a global row by none.
+    #[cfg(not(target_arch = "wasm32"))]
+    #[test]
+    fn the_web_key_test_agrees_with_the_host_group_column() {
+        use crate::encrypted_db::is_global_key;
+        use crate::snapshot_storage::key_belongs_to_group;
+
+        futures::executor::block_on(async {
+            let alice = Party::new("alice").await;
+            let bob = Party::new("bob").await;
+            let carol = Party::new("carol").await;
+            let short: &[u8] = b"group";
+            let long: &[u8] = b"group-2";
+
+            alice.create_group(Some(short)).await.expect("short ID");
+            alice.create_group(Some(long)).await.expect("long ID");
+            let other = alice.create_group(None).await.expect("random ID");
+            alice.invite(long, &bob).await;
+            let key_package = carol.key_package().await;
+            alice
+                .engine
+                .propose_add(long.to_vec(), alice.signer.clone(), key_package)
+                .await
+                .expect("stored proposal");
+            alice
+                .engine
+                .propose_self_update(short.to_vec(), alice.signer.clone(), None, None)
+                .await
+                .expect("own leaf node");
+            alice
+                .engine
+                .create_message(other.clone(), alice.signer.clone(), b"hello".to_vec(), None)
+                .await
+                .expect("message");
+
+            let rows = alice.engine.db().expect("engine is open").rows_with_group_column();
+            // The key shapes that are not label + ID alone have to be among
+            // what is checked.
+            for label in ["QueuedProposal", "ProposalQueueRefs", "EpochKeyPairs", "OwnLeafNodes"] {
+                assert!(
+                    rows.iter().any(|(key, _)| key.starts_with(label.as_bytes())),
+                    "no {label} row to check"
+                );
+            }
+
+            let groups = [short, long, other.as_slice()];
+            for (key, column) in &rows {
+                let claimed: Vec<&[u8]> =
+                    groups.iter().copied().filter(|id| key_belongs_to_group(key, id)).collect();
+                let shown = String::from_utf8_lossy(key);
+                match column {
+                    None => assert!(
+                        claimed.is_empty() && is_global_key(key),
+                        "a global row claimed by a group, or a group row with no column: {shown}"
+                    ),
+                    Some(id) => assert_eq!(claimed, [id.as_slice()], "{shown}"),
+                }
+            }
+        });
+    }
+
+    /// One client: its own engine on its own ephemeral database, and its
+    /// signing identity.
+    struct Party {
+        engine: MlsEngine,
+        name: &'static str,
+        signer: Vec<u8>,
+        public_key: Vec<u8>,
+    }
+
+    impl Party {
+        async fn new(name: &'static str) -> Self {
+            let engine = MlsEngine::create(":memory:".to_string(), vec![0x5a; 32])
+                .await
+                .expect("engine opens");
+            let keys = MlsSignatureKeyPair::generate(SUITE).expect("signature key pair");
+            let signer = serialize_signer(SUITE, keys.private_key(), keys.public_key())
+                .expect("serialized signer");
+            Self { engine, name, signer, public_key: keys.public_key() }
+        }
+
+        async fn create_group(&self, group_id: Option<&[u8]>) -> Result<Vec<u8>, String> {
+            self.engine
+                .create_group(
+                    MlsGroupConfig::default_config(SUITE),
+                    self.signer.clone(),
+                    self.name.as_bytes().to_vec(),
+                    self.public_key.clone(),
+                    group_id.map(<[u8]>::to_vec),
+                    None,
+                )
+                .await
+                .map(|created| created.group_id)
+        }
+
+        async fn create_group_with_builder(&self, group_id: &[u8]) -> Result<Vec<u8>, String> {
+            self.engine
+                .create_group_with_builder(
+                    MlsGroupConfig::default_config(SUITE),
+                    self.signer.clone(),
+                    self.name.as_bytes().to_vec(),
+                    self.public_key.clone(),
+                    Some(group_id.to_vec()),
+                    None,
+                    None,
+                    None,
+                    None,
+                    None,
+                )
+                .await
+                .map(|created| created.group_id)
+        }
+
+        async fn key_package(&self) -> Vec<u8> {
+            self.engine
+                .create_key_package(
+                    SUITE,
+                    self.signer.clone(),
+                    self.name.as_bytes().to_vec(),
+                    self.public_key.clone(),
+                    None,
+                )
+                .await
+                .expect("key package")
+                .key_package_bytes
+        }
+
+        /// Adds `invitee` to `group_id` and returns the Welcome.
+        async fn invite(&self, group_id: &[u8], invitee: &Party) -> Vec<u8> {
+            let key_package = invitee.key_package().await;
+            self.engine
+                .add_members(group_id.to_vec(), self.signer.clone(), vec![key_package])
+                .await
+                .expect("member is added")
+                .welcome
+        }
+
+        async fn join(&self, welcome: &[u8]) -> Result<Vec<u8>, String> {
+            self.engine
+                .join_group_from_welcome(
+                    MlsGroupConfig::default_config(SUITE),
+                    welcome.to_vec(),
+                    None,
+                    self.signer.clone(),
+                )
+                .await
+                .map(|joined| joined.group_id)
+        }
+
+        async fn join_with_options(&self, welcome: &[u8]) -> Result<Vec<u8>, String> {
+            self.engine
+                .join_group_from_welcome_with_options(
+                    MlsGroupConfig::default_config(SUITE),
+                    welcome.to_vec(),
+                    None,
+                    self.signer.clone(),
+                    false,
+                )
+                .await
+                .map(|joined| joined.group_id)
+        }
+
+        /// The members of `group_id` as this client's engine has it stored.
+        async fn members(&self, group_id: &[u8]) -> Vec<String> {
+            self.engine
+                .group_members(group_id.to_vec())
+                .await
+                .expect("group loads")
+                .into_iter()
+                .map(|member| {
+                    let credential = Credential::tls_deserialize_exact_bytes(&member.credential)
+                        .expect("credential decodes");
+                    let basic = BasicCredential::try_from(credential).expect("basic credential");
+                    String::from_utf8_lossy(basic.identity()).into_owned()
+                })
+                .collect()
+        }
+
+        async fn epoch(&self, group_id: &[u8]) -> Result<u64, String> {
+            self.engine.group_epoch(group_id.to_vec()).await
+        }
+
+        /// Joins the group of `group_info` by an external commit, through
+        /// the first API or the second.
+        async fn join_externally(
+            &self,
+            v2: bool,
+            group_info: &[u8],
+            tree: &[u8],
+            replace: Option<bool>,
+        ) -> Result<ExternalJoinResult, String> {
+            let config = MlsGroupConfig::default_config(SUITE);
+            let identity = self.name.as_bytes().to_vec();
+            if v2 {
+                self.engine
+                    .join_group_external_commit_v2(
+                        config,
+                        group_info.to_vec(),
+                        Some(tree.to_vec()),
+                        self.signer.clone(),
+                        identity,
+                        self.public_key.clone(),
+                        None,
+                        false,
+                        None,
+                        replace,
+                    )
+                    .await
+            } else {
+                self.engine
+                    .join_group_external_commit(
+                        config,
+                        group_info.to_vec(),
+                        Some(tree.to_vec()),
+                        self.signer.clone(),
+                        identity,
+                        self.public_key.clone(),
+                        None,
+                        replace,
+                    )
+                    .await
+            }
+        }
+
+        async fn pending_proposals(&self, group_id: &[u8]) -> usize {
+            self.engine
+                .group_pending_proposals(group_id.to_vec())
+                .await
+                .expect("group loads")
+                .len()
+        }
+    }
+
+    /// The key of `group_id`'s entry under `label`, as this provider writes a
+    /// plain group key: the label, the ID as serde_json writes it, `rest`,
+    /// and the storage version.
+    fn group_key(label: &[u8], group_id: &[u8], rest: &[u8]) -> Vec<u8> {
+        let id = serde_json::to_vec(&GroupId::from_slice(group_id)).expect("group ID");
+        [label, &id, rest, &openmls_traits::storage::CURRENT_VERSION.to_be_bytes()].concat()
+    }
+
+    /// Stores `rows` as the engine stores `group_id`'s: on the host, filed
+    /// under that group's column.
+    async fn store_rows(party: &Party, group_id: &[u8], rows: Vec<(Vec<u8>, Vec<u8>)>) {
+        party
+            .engine
+            .db()
+            .expect("engine is open")
+            .save_updates(
+                crate::encrypted_db::StorageUpdates { upserts: rows, deletes: Vec::new() },
+                Some(group_id),
+            )
+            .await
+            .expect("rows are stored");
+    }
+
+    /// Stores rows of `group_id` that OpenMLS's own `delete` does not know
+    /// of, shaped as a group's leftovers are: the epoch key pairs of an epoch
+    /// long gone, and a queued proposal no queue refers to. Returns their
+    /// keys.
+    async fn plant_leftovers(party: &Party, group_id: &[u8]) -> Vec<Vec<u8>> {
+        let id = GroupId::from_slice(group_id);
+        let in_pair = serde_json::to_vec(&serde_json::to_value(&id).expect("group ID"))
+            .expect("group ID");
+        let version = openmls_traits::storage::CURRENT_VERSION.to_be_bytes();
+        let mut queued = b"QueuedProposal[".to_vec();
+        queued.extend(&in_pair);
+        queued.extend(b",\"leftover\"]");
+        queued.extend(version);
+        let keys = vec![group_key(b"EpochKeyPairs", group_id, b"[7,3]"), queued];
+        store_rows(party, group_id, keys.iter().map(|key| (key.clone(), b"leftover".to_vec())).collect())
+            .await;
+        keys
+    }
+
+    /// Every key `party` stores, whatever group it is filed under: on the
+    /// host the whole table, read past the group column; on the Web every
+    /// row, which is what any load reads there.
+    async fn all_keys(party: &Party) -> Vec<Vec<u8>> {
+        let db = party.engine.db().expect("engine is open");
+        #[cfg(not(target_arch = "wasm32"))]
+        let rows: Vec<Vec<u8>> = db.rows_with_group_column().into_iter().map(|(key, _)| key).collect();
+        #[cfg(target_arch = "wasm32")]
+        let rows: Vec<Vec<u8>> = db
+            .load_for_group(b"")
+            .await
+            .expect("rows load")
+            .into_iter()
+            .map(|(key, _)| key)
+            .collect();
+        rows
+    }
+
+    /// How many epoch key pair entries `party` stores for `group_id`, told
+    /// apart by their keys, as the Web build tells them apart.
+    async fn epoch_key_pair_rows(party: &Party, group_id: &[u8]) -> usize {
+        all_keys(party)
+            .await
+            .iter()
+            .filter(|key| {
+                key.starts_with(b"EpochKeyPairs")
+                    && crate::snapshot_storage::key_belongs_to_group(key, group_id)
+            })
+            .count()
+    }
+
+    /// The refusal a stored group ID has to produce.
+    fn assert_refused(result: Result<Vec<u8>, String>, operation: &str) {
+        match result {
+            Ok(_) => panic!("{operation} went through over the stored group"),
+            Err(error) => assert!(
+                error.contains("already exists") && error.contains("deleteGroup"),
+                "{operation} failed, but not with the refusal: {error}"
+            ),
+        }
+    }
+
+    /// RFC 9420 §12.4.3.1: a joiner must "verify that the group_id is unique
+    /// among the groups that the client is currently participating in", and
+    /// OpenMLS checks it against storage. Anyone who can hand Bob a Welcome —
+    /// a delivery service, anyone holding one of his key packages — could
+    /// otherwise put a group of their own under the ID of one he is in.
+    async fn welcome_into_a_stored_group_id() {
+        let alice = Party::new("alice").await;
+        let bob = Party::new("bob").await;
+        let mallory = Party::new("mallory").await;
+        let group_id: &[u8] = b"team-chat";
+
+        alice.create_group(Some(group_id)).await.expect("alice's group");
+        let welcome = alice.invite(group_id, &bob).await;
+        bob.join(&welcome).await.expect("bob joins alice's group");
+
+        mallory.create_group(Some(group_id)).await.expect("mallory's group under the same ID");
+        let impostor = mallory.invite(group_id, &bob).await;
+
+        let joined = bob.join(&impostor).await;
+        if joined.is_ok() {
+            panic!(
+                "joinGroupFromWelcome replaced the stored group; its members are now {:?}",
+                bob.members(group_id).await
+            );
+        }
+        assert_refused(joined, "joinGroupFromWelcome");
+        assert_refused(bob.join_with_options(&impostor).await, "joinGroupFromWelcomeWithOptions");
+        assert_eq!(bob.members(group_id).await, ["alice", "bob"]);
+
+        // The refusals wrote nothing — the key package the Welcome is
+        // addressed to included — so once Bob gives up his copy of the
+        // group, the same Welcome goes through.
+        bob.engine.delete_group(group_id.to_vec()).await.expect("group is deleted");
+        bob.join(&impostor).await.expect("the Welcome is accepted once the ID is free");
+        assert_eq!(bob.members(group_id).await, ["mallory", "bob"]);
+    }
+
+    /// The creating side of the same check: OpenMLS refuses to build a group
+    /// under an ID it already stores.
+    async fn creating_under_a_stored_id() {
+        let alice = Party::new("alice").await;
+        let bob = Party::new("bob").await;
+        let group_id: &[u8] = b"team-chat";
+
+        alice.create_group(Some(group_id)).await.expect("first group");
+        alice.invite(group_id, &bob).await;
+
+        let created = alice.create_group(Some(group_id)).await;
+        if created.is_ok() {
+            panic!(
+                "createGroup replaced the stored group; its members are now {:?}",
+                alice.members(group_id).await
+            );
+        }
+        assert_refused(created, "createGroup");
+        assert_refused(alice.create_group_with_builder(group_id).await, "createGroupWithBuilder");
+        assert_eq!(alice.members(group_id).await, ["alice", "bob"]);
+        assert_eq!(alice.epoch(group_id).await, Ok(1));
+
+        alice.engine.delete_group(group_id.to_vec()).await.expect("group is deleted");
+        alice.create_group(Some(group_id)).await.expect("the ID is free again");
+        assert_eq!(alice.members(group_id).await, ["alice"]);
+    }
+
+    /// `deleteGroup` removes one group. What OpenMLS leaves behind for the
+    /// purge is found by the group's ID, and every other group keeps all of
+    /// its rows — including a group whose ID merely starts with the deleted
+    /// one's, and the other way round.
+    async fn deleting_leaves_the_other_groups() {
+        let alice = Party::new("alice").await;
+        let bob = Party::new("bob").await;
+        let carol = Party::new("carol").await;
+        let short: &[u8] = b"group";
+        let long: &[u8] = b"group-2";
+
+        alice.create_group(Some(short)).await.expect("short ID");
+        alice.create_group(Some(long)).await.expect("long ID");
+        let other = alice.create_group(None).await.expect("random ID");
+
+        // More than a fresh group's rows: a second epoch and member, and a
+        // stored proposal, whose key is the group ID *and* the proposal ref.
+        alice.invite(long, &bob).await;
+        let key_package = carol.key_package().await;
+        alice
+            .engine
+            .propose_add(long.to_vec(), alice.signer.clone(), key_package)
+            .await
+            .expect("proposal is stored");
+        // And rows OpenMLS's own delete does not know of, for the group that
+        // is deleted and for the one whose ID extends it: only the purge
+        // removes the first, and it has to keep the second.
+        plant_leftovers(&alice, short).await;
+        let long_leftovers = plant_leftovers(&alice, long).await;
+
+        alice.engine.delete_group(short.to_vec()).await.expect("short ID is deleted");
+        let keys = all_keys(&alice).await;
+        assert!(
+            !keys.iter().any(|key| crate::snapshot_storage::key_belongs_to_group(key, short)),
+            "a row of the deleted group was left"
+        );
+        for key in &long_leftovers {
+            assert!(keys.contains(key), "a row of the group whose ID extends it went");
+        }
+        assert!(alice.epoch(short).await.is_err(), "the deleted group is gone");
+        assert_eq!(alice.epoch(long).await, Ok(1), "a group whose ID extends the deleted one's");
+        assert_eq!(alice.members(long).await, ["alice", "bob"]);
+        let pending = alice
+            .engine
+            .group_pending_proposals(long.to_vec())
+            .await
+            .expect("proposals load");
+        assert_eq!(pending.len(), 1, "the stored proposal survives");
+        assert_eq!(alice.epoch(&other).await, Ok(0), "an unrelated group");
+
+        alice.create_group(Some(short)).await.expect("short ID again");
+        alice.engine.delete_group(long.to_vec()).await.expect("long ID is deleted");
+        assert!(alice.epoch(long).await.is_err(), "the deleted group is gone");
+        assert_eq!(alice.members(short).await, ["alice"], "a group whose ID the deleted one's extends");
+        assert_eq!(alice.epoch(&other).await, Ok(0), "an unrelated group");
+    }
+
+    /// An external join is how a client rejoins a group whose state it lost
+    /// track of, and OpenMLS does not check its group ID against storage. So
+    /// a group stored under that ID is refused, with nothing written, unless
+    /// the caller asks for it to be replaced, and then it is replaced whole.
+    /// On the global scope alone the join kept the old group's queued
+    /// proposal and epoch key pairs under the new group's ID, and the
+    /// rejoined client's next commit carried a proposal the group had already
+    /// applied ("Duplicate signature key in proposals and group").
+    async fn external_join_into_a_stored_group_id() {
+        for v2 in [false, true] {
+            let alice = Party::new("alice").await;
+            let bob = Party::new("bob").await;
+            let carol = Party::new("carol").await;
+            let group = alice.create_group(None).await.expect("alice's group");
+            let welcome = alice.invite(&group, &bob).await;
+            alice.engine.merge_pending_commit(group.clone()).await.expect("alice merges");
+            bob.join(&welcome).await.expect("bob joins");
+
+            // Bob stores a proposal and misses the commit that applies it.
+            let proposal = alice
+                .engine
+                .propose_add(group.clone(), alice.signer.clone(), carol.key_package().await)
+                .await
+                .expect("alice proposes carol")
+                .proposal_message;
+            bob.engine
+                .process_message(group.clone(), proposal)
+                .await
+                .expect("bob stores the proposal");
+            alice
+                .engine
+                .commit_to_pending_proposals(group.clone(), alice.signer.clone())
+                .await
+                .expect("alice commits it");
+            alice.engine.merge_pending_commit(group.clone()).await.expect("alice merges");
+            let group_info = alice
+                .engine
+                .export_group_info(group.clone(), alice.signer.clone())
+                .await
+                .expect("group info");
+            let tree = alice.engine.export_ratchet_tree(group.clone()).await.expect("tree");
+
+            for replace in [None, Some(false)] {
+                match bob.join_externally(v2, &group_info, &tree, replace).await {
+                    Ok(_) => panic!("v2={v2}: the join replaced the stored group untold"),
+                    Err(error) => assert!(
+                        error.contains("already exists")
+                            && error.contains("replaceStoredGroup")
+                            && error.contains(&hex(&group)),
+                        "v2={v2}: refused, but not with the refusal: {error}"
+                    ),
+                }
+            }
+            // A replacing join that fails keeps the stored group too: here on
+            // a GroupInfo whose signature, its last byte, no longer verifies,
+            // after the group ID has been read from it.
+            let mut forged = group_info.clone();
+            *forged.last_mut().expect("group info") ^= 0x01;
+            match bob.join_externally(v2, &forged, &tree, Some(true)).await {
+                Ok(_) => panic!("v2={v2}: a join on a forged GroupInfo"),
+                Err(error) => assert!(
+                    !error.contains("deserialize"),
+                    "v2={v2}: failed before the stored group was read: {error}"
+                ),
+            }
+            assert_eq!(bob.epoch(&group).await, Ok(1), "v2={v2}: nothing was written");
+            assert_eq!(bob.members(&group).await, ["alice", "bob"]);
+            assert_eq!(bob.pending_proposals(&group).await, 1);
+
+            let joined = bob
+                .join_externally(v2, &group_info, &tree, Some(true))
+                .await
+                .expect("bob rejoins, replacing what he stored");
+            assert_eq!(joined.group_id, group);
+            if !v2 {
+                bob.engine.merge_pending_commit(group.clone()).await.expect("bob merges");
+            }
+            alice
+                .engine
+                .process_message(group.clone(), joined.commit)
+                .await
+                .expect("alice takes bob's commit");
+            assert_eq!(alice.epoch(&group).await, bob.epoch(&group).await, "v2={v2}");
+            assert_eq!(bob.pending_proposals(&group).await, 0, "v2={v2}: the old proposal went");
+            assert_eq!(
+                epoch_key_pair_rows(&bob, &group).await,
+                1,
+                "v2={v2}: only the new epoch's key pairs are left"
+            );
+            bob.engine
+                .self_update(group.clone(), bob.signer.clone())
+                .await
+                .expect("bob commits again");
+
+            // Entries under the ID that no group loads from are no stored
+            // group: a join goes ahead without being told, and they go.
+            let dave = Party::new("dave").await;
+            let planted = plant_leftovers(&dave, &group).await;
+            assert!(dave.epoch(&group).await.is_err(), "v2={v2}: no group loads");
+            let group_info = alice
+                .engine
+                .export_group_info(group.clone(), alice.signer.clone())
+                .await
+                .expect("group info");
+            let tree = alice.engine.export_ratchet_tree(group.clone()).await.expect("tree");
+            dave.join_externally(v2, &group_info, &tree, None)
+                .await
+                .expect("dave joins, untold");
+            let keys = all_keys(&dave).await;
+            for key in &planted {
+                assert!(!keys.contains(key), "v2={v2}: a leftover stayed");
+            }
+        }
+    }
+
+    /// A stored group that no longer loads cannot be checked, so an external
+    /// join refuses it untold, saying so and naming `replaceStoredGroup`, and
+    /// told, replaces it without loading it.
+    async fn external_join_into_a_group_that_does_not_load() {
+        let alice = Party::new("alice").await;
+        let bob = Party::new("bob").await;
+        let group = alice.create_group(None).await.expect("alice's group");
+        let welcome = alice.invite(&group, &bob).await;
+        alice.engine.merge_pending_commit(group.clone()).await.expect("alice merges");
+        bob.join(&welcome).await.expect("bob joins");
+
+        // Bob's copy of the group context no longer reads.
+        let context = group_key(b"GroupContext", &group, b"");
+        assert!(all_keys(&bob).await.contains(&context), "the group context's key");
+        store_rows(&bob, &group, vec![(context, b"not a group context".to_vec())]).await;
+        assert!(bob.epoch(&group).await.is_err(), "the group no longer loads");
+
+        let group_info = alice
+            .engine
+            .export_group_info(group.clone(), alice.signer.clone())
+            .await
+            .expect("group info");
+        let tree = alice.engine.export_ratchet_tree(group.clone()).await.expect("tree");
+        match bob.join_externally(false, &group_info, &tree, None).await {
+            Ok(_) => panic!("the join replaced a group it could not check"),
+            Err(error) => assert!(
+                error.contains("does not load")
+                    && error.contains("replaceStoredGroup")
+                    && error.contains(&hex(&group)),
+                "refused, but not for that reason: {error}"
+            ),
+        }
+        let joined = bob
+            .join_externally(false, &group_info, &tree, Some(true))
+            .await
+            .expect("bob replaces it");
+        bob.engine.merge_pending_commit(group.clone()).await.expect("bob merges");
+        alice
+            .engine
+            .process_message(group.clone(), joined.commit)
+            .await
+            .expect("alice takes bob's commit");
+        assert_eq!(bob.epoch(&group).await, alice.epoch(&group).await, "the group loads again");
+    }
+
+    /// `groupIds` lists what the engine stores, no more and no less, and
+    /// agrees with the check `createGroup` and `joinGroupFromWelcome` make:
+    /// every ID it lists loads and is refused as already in use, a group
+    /// stays listed while inactive, and an ID drops out exactly when
+    /// `deleteGroup` frees it.
+    async fn group_ids_lists_the_stored_groups() {
+        let alice = Party::new("alice").await;
+        let bob = Party::new("bob").await;
+        assert_eq!(alice.engine.group_ids().await, Ok(vec![]), "a fresh engine");
+
+        let short: &[u8] = b"group";
+        let long: &[u8] = b"group-2";
+        alice.create_group(Some(short)).await.expect("short ID");
+        alice.create_group(Some(long)).await.expect("long ID");
+        let other = alice.create_group(None).await.expect("random ID");
+        // Stored as well, and not groups: a key package and the signature
+        // key every call above stored.
+        alice.key_package().await;
+
+        let mut stored = vec![short.to_vec(), long.to_vec(), other.clone()];
+        stored.sort();
+        assert_eq!(alice.engine.group_ids().await, Ok(stored.clone()));
+        for id in &stored {
+            assert!(alice.epoch(id).await.is_ok(), "a listed group loads");
+            assert_refused(alice.create_group(Some(id)).await, "createGroup");
+        }
+
+        // The joiner lists a group it joined from a Welcome, and keeps it
+        // listed once it has been removed — inactive, until deleted.
+        let welcome = alice.invite(long, &bob).await;
+        bob.join(&welcome).await.expect("bob joins");
+        assert_eq!(bob.engine.group_ids().await, Ok(vec![long.to_vec()]));
+        let removal = alice
+            .engine
+            .remove_members(long.to_vec(), alice.signer.clone(), vec![1])
+            .await
+            .expect("bob is removed")
+            .commit;
+        bob.engine
+            .process_message(long.to_vec(), removal)
+            .await
+            .expect("bob processes his removal");
+        assert_eq!(bob.engine.group_is_active(long.to_vec()).await, Ok(false));
+        assert_eq!(bob.engine.group_ids().await, Ok(vec![long.to_vec()]), "an inactive group");
+        let again = alice.invite(long, &bob).await;
+        assert_refused(bob.join(&again).await, "joinGroupFromWelcome");
+
+        bob.engine.delete_group(long.to_vec()).await.expect("bob deletes it");
+        assert_eq!(bob.engine.group_ids().await, Ok(vec![]), "a deleted group");
+        bob.join(&again).await.expect("the ID is free again");
+        assert_eq!(bob.engine.group_ids().await, Ok(vec![long.to_vec()]));
+
+        alice.engine.delete_group(short.to_vec()).await.expect("alice deletes one");
+        stored.retain(|id| id != short);
+        assert_eq!(alice.engine.group_ids().await, Ok(stored), "only the deleted one drops out");
     }
 }

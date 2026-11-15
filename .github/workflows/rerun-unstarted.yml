@@ -1,0 +1,116 @@
+# Runs again the jobs GitHub never gave a runner.
+#
+# macOS arm64 runners run short now and then. A job GitHub cannot give one is
+# cancelled after about a quarter of an hour, with the annotation "The job was
+# not acquired by Runner of type hosted even after multiple attempts", and the
+# run fails without one step of that job having run. In a project generated from
+# this template, on 2026-11-03, that was ten job runs across two pushes of one
+# pull request, and `test / Test (macOS ARM64)` is a required check: each one held
+# the pull request until someone re-ran it.
+#
+# Running such a job again cannot hide anything, since nothing in it ran, so
+# this does it, twice at most (`run_attempt < 3`). Possibly only once: GitHub
+# may not report the end of an attempt this workflow started, as it reports no
+# other event a workflow's own token causes. The first live case will show it.
+#
+# Left as they are:
+# - a run in which any job failed after it had started, which is for a person
+#   to read; the jobs that drive a device already retried what the device or
+#   the connection broke;
+# - a cancelled run, which concludes `cancelled` rather than `failure`;
+# - a run a newer one has replaced. It is not worth a runner, and in a pull
+#   request's concurrency group its re-run would cancel the newer one. "Newer"
+#   means of the same branch from the same repository: two forks' `main` are
+#   not one branch. A run another workflow's completion started is different:
+#   they are all recorded on the default branch, and each tests what its title
+#   names (the binaries of one release), so only a newer run with the same
+#   title replaces it. Without that, any later native build would leave the
+#   run a release waits for unrepaired.
+#
+# `workflow_run` takes this file from the default branch, so it acts only once
+# it is on main, and then on pull request runs as well as main's. It checks out
+# nothing and runs no code from the run it reads; what a fork controls, a branch
+# or a job name, reaches the script through the environment, and no line it
+# prints starts with one.
+
+name: Re-run jobs that got no runner
+
+on:
+  workflow_run:
+    workflows: ["Tests", "Integration Tests"]
+    types: [completed]
+
+# Re-running needs actions: write; the annotations that say why a job never
+# started are read through the checks API.
+permissions:
+  actions: write
+  checks: read
+
+jobs:
+  rerun:
+    if: >-
+      github.event.workflow_run.conclusion == 'failure' &&
+      github.event.workflow_run.run_attempt < 3
+    runs-on: ubuntu-26.04
+    timeout-minutes: 5
+    steps:
+      - name: Run again the jobs that never got a runner
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          RUN_ID: ${{ github.event.workflow_run.id }}
+          ATTEMPT: ${{ github.event.workflow_run.run_attempt }}
+          WORKFLOW_ID: ${{ github.event.workflow_run.workflow_id }}
+          BRANCH: ${{ github.event.workflow_run.head_branch }}
+          EVENT: ${{ github.event.workflow_run.event }}
+          HEAD_REPO: ${{ github.event.workflow_run.head_repository.full_name }}
+          TITLE: ${{ github.event.workflow_run.display_title }}
+        run: |
+          set -euo pipefail
+
+          # The newest run this one competes with (see the top of this file).
+          # The repository and the title, which a fork controls, are compared
+          # inside jq, read from the environment.
+          if [ "$EVENT" = workflow_run ]; then
+            newest=$(gh api -X GET "repos/$REPO/actions/workflows/$WORKFLOW_ID/runs" \
+              -f event="$EVENT" -f per_page=50 \
+              --jq '[.workflow_runs[] | select(.display_title == env.TITLE)][0].id // empty')
+          else
+            newest=$(gh api -X GET "repos/$REPO/actions/workflows/$WORKFLOW_ID/runs" \
+              -f branch="$BRANCH" -f event="$EVENT" -f per_page=50 \
+              --jq '[.workflow_runs[] | select(.head_repository.full_name == env.HEAD_REPO)][0].id // empty')
+          fi
+          if [ "$newest" != "$RUN_ID" ]; then
+            echo "Run $RUN_ID is no longer the newest of its kind (run ${newest:-none of the last 50} is), so it is left as it is."
+            exit 0
+          fi
+
+          # Every job of this attempt that neither passed nor was skipped: its
+          # id, how many steps it ran, its name.
+          failed=$(gh api --paginate \
+            "repos/$REPO/actions/runs/$RUN_ID/attempts/$ATTEMPT/jobs?per_page=100" \
+            --jq '.jobs[] | select(.conclusion != "success" and .conclusion != "skipped") | [.id, (.steps | length), .name] | @tsv')
+          if [ -z "$failed" ]; then
+            echo "No job failed in attempt $ATTEMPT."
+            exit 0
+          fi
+
+          count=0
+          while IFS=$'\t' read -r id steps name; do
+            if [ "$steps" -gt 0 ]; then
+              echo "Job \"$name\" started and failed, so the run is left as it is."
+              exit 0
+            fi
+            # Read whole, not piped into grep -q: an early exit there would
+            # kill gh, and pipefail would read that as no match.
+            messages=$(gh api "repos/$REPO/check-runs/$id/annotations" --jq '.[].message')
+            if ! grep -q 'was not acquired by Runner' <<< "$messages"; then
+              echo "Job \"$name\" never started, but not for want of a runner, so the run is left as it is."
+              exit 0
+            fi
+            echo "Job \"$name\" never got a runner."
+            count=$((count + 1))
+          done <<< "$failed"
+
+          echo "::notice::Running again the $count job(s) of attempt $ATTEMPT that never got a runner."
+          gh run rerun "$RUN_ID" --failed --repo "$REPO"
